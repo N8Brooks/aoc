@@ -2,12 +2,12 @@ use num::complex::Complex;
 
 fn direction(dir: &str) -> Complex<i32> {
     match dir {
-        "nw" => Complex { re: 1, im: 0 },
-        "n" => Complex { re: 0, im: 1 },
-        "ne" => Complex { re: -1, im: 1 },
-        "se" => Complex { re: -1, im: 0 },
-        "s" => Complex { re: 0, im: -1 },
-        "sw" => Complex { re: 1, im: -1 },
+        "nw" => Complex::new(1, 0),
+        "n" => Complex::new(0, 1),
+        "ne" => Complex::new(-1, 1),
+        "se" => Complex::new(-1, 0),
+        "s" => Complex::new(0, -1),
+        "sw" => Complex::new(1, -1),
         _ => panic!("Invalid direction"),
     }
 }
