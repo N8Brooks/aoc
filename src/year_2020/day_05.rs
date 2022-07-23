@@ -10,26 +10,25 @@ pub fn part_1(input: &str) -> u32 {
     input.split('\n').map(pass_id).max().unwrap()
 }
 
-/// For the un-sorted ints, the missing value can be found in O(n) time and O(1) extra space.
-///
-/// The sum with the missing number included can be found using the arithmetic sum of the series.
+/// For the un-sorted ints, the missing value can be
+/// found in O(n) time and O(1) extra space. The sum
+/// with the missing number included can be found
+/// using the arithmetic sum of the series. The sum
+/// without the missing number included can be found
+/// as the sum of the digits. Subtracting these gives
+/// the result.
 /// ```rs
-/// let sum_with_missing = (nums.count() + 1) * (min + max) / 2;
-/// ```
-///
-/// The sum without the missing number included can be found as the sum of the digits.
-/// ```rs
+/// let count = nums.count();
+/// let min = nums.min();
+/// let max = nums.max();
+/// let sum_with_missing = (count + 1) * (min + max) / 2;
 /// let sum = nums.sum();
-/// ```
-///
-/// Subtracting these gives the result.
-/// ```rs
 /// let missing = sum_with_missing - sum;
-/// let missing = (nums.count +  1) * (min + max) / 2 - nums.sum();
 /// ```
 ///
-/// Equivalent to:
+/// Equivalent to all of the following:
 /// ```rs
+/// (nums.count +  1) * (min + max) / 2 - nums.sum();
 /// (count + 1) * (min + max) / 2 - sum
 /// (count + 1) * (min +min + count) / 2 - sum
 /// (max - min + 1) * (min + max) / 2 - sum
