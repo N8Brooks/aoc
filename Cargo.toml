@@ -8,3 +8,4 @@ lazy_static = "1.4"
 num = "0.4"
 regex = { version = "1", default-features = false, features = ["std", "perf", "unicode-gencat"] }
 test-case = "2.2"
+
