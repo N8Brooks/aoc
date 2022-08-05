@@ -1,3 +1,5 @@
+pub mod util;
+
 pub mod year_2017 {
     pub mod day_11;
 }
@@ -13,5 +15,6 @@ pub mod year_2020 {
     pub mod day_09;
     pub mod day_10;
     pub mod day_12;
+    pub mod day_13;
     pub mod day_15;
 }
