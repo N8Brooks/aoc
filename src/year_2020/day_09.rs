@@ -9,7 +9,7 @@ fn find_weakness(nums: &Vec<i64>, n: usize) -> i64 {
         counts
             .entry(num)
             .and_modify(|count| *count += 1)
-            .or_insert(1);
+            .or_insert(2);
     });
 
     for (old_num, new_num) in nums.iter().zip(nums[n..].iter()) {

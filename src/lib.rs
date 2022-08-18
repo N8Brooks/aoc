@@ -23,4 +23,5 @@ pub mod year_2020 {
 
 pub mod year_2021 {
     pub mod day_01;
+    pub mod day_02;
 }
