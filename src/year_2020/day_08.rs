@@ -9,7 +9,7 @@ fn parse_input(input: &str) -> Vec<Operation> {
     input
         .lines()
         .map(|line| -> (&str, i32) {
-            let (op, val) = line.split_once(" ").unwrap();
+            let (op, val) = line.split_once(' ').unwrap();
             (op, val.parse().unwrap())
         })
         .map(|(op, val)| {

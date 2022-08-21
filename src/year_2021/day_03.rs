@@ -14,7 +14,7 @@ pub fn part_1(input: &str) -> u32 {
     pop_counts.iter().for_each(|&pop_count| {
         let bit = (pop_count > length / 2) as u32;
         gamma = gamma << 1 | bit;
-        epsilon = epsilon << 1 | 1 - bit;
+        epsilon = epsilon << 1 | (1 - bit);
     });
     gamma * epsilon
 }

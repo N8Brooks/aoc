@@ -13,7 +13,7 @@ impl Passport {
     fn new(input: &str) -> Passport {
         let mut passport = Passport::default();
         for entry in input.split_whitespace() {
-            let (key, val) = entry.split_once(":").unwrap();
+            let (key, val) = entry.split_once(':').unwrap();
             match key {
                 "byr" => passport.byr = Some(val.parse().unwrap()),
                 "iyr" => passport.iyr = Some(val.parse().unwrap()),
@@ -30,13 +30,13 @@ impl Passport {
     }
 
     fn is_valid_part_1(&self) -> bool {
-        return self.byr.is_some()
+        self.byr.is_some()
             && self.iyr.is_some()
             && self.eyr.is_some()
             && self.hgt.is_some()
             && self.hcl.is_some()
             && self.ecl.is_some()
-            && self.pid.is_some();
+            && self.pid.is_some()
     }
 
     fn is_valid_part_2<'a>(&'a self) -> bool {
@@ -62,11 +62,11 @@ impl Passport {
                 _ => false,
             }
             && self.hcl.is_some()
-            && HCL_RE.is_match(&self.hcl.as_ref().unwrap())
+            && HCL_RE.is_match(self.hcl.as_ref().unwrap())
             && self.ecl.is_some()
-            && ECL_RE.is_match(&self.ecl.as_ref().unwrap())
+            && ECL_RE.is_match(self.ecl.as_ref().unwrap())
             && self.pid.is_some()
-            && PID_RE.is_match(&self.pid.as_ref().unwrap());
+            && PID_RE.is_match(self.pid.as_ref().unwrap());
     }
 }
 
@@ -93,7 +93,7 @@ impl Hgt {
 pub fn part_1(input: &str) -> usize {
     input
         .split("\n\n")
-        .map(|data| Passport::new(data))
+        .map(Passport::new)
         .filter(|passport| passport.is_valid_part_1())
         .count()
 }
@@ -101,7 +101,7 @@ pub fn part_1(input: &str) -> usize {
 pub fn part_2(input: &str) -> usize {
     input
         .split("\n\n")
-        .map(|data| Passport::new(data))
+        .map(Passport::new)
         .filter(|passport| passport.is_valid_part_2())
         .count()
 }

@@ -26,7 +26,7 @@ pub fn part_1(input: &str) -> usize {
         .filter(|policy| {
             let range = policy.lo..=policy.hi;
             let count = policy.password.matches(policy.letter).count();
-            range.contains(&&count)
+            range.contains(&count)
         })
         .count()
 }
