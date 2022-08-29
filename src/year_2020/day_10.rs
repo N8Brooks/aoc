@@ -21,7 +21,7 @@ struct Memo {
     arrangements: i64,
 }
 
-pub fn part_2<'a>(input: &'a str) -> u64 {
+pub fn part_2(input: &str) -> u64 {
     let mut memory = VecDeque::from([Memo {
         joltage: 0,
         arrangements: 1,

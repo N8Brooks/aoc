@@ -14,7 +14,7 @@ pub fn part_1(input: &str) -> u32 {
         .sum()
 }
 
-pub fn part_2<'a>(input: &'a str) -> u32 {
+pub fn part_2(input: &str) -> u32 {
     input
         .split("\n\n")
         .map(|group| {

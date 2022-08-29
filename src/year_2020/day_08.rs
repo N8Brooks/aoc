@@ -40,7 +40,7 @@ pub fn part_1(input: &str) -> i32 {
     run_program(&instructions).1
 }
 
-pub fn part_2<'a>(input: &'a str) -> i32 {
+pub fn part_2(input: &str) -> i32 {
     let mut instructions = parse_input(input);
     for i in 0..instructions.len() {
         let corrupted_instruction = instructions[i];

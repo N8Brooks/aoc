@@ -22,7 +22,7 @@ pub fn part_1(input: &str) -> i32 {
     location.re.abs() + location.im.abs()
 }
 
-pub fn part_2<'a>(input: &'a str) -> i32 {
+pub fn part_2(input: &str) -> i32 {
     let mut location = Complex::new(0, 0);
     let mut waypoint = Complex::new(10, 1);
     input

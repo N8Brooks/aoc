@@ -39,7 +39,7 @@ impl Passport {
             && self.pid.is_some()
     }
 
-    fn is_valid_part_2<'a>(&'a self) -> bool {
+    fn is_valid_part_2(&self) -> bool {
         use lazy_static::lazy_static;
         use regex::Regex;
 

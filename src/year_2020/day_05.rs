@@ -34,7 +34,7 @@ pub fn part_1(input: &str) -> u32 {
 /// (max - min + 1) * (min + max) / 2 - sum
 /// (count + 1) * (max + max - count) / 2 - sum
 /// ```
-pub fn part_2<'a>(input: &'a str) -> u32 {
+pub fn part_2(input: &str) -> u32 {
     let mut min = u32::MAX;
     let mut max = u32::MIN;
     let mut sum = 0;
