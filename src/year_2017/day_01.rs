@@ -14,7 +14,13 @@ pub fn part_2(input: &str) -> u32 {
     input
         .bytes()
         .zip(input.bytes().cycle().skip(input.len() / 2))
-        .filter_map(|(a, b)| if a == b {Some((a - b'0') as u32)} else {None})
+        .filter_map(|(a, b)| {
+            if a == b {
+                Some((a - b'0') as u32)
+            } else {
+                None
+            }
+        })
         .inspect(|x| println!("{x}"))
         .sum()
 }

@@ -12,13 +12,11 @@ fn parse_input(input: &str) -> Vec<Operation> {
             let (op, val) = line.split_once(' ').unwrap();
             (op, val.parse().unwrap())
         })
-        .map(|(op, val)| {
-            match op {
-                "acc" => Operation::Acc(val),
-                "jmp" => Operation::Jmp(val),
-                "nop" => Operation::Nop(val),
-                _ => panic!("Unknown operation")
-            }
+        .map(|(op, val)| match op {
+            "acc" => Operation::Acc(val),
+            "jmp" => Operation::Jmp(val),
+            "nop" => Operation::Nop(val),
+            _ => panic!("Unknown operation"),
         })
         .collect()
 }
