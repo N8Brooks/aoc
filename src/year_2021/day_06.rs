@@ -7,9 +7,8 @@ fn lantern_fish_total(input: &str, days: u64) -> u64 {
         counts[timer] += 1;
     }
     for _ in 0..days {
-        let zero_count = counts.pop_front().unwrap();
-        counts[6] += zero_count;
-        counts.push_back(zero_count);
+        counts[7] += counts[0];
+        counts.rotate_left(1);
     }
     counts.iter().sum()
 }
