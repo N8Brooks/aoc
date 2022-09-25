@@ -2,11 +2,7 @@ use std::collections::VecDeque;
 
 fn lantern_fish_total(input: &str, days: u64) -> u64 {
     let mut counts = VecDeque::from([0; 9]);
-    for num in input.trim().split(',') {
-        num.parse::<usize>().unwrap_or_else(|_| {
-            println!("HERE \"{}\"", num);
-            3
-        });
+    for num in input.split(',') {
         let timer = num.parse().unwrap();
         counts[timer] += 1;
     }
