@@ -60,13 +60,11 @@ pub fn part_2(input: &str) -> u32 {
     for num in nums.split(',').map(|num| num.parse().unwrap()) {
         for board in boards.iter_mut() {
             board.draw(num);
-        };
+        }
         if boards.len() == 1 && boards[0].is_winner() {
             return boards[0].score(num);
         }
-        boards.retain_mut(|board| {
-            !board.is_winner()
-        });
+        boards.retain_mut(|board| !board.is_winner());
     }
     panic!("no one loosing board")
 }
