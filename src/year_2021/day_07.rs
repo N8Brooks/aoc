@@ -2,22 +2,19 @@ use itertools::{Itertools, MinMaxResult};
 use std::collections::HashMap;
 
 pub fn part_1(input: &str) -> u32 {
-    let mut counts = HashMap::new();
-    for i in input.split(',') {
-        let i = i.parse::<u32>().unwrap();
-        *counts.entry(i).or_insert(0) += 1;
-    }
-    let (min, max) = match counts.keys().minmax() {
-        MinMaxResult::MinMax(&min, &max) => (min, max),
-        MinMaxResult::NoElements | MinMaxResult::OneElement(_) => return 0,
-    };
-    (min..=max)
-        .map(|i| counts.iter().map(|(&j, count)| i.abs_diff(j) * count).sum())
-        .min()
-        .unwrap()
+    min_map(input, u32::abs_diff)
 }
 
 pub fn part_2(input: &str) -> u32 {
+    min_map(input, arithmetic_diff)
+}
+
+fn arithmetic_diff(i: u32, j: u32) -> u32 {
+    let diff = i.abs_diff(j);
+    diff * (diff + 1) / 2
+}
+
+pub fn min_map(input: &str, func: fn(u32, u32) -> u32) -> u32 {
     let mut counts = HashMap::new();
     for i in input.split(',') {
         let i = i.parse::<u32>().unwrap();
@@ -28,15 +25,7 @@ pub fn part_2(input: &str) -> u32 {
         MinMaxResult::NoElements | MinMaxResult::OneElement(_) => return 0,
     };
     (min..=max)
-        .map(|i| {
-            counts
-                .iter()
-                .map(|(&j, count)| {
-                    let diff = i.abs_diff(j);
-                    diff * (diff + 1) / 2 * count
-                })
-                .sum()
-        })
+        .map(|i| counts.iter().map(|(&j, count)| func(i, j) * count).sum())
         .min()
         .unwrap()
 }
