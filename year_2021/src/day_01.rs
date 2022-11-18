@@ -1,43 +1,51 @@
 use itertools::Itertools;
 
-pub fn part_1(input: &str) -> u32 {
+pub fn part_1(input: &str) -> usize {
     input
         .lines()
-        .map(|line| line.parse::<u32>().unwrap())
+        .map(|line| line.parse::<u64>().unwrap())
         .tuple_windows()
         .filter(|(a, b)| b > a)
-        .count() as u32
+        .count()
 }
 
-pub fn part_2(input: &str) -> u32 {
+pub fn part_2(input: &str) -> usize {
     input
         .lines()
-        .map(|line| line.parse::<u32>().unwrap())
+        .map(|line| line.parse::<u64>().unwrap())
         .tuple_windows()
         .map(|(a, b, c)| a + b + c)
         .tuple_windows()
         .filter(|(a, b)| b > a)
-        .count() as u32
+        .count()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use test_case::test_case;
 
-    static EXAMPLE: &str = "199\n200\n208\n210\n200\n207\n240\n269\n260\n263";
+    static EXAMPLE: &str = "199
+200
+208
+210
+200
+207
+240
+269
+260
+263";
 
     static INPUT: &str = include_str!("testdata/day_01.txt");
 
     #[test_case(EXAMPLE, 7)]
     #[test_case(INPUT, 1557)]
-    fn part_1_examples(input: &str, expected: u32) {
-        assert_eq!(part_1(input), expected);
+    fn part_2(input: &str, actual: usize) {
+        assert_eq!(super::part_1(input), actual);
     }
 
     #[test_case(EXAMPLE, 5)]
     #[test_case(INPUT, 1608)]
-    fn part_2_examples(input: &str, expected: u32) {
-        assert_eq!(part_2(input), expected);
+    fn part_1(input: &str, actual: usize) {
+        assert_eq!(super::part_2(input), actual);
     }
 }
