@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use num::{signum, Complex};
+use std::collections::HashMap;
 
 fn parse_line(line: &str) -> (Complex<isize>, Complex<isize>) {
     let (start, stop) = line.split_once(" -> ").unwrap();
@@ -16,9 +15,9 @@ fn parse_point(point: &str) -> Complex<isize> {
 
 fn count_overlaps(iter: impl IntoIterator<Item = (Complex<isize>, Complex<isize>)>) -> usize {
     let mut overlaps: HashMap<Complex<isize>, usize> = HashMap::new();
-    iter.into_iter().for_each(|(start, stop)| {
+    for (start, stop) in iter {
         let mut cursor = start;
-        let delta = Complex::new(signum(start.re), signum(start.im));
+        let delta = Complex::new(signum(stop.re - start.re), signum(stop.im - start.im));
         if cursor != stop {
             *overlaps.entry(cursor).or_default() += 1;
         }
@@ -26,7 +25,7 @@ fn count_overlaps(iter: impl IntoIterator<Item = (Complex<isize>, Complex<isize>
             cursor += delta;
             *overlaps.entry(cursor).or_default() += 1;
         }
-    });
+    }
     overlaps.values().filter(|&count| *count > 1).count()
 }
 
