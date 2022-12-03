@@ -22,7 +22,7 @@ pub fn part_2(input: &str) -> u32 {
             let mut a: HashSet<u8> = HashSet::from_iter(a.bytes());
             let b: HashSet<u8> = HashSet::from_iter(b.bytes());
             let c: HashSet<u8> = HashSet::from_iter(c.bytes());
-            a.retain(|char| b.contains(char) && c.contains(char));
+            a.retain(|item| b.contains(item) && c.contains(item));
             let item = a.iter().next().unwrap();
             get_item_priority(item)
         })
