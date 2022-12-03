@@ -30,11 +30,12 @@ pub fn part_2(input: &str) -> u32 {
 }
 
 fn get_item_priority(item: &u8) -> u32 {
-    if item.is_ascii_lowercase() {
-        (item - b'a' + 1) as u32
+    let priority = if item.is_ascii_lowercase() {
+        item - b'a' + 1
     } else {
-        (item - b'A' + 27) as u32
-    }
+        item - b'A' + 27
+    };
+    priority as u32
 }
 
 #[cfg(test)]
