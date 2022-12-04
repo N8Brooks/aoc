@@ -15,13 +15,6 @@ pub fn part_1(input: &str) -> usize {
         .sum()
 }
 
-fn get_range(range: &str) -> RangeInclusive<usize> {
-    let (start, stop) = range.split_once('-').unwrap();
-    let start = start.parse().unwrap();
-    let stop = stop.parse().unwrap();
-    start..=stop
-}
-
 pub fn part_2(input: &str) -> usize {
     input
         .lines()
@@ -37,6 +30,13 @@ pub fn part_2(input: &str) -> usize {
             )
         })
         .sum()
+}
+
+fn get_range(range: &str) -> RangeInclusive<usize> {
+    let (start, stop) = range.split_once('-').unwrap();
+    let start = start.parse().unwrap();
+    let stop = stop.parse().unwrap();
+    start..=stop
 }
 
 #[cfg(test)]
