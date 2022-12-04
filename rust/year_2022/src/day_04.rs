@@ -25,13 +25,12 @@ pub fn part_2(input: &str) -> usize {
 }
 
 fn get_ranges(line: &str) -> (RangeInclusive<usize>, RangeInclusive<usize>) {
-    let get_range = |range: &str| {
-        let (start, end) = range.split_once('-').unwrap();
+    let get_range = |pair: &str| {
+        let (start, end) = pair.split_once('-').unwrap();
         let start = start.parse().unwrap();
         let end = end.parse().unwrap();
         start..=end
     };
-
     let (a, b) = line.split_once(',').unwrap();
     (get_range(a), get_range(b))
 }
