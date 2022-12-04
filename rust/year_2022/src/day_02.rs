@@ -49,13 +49,8 @@ impl Outcome {
     pub fn from_round(opponent: &Shape, player: &Shape) -> Outcome {
         let player = *player as u8;
         let opponent = *opponent as u8;
-        let outcome = (player + 3 - opponent) % 3;
-        match outcome {
-            2 => Outcome::Lose,
-            0 => Outcome::Draw,
-            1 => Outcome::Win,
-            outcome => panic!("invalid outcome: {outcome}"),
-        }
+        let outcome = (player + 3 - opponent + 1) % 3 + b'X';
+        Outcome::from_byte(&outcome)
     }
 
     pub fn get_score(&self) -> usize {
