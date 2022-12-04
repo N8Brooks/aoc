@@ -3,12 +3,11 @@ use std::ops::RangeInclusive;
 pub fn part_1(input: &str) -> usize {
     input
         .lines()
-        .filter(|line| {
-            let (a, b) = line.split_once(',').unwrap();
-            let a = get_range(a);
-            let b = get_range(b);
-            a.contains(b.start()) && a.contains(b.end())
-                || b.contains(a.start()) && b.contains(a.end())
+        .map(get_ranges)
+        .filter(|(a, b)| {
+            let is_a_superset = a.contains(b.start()) && a.contains(b.end());
+            let is_b_superset = b.contains(a.start()) && b.contains(a.end());
+            is_a_superset || is_b_superset
         })
         .count()
 }
@@ -16,23 +15,25 @@ pub fn part_1(input: &str) -> usize {
 pub fn part_2(input: &str) -> usize {
     input
         .lines()
-        .filter(|line| {
-            let (a, b) = line.split_once(',').unwrap();
-            let a = get_range(a);
-            let b = get_range(b);
-            a.contains(b.start())
-                || a.contains(b.end())
-                || b.contains(a.start())
-                || b.contains(a.end())
+        .map(get_ranges)
+        .filter(|(a, b)| {
+            let is_a_in_b = a.contains(b.start()) || a.contains(b.end());
+            let is_b_in_a = b.contains(a.start()) || b.contains(a.end());
+            is_a_in_b || is_b_in_a
         })
         .count()
 }
 
-fn get_range(range: &str) -> RangeInclusive<usize> {
-    let (start, stop) = range.split_once('-').unwrap();
-    let start = start.parse().unwrap();
-    let stop = stop.parse().unwrap();
-    start..=stop
+fn get_ranges(line: &str) -> (RangeInclusive<usize>, RangeInclusive<usize>) {
+    let get_range = |range: &str| {
+        let (start, end) = range.split_once('-').unwrap();
+        let start = start.parse().unwrap();
+        let end = end.parse().unwrap();
+        start..=end
+    };
+
+    let (a, b) = line.split_once(',').unwrap();
+    (get_range(a), get_range(b))
 }
 
 #[cfg(test)]
