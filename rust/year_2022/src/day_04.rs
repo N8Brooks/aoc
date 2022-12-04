@@ -1,13 +1,13 @@
 use std::ops::RangeInclusive;
 
-pub fn part_1(input: &str) -> u32 {
+pub fn part_1(input: &str) -> usize {
     input
         .lines()
         .map(|line| {
             let (a, b) = line.split_once(',').unwrap();
             let a = get_range(a);
             let b = get_range(b);
-            u32::from(
+            usize::from(
                 a.contains(b.start()) && a.contains(b.end())
                     || b.contains(a.start()) && b.contains(a.end()),
             )
@@ -22,14 +22,14 @@ fn get_range(range: &str) -> RangeInclusive<usize> {
     start..=stop
 }
 
-pub fn part_2(input: &str) -> u32 {
+pub fn part_2(input: &str) -> usize {
     input
         .lines()
         .map(|line| {
             let (a, b) = line.split_once(',').unwrap();
             let a = get_range(a);
             let b = get_range(b);
-            u32::from(
+            usize::from(
                 a.contains(b.start())
                     || a.contains(b.end())
                     || b.contains(a.start())
@@ -54,13 +54,13 @@ mod test {
 
     #[test_case(EXAMPLE, 2)]
     #[test_case(INPUT, 540)]
-    fn part_1(input: &str, expected: u32) {
+    fn part_1(input: &str, expected: usize) {
         assert_eq!(super::part_1(input), expected);
     }
 
     #[test_case(EXAMPLE, 4)]
     #[test_case(INPUT, 872)]
-    fn part_2(input: &str, expected: u32) {
+    fn part_2(input: &str, expected: usize) {
         assert_eq!(super::part_2(input), expected);
     }
 }
