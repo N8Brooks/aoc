@@ -14,13 +14,13 @@ Using an example date of December 1, 2022:
 
 |Symbol|Description|
 |------|-----------|
-| part_1|Solution for part 1.|
-| part_2|Solution for part 2.|
-| tests|Testing module.|
-|├  EXAMPLE|Multi-line, static `&str` example data.|
-|├  INPUT|Static `include_str!` input data to `../testdata`.|
-|└  part_1|Part 1 tests.|
-|└  part_2|Part 2 tests.|
+|part_1|Solution for part 1.|
+|part_2|Solution for part 2.|
+|tests|Testing module.|
+|├ EXAMPLE|Multi-line, static `&str` example data.|
+|├ INPUT|Static `include_str!` input data to `../testdata`.|
+|├ part_1|Part 1 tests.|
+|└ part_2|Part 2 tests.|
 
 Tests make use of [test_case](https://docs.rs/test-case/latest/test_case/).
 
