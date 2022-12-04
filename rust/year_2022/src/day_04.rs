@@ -3,33 +3,29 @@ use std::ops::RangeInclusive;
 pub fn part_1(input: &str) -> usize {
     input
         .lines()
-        .map(|line| {
+        .filter(|line| {
             let (a, b) = line.split_once(',').unwrap();
             let a = get_range(a);
             let b = get_range(b);
-            usize::from(
-                a.contains(b.start()) && a.contains(b.end())
-                    || b.contains(a.start()) && b.contains(a.end()),
-            )
+            a.contains(b.start()) && a.contains(b.end())
+                || b.contains(a.start()) && b.contains(a.end())
         })
-        .sum()
+        .count()
 }
 
 pub fn part_2(input: &str) -> usize {
     input
         .lines()
-        .map(|line| {
+        .filter(|line| {
             let (a, b) = line.split_once(',').unwrap();
             let a = get_range(a);
             let b = get_range(b);
-            usize::from(
-                a.contains(b.start())
-                    || a.contains(b.end())
-                    || b.contains(a.start())
-                    || b.contains(a.end()),
-            )
+            a.contains(b.start())
+                || a.contains(b.end())
+                || b.contains(a.start())
+                || b.contains(a.end())
         })
-        .sum()
+        .count()
 }
 
 fn get_range(range: &str) -> RangeInclusive<usize> {
