@@ -49,7 +49,7 @@ wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
 ttgJtRGJQctTZtZT
 CrZsJsPPZsGzwwsLwLmpwMDw";
 
-    const INPUT: &str = include_str!("testdata/day_03.txt");
+    const INPUT: &str = include_str!("../../../testdata/year_2022/day_03.txt");
 
     #[test_case(EXAMPLE, 157)]
     #[test_case(INPUT, 8515)]

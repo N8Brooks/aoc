@@ -108,7 +108,7 @@ mod test {
 B X
 C Z";
 
-    const INPUT: &str = include_str!("testdata/day_02.txt");
+    const INPUT: &str = include_str!("../../../testdata/year_2022/day_02.txt");
 
     #[test_case("A X", 4)]
     #[test_case("A Y", 8)]
