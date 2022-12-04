@@ -7,13 +7,10 @@ pub fn part_1(input: &str) -> u32 {
             let (a, b) = line.split_once(',').unwrap();
             let a = get_range(a);
             let b = get_range(b);
-            if a.contains(b.start()) && a.contains(b.end())
-                || b.contains(a.start()) && b.contains(a.end())
-            {
-                1
-            } else {
-                0
-            }
+            u32::from(
+                a.contains(b.start()) && a.contains(b.end())
+                    || b.contains(a.start()) && b.contains(a.end()),
+            )
         })
         .sum()
 }
@@ -32,15 +29,12 @@ pub fn part_2(input: &str) -> u32 {
             let (a, b) = line.split_once(',').unwrap();
             let a = get_range(a);
             let b = get_range(b);
-            if a.contains(b.start())
-                || a.contains(b.end())
-                || b.contains(a.start())
-                || b.contains(a.end())
-            {
-                1
-            } else {
-                0
-            }
+            u32::from(
+                a.contains(b.start())
+                    || a.contains(b.end())
+                    || b.contains(a.start())
+                    || b.contains(a.end()),
+            )
         })
         .sum()
 }
@@ -59,13 +53,13 @@ mod test {
     const INPUT: &str = include_str!("../../../testdata/year_2022/day_04.txt");
 
     #[test_case(EXAMPLE, 2)]
-    #[test_case(INPUT, 0)]
+    #[test_case(INPUT, 540)]
     fn part_1(input: &str, expected: u32) {
         assert_eq!(super::part_1(input), expected);
     }
 
-    #[test_case(EXAMPLE, 0)]
-    #[test_case(INPUT, 0)]
+    #[test_case(EXAMPLE, 4)]
+    #[test_case(INPUT, 872)]
     fn part_2(input: &str, expected: u32) {
         assert_eq!(super::part_2(input), expected);
     }
