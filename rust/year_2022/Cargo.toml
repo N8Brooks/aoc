@@ -9,6 +9,6 @@ edition = "2021"
 itertools = "0.10"
 lazy_static = "1.4"
 num = "0.4"
-regex = "1.7"
+regex = { version = "1.7", features = ["unicode-perl"] }
 test-case = "2.2"
 phf = { version = "0.8", features = ["macros"] }
