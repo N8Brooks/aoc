@@ -33,11 +33,7 @@ lazy_static! {
 
 impl Monkey {
     fn inspect(&mut self, item: u64) -> u64 {
-        if self.operation.0 == 0 {
-            self.operation.1 * item + self.operation.2
-        } else {
-            self.operation.0 * item * item
-        }
+        self.operation.0 * item * item + self.operation.1 * item + self.operation.2
     }
 
     fn get_test_index(&self, item: u64) -> usize {
