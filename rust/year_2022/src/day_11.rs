@@ -33,6 +33,7 @@ lazy_static! {
 
 impl Monkey {
     fn inspect(&mut self, item: u64) -> u64 {
+        self.activity += 1;
         self.operation.0 * item * item + self.operation.1 * item + self.operation.2
     }
 
@@ -75,7 +76,6 @@ fn simulate_rounds<F: Fn(u64) -> u64>(
     for _ in 0..n_rounds {
         for i in 0..monkeys.len() {
             while let Some(item) = monkeys[i].items.pop_front() {
-                monkeys[i].activity += 1;
                 let item = worry_func(monkeys[i].inspect(item));
                 let j = monkeys[i].get_test_index(item);
                 monkeys[j].items.push_back(item);
