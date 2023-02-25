@@ -151,7 +151,7 @@ abdefghi";
     }
 
     #[test_case(EXAMPLE, 29)]
-    #[test_case(INPUT, 0)]
+    #[test_case(INPUT, 451)]
     fn part_2(input: &str, expected: usize) {
         assert_eq!(super::part_2(input), expected);
     }
