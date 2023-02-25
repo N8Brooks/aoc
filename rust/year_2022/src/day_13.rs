@@ -33,7 +33,7 @@ pub fn part_1(input: &str) -> usize {
             value_cmp(&a, &b) != Ordering::Greater
         })
         .map(|(i, _)| i + 1)
-        .sum::<usize>()
+        .sum()
 }
 
 pub fn part_2(input: &str) -> usize {
