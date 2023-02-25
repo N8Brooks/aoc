@@ -44,7 +44,7 @@ pub fn part_2(input: &str) -> usize {
         .collect();
     let divider_packets = [json!([[2]]), json!([[6]])];
     packets.extend_from_slice(&divider_packets);
-    packets.sort_by(value_cmp);
+    packets.sort_unstable_by(value_cmp);
     divider_packets
         .iter()
         .map(|divider_packet| {
