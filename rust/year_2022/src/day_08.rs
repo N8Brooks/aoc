@@ -43,7 +43,7 @@ pub fn part_1(input: &str) -> usize {
     visible
         .iter()
         .flatten()
-        .map(|&is_visible| if is_visible { 1 } else { 0 })
+        .map(|&is_visible| usize::from(is_visible))
         .sum()
 }
 

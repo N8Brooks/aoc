@@ -94,7 +94,7 @@ fn get_byte_position(bytes: &[&[u8]], byte: u8) -> (usize, usize) {
                 .enumerate()
                 .find_map(|(j, &x)| if x == byte { Some((i, j)) } else { None })
         })
-        .expect(&format!("No position of {byte}"))
+        .unwrap_or_else(|| panic!("No position of {byte}"))
 }
 
 #[cfg(test)]
