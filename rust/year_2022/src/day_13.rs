@@ -30,7 +30,7 @@ pub fn part_1(input: &str) -> usize {
             let (a, b) = pair.split_once('\n').unwrap();
             let a = serde_json::from_str(a).unwrap();
             let b = serde_json::from_str(b).unwrap();
-            !matches!(value_cmp(&a, &b), Ordering::Greater)
+            value_cmp(&a, &b) != Ordering::Greater
         })
         .map(|(i, _)| i + 1)
         .sum::<usize>()
