@@ -6,35 +6,49 @@ use num::Integer;
 use regex::Regex;
 
 lazy_static! {
-    static ref RE: Regex = Regex::new(r"\bSensor at x=(?P<beacon_x>\-?\w+), y=(?P<beacon_y>\-?\w+): closest beacon is at x=(?P<scanner_x>\-?\w+), y=(?P<scanner_y>\-?\w+)\b").unwrap();
+    static ref RE: Regex = Regex::new(r"\bSensor at x=(?P<scanner_x>\-?\w+), y=(?P<scanner_y>\-?\w+): closest beacon is at x=(?P<beacon_x>\-?\w+), y=(?P<beacon_y>\-?\w+)\b").unwrap();
 }
 
 struct ScannerBeaconPair {
-    beacon_x: isize,
-    beacon_y: isize,
     scanner_x: isize,
     scanner_y: isize,
+    beacon_x: isize,
+    beacon_y: isize,
 }
 
 impl ScannerBeaconPair {
     fn from(line: &str) -> ScannerBeaconPair {
         let cap = RE.captures(line).unwrap();
-        let beacon_x = cap["beacon_x"].parse().unwrap();
-        let beacon_y = cap["beacon_y"].parse().unwrap();
         let scanner_x = cap["scanner_x"].parse().unwrap();
         let scanner_y = cap["scanner_y"].parse().unwrap();
+        let beacon_x = cap["beacon_x"].parse().unwrap();
+        let beacon_y = cap["beacon_y"].parse().unwrap();
         ScannerBeaconPair {
-            beacon_x,
-            beacon_y,
             scanner_x,
             scanner_y,
+            beacon_x,
+            beacon_y,
         }
     }
 
-    fn dist(&self) -> usize {
-        let diff_x = self.scanner_x.abs_diff(self.beacon_x);
-        let diff_y = self.scanner_y.abs_diff(self.beacon_y);
-        diff_x + diff_y
+    fn dist_from(&self, (x, y): &(isize, isize)) -> usize {
+        self.scanner_x.abs_diff(*x) + self.scanner_y.abs_diff(*y)
+    }
+
+    fn min_beacon_dist(&self) -> usize {
+        self.dist_from(&(self.beacon_x, self.beacon_y))
+    }
+
+    fn is_outside(&self, coordinate: &(isize, isize)) -> bool {
+        self.dist_from(coordinate) > self.min_beacon_dist()
+    }
+
+    fn bot_vertex_y(&self) -> isize {
+        self.scanner_x - self.min_beacon_dist() as isize
+    }
+
+    fn top_vertex_y(&self) -> isize {
+        self.scanner_y + self.min_beacon_dist() as isize
     }
 }
 
@@ -43,73 +57,75 @@ pub fn part_1(input: &str, row_y: isize) -> usize {
         .lines()
         .flat_map(|line| {
             let pair = ScannerBeaconPair::from(line);
-            let dist = pair.dist();
-            let delta_y = pair.beacon_y.abs_diff(row_y);
+            let dist = pair.min_beacon_dist();
+            let delta_y = pair.scanner_y.abs_diff(row_y);
             dist.checked_sub(delta_y).map(|overshot| {
                 let overshot = overshot as isize;
-                let start = pair.beacon_x - overshot;
-                let end = pair.beacon_x + overshot;
-                (start, end)
+                let start = pair.scanner_x - overshot;
+                let end = pair.scanner_x + overshot;
+                start..=end
             })
         })
-        .sorted_unstable()
-        .scan(isize::MIN, |end_0, (start_1, end_1)| {
-            let end_1 = end_1.max(*end_0);
-            let count = end_1 - start_1.max(*end_0);
-            *end_0 = end_1;
+        .sorted_unstable_by_key(|range| *range.start())
+        .scan(isize::MIN, |cursor_0, range| {
+            let cursor_1 = *range.end().max(cursor_0);
+            let count = cursor_1 - range.start().max(cursor_0);
+            *cursor_0 = cursor_1;
             Some(count as usize)
         })
         .sum()
 }
 
 pub fn part_2(input: &str, range: RangeInclusive<isize>) -> isize {
-    let pairs = input
-        .lines()
-        .map(|line| ScannerBeaconPair::from(line))
-        .collect_vec();
+    let pairs = input.lines().map(ScannerBeaconPair::from).collect_vec();
 
-    let (y_int_neg_m, y_int_pos_m): (Vec<isize>, Vec<isize>) = pairs
-        .iter()
-        .flat_map(|pair| {
-            let dist = pair.dist() as isize;
-            let bot_vertex_y = pair.beacon_x - dist - 1;
-            let top_vertex_y = pair.beacon_y + dist + 1;
-            [
-                (bot_vertex_y + pair.beacon_x, bot_vertex_y - pair.beacon_x),
-                (top_vertex_y + pair.beacon_x, top_vertex_y - pair.beacon_x),
-            ]
-        })
-        .unzip();
+    // The y-intercepts of the "back slash" and "forward slash" bounding diagonals
+    let y_ints_neg_m = get_y_ints(&pairs, |pair| pair.scanner_x);
+    let y_ints_pos_m = get_y_ints(&pairs, |pair| -pair.scanner_x);
 
-    let (even_y_int_pos_m, odd_y_int_pos_m): (Vec<isize>, Vec<isize>) =
-        y_int_pos_m.iter().partition(|y| y.is_odd());
-    let (even_y_int_neg_m, odd_y_int_neg_m): (Vec<isize>, Vec<isize>) =
-        y_int_neg_m.iter().partition(|y| y.is_odd());
+    // Lines only cross if they have y-intercepts that are equal modulo 2
+    let (evens_neg_m, odds_neg_m): (Vec<isize>, Vec<isize>) =
+        y_ints_neg_m.partition(|y| y.is_odd());
+    let (evens_pos_m, odds_pos_m): (Vec<isize>, Vec<isize>) =
+        y_ints_pos_m.partition(|y| y.is_odd());
 
-    let possible_coordinates_a = odd_y_int_pos_m
-        .iter()
-        .cartesian_product(odd_y_int_neg_m)
-        .map(|(y_0, y_1)| (y_0.abs_diff(y_1) as isize / 2, (y_0 + y_1) / 2));
-    let possible_coordinates_b = even_y_int_pos_m
-        .iter()
-        .cartesian_product(even_y_int_neg_m)
-        .map(|(y_0, y_1)| (y_0.abs_diff(y_1) as isize / 2, (y_0 + y_1) / 2));
+    // Find all possible crossing points between lines
+    let possible_coords_a = get_possible_coords(&evens_neg_m, &evens_pos_m);
+    let possible_coords_b = get_possible_coords(&odds_neg_m, &odds_pos_m);
 
-    let (x, y) = possible_coordinates_b
-        .chain(possible_coordinates_a)
-        .filter(|(x, y)| range.contains(x) && range.contains(y))
+    let (x, y) = possible_coords_a
+        .chain(possible_coords_b)
+        .filter(|coord| range.contains(&coord.0) && range.contains(&coord.1))
         .unique()
-        .filter(|(x, y)| {
-            pairs.iter().all(|pair| {
-                let minimum_beacon_dist = pair.dist();
-                let possible_beacon_dist = pair.beacon_x.abs_diff(*x) + pair.beacon_y.abs_diff(*y);
-                possible_beacon_dist > minimum_beacon_dist
-            })
-        })
-        .next()
+        .find(|coord| pairs.iter().all(|pair| pair.is_outside(coord)))
         .unwrap();
 
     4_000_000 * x + y
+}
+
+fn get_y_ints(
+    pairs: &[ScannerBeaconPair],
+    func: fn(&ScannerBeaconPair) -> isize,
+) -> impl Iterator<Item = isize> + '_ {
+    pairs
+        .iter()
+        .map(move |pair| pair.bot_vertex_y() - 1 + func(pair))
+        .chain(
+            pairs
+                .iter()
+                .map(move |pair| pair.top_vertex_y() + 1 + func(pair)),
+        )
+        .unique()
+}
+
+fn get_possible_coords<'a>(
+    neg_m: &'a [isize],
+    pos_m: &'a [isize],
+) -> impl Iterator<Item = (isize, isize)> + 'a {
+    neg_m
+        .iter()
+        .cartesian_product(pos_m)
+        .map(|(y_0, y_1)| (y_0.abs_diff(*y_1) as isize / 2, (y_0 + y_1) / 2))
 }
 
 #[cfg(test)]
