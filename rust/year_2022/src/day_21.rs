@@ -89,11 +89,13 @@ mod part_1_context {
 mod part_2_context {
     use std::collections::HashMap;
 
+    use itertools::{Either, Itertools};
+
     use super::Operator;
 
     pub fn part_2(input: &str) -> i64 {
-        let (equality, monkeys) = parse_input(input);
-        let (a, b) = equality.expect("found equality");
+        let (equalities, monkeys) = parse_input(input);
+        let (a, b) = equalities.iter().exactly_one().expect("one equality");
         let a = monkeys[a].evaluate(&monkeys);
         let b = monkeys[b].evaluate(&monkeys);
         let (x, c) = match (a, b) {
@@ -104,36 +106,26 @@ mod part_2_context {
         x.solve(c)
     }
 
-    fn parse_input(input: &str) -> (Option<(&str, &str)>, HashMap<&str, Expression>) {
-        let mut equality = None;
-        let monkeys: HashMap<&str, Expression> = input
-            .lines()
-            .flat_map(|line| {
-                let (name, operation) = line.split_once(": ").unwrap();
-                if let Ok(num) = operation.parse() {
-                    let term = if name == "humn" {
-                        Expression::Input
-                    } else {
-                        Expression::Number(num)
-                    };
-                    Some((name, term))
+    fn parse_input(input: &str) -> (Vec<(&str, &str)>, HashMap<&str, Expression>) {
+        input.lines().partition_map(|line| {
+            let (name, operation) = line.split_once(": ").unwrap();
+            if let Ok(num) = operation.parse() {
+                let term = if name == "humn" {
+                    Expression::Input
                 } else {
-                    let mut tokens = operation.split_whitespace();
-                    let a = tokens.next().expect("first token");
-                    let operator = tokens.next().expect("second token");
-                    let b = tokens.next().expect("third token");
-                    if name == "root" {
-                        assert!(equality.is_none(), "expect one equality");
-                        equality = Some((a, b));
-                        None
-                    } else {
-                        let operator = Operator::try_from(operator).unwrap();
-                        Some((name, Expression::Expressions(a, operator, b)))
-                    }
+                    Expression::Number(num)
+                };
+                Either::Right((name, term))
+            } else {
+                let (a, operator, b) = operation.split(' ').collect_tuple().unwrap();
+                if name == "root" {
+                    Either::Left((a, b))
+                } else {
+                    let operator = Operator::try_from(operator).unwrap();
+                    Either::Right((name, Expression::Expressions(a, operator, b)))
                 }
-            })
-            .collect();
-        (equality, monkeys)
+            }
+        })
     }
 
     #[derive(Debug)]
