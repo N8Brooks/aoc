@@ -1,199 +1,208 @@
-pub fn part_1(input: &str) -> i64 {
-    part_1::Monkeys::from(input).operate("root")
+pub use part_1_context::part_1;
+pub use part_2_context::part_2;
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+enum Operator {
+    Add,
+    Sub,
+    Div,
+    Mul,
 }
 
-mod part_1 {
+impl TryFrom<&str> for Operator {
+    type Error = String;
+
+    fn try_from(char: &str) -> Result<Self, Self::Error> {
+        match char {
+            "+" => Ok(Operator::Add),
+            "-" => Ok(Operator::Sub),
+            "/" => Ok(Operator::Div),
+            "*" => Ok(Operator::Mul),
+            _ => Err(format!("unknown operator {char}")),
+        }
+    }
+}
+
+impl Operator {
+    fn operate(&self, a: i64, b: i64) -> i64 {
+        match self {
+            Operator::Add => a + b,
+            Operator::Sub => a - b,
+            Operator::Div => a / b,
+            Operator::Mul => a * b,
+        }
+    }
+}
+
+mod part_1_context {
     use std::collections::HashMap;
 
-    #[derive(Debug)]
-    enum Operation<'a> {
-        Number(i64),
-        Add(&'a str, &'a str),
-        Sub(&'a str, &'a str),
-        Div(&'a str, &'a str),
-        Mul(&'a str, &'a str),
+    use super::Operator;
+
+    pub fn part_1(input: &str) -> i64 {
+        let monkeys: HashMap<&str, Expression> = input
+            .lines()
+            .map(|line| {
+                let (name, operation) = line.split_once(": ").unwrap();
+                let operation = Expression::from(operation);
+                (name, operation)
+            })
+            .collect();
+        monkeys["root"].evaluate(&monkeys)
     }
 
-    impl<'a> From<&'a str> for Operation<'a> {
+    #[derive(Debug)]
+    enum Expression<'a> {
+        Number(i64),
+        Expressions(&'a str, Operator, &'a str),
+    }
+
+    impl<'a> From<&'a str> for Expression<'a> {
         fn from(input: &'a str) -> Self {
             if let Ok(num) = input.parse() {
-                return Operation::Number(num);
-            }
-            let mut tokens = input.split_whitespace();
-            let a = tokens.next().unwrap();
-            let operator = tokens.next().unwrap();
-            let b = tokens.next().unwrap();
-            match operator {
-                "+" => Operation::Add(a, b),
-                "-" => Operation::Sub(a, b),
-                "/" => Operation::Div(a, b),
-                "*" => Operation::Mul(a, b),
-                _ => panic!("unknown operator {operator}"),
+                Expression::Number(num)
+            } else {
+                let mut tokens = input.split(' ');
+                Expression::Expressions(
+                    tokens.next().expect("first token"),
+                    Operator::try_from(tokens.next().expect("second token")).unwrap(),
+                    tokens.next().expect("third token"),
+                )
             }
         }
     }
 
-    #[derive(Debug)]
-    pub struct Monkeys<'a>(HashMap<&'a str, Operation<'a>>);
-
-    impl<'a> Monkeys<'a> {
-        pub fn operate(&self, name: &str) -> i64 {
-            let operation = &self.0[name];
-            match operation {
-                Operation::Number(num) => *num,
-                Operation::Add(a, b) => self.operate(a) + self.operate(b),
-                Operation::Sub(a, b) => self.operate(a) - self.operate(b),
-                Operation::Div(a, b) => self.operate(a) / self.operate(b),
-                Operation::Mul(a, b) => self.operate(a) * self.operate(b),
+    impl<'a> Expression<'a> {
+        fn evaluate(&self, monkeys: &HashMap<&'a str, Expression<'a>>) -> i64 {
+            match self {
+                Expression::Number(num) => *num,
+                Expression::Expressions(a, operator, b) => {
+                    let a = monkeys[a].evaluate(monkeys);
+                    let b = monkeys[b].evaluate(monkeys);
+                    operator.operate(a, b)
+                }
             }
         }
     }
-
-    impl<'a> From<&'a str> for Monkeys<'a> {
-        fn from(input: &'a str) -> Self {
-            Monkeys(
-                input
-                    .lines()
-                    .map(|line| {
-                        let (name, operation) = line.split_once(": ").unwrap();
-                        let operation = Operation::from(operation);
-                        (name, operation)
-                    })
-                    .collect(),
-            )
-        }
-    }
-}
-
-pub fn part_2(input: &str) -> i64 {
-    use part_2_context::*;
-    let monkeys = Monkeys::from(input);
-    let equation = monkeys.operate("root");
-    let (x, c) = match equation {
-        Equation::Left(x, Operator::Eql, c) => (x, c),
-        Equation::Right(c, Operator::Eql, x) => (x, c),
-        _ => panic!("expected equality {equation:?}"),
-    };
-    Monkeys::un_operate(&x, c)
 }
 
 mod part_2_context {
     use std::collections::HashMap;
 
-    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-    pub enum Operator {
-        Add,
-        Sub,
-        Div,
-        Mul,
-        Eql,
+    use super::Operator;
+
+    pub fn part_2(input: &str) -> i64 {
+        let (equality, monkeys) = parse_input(input);
+        let (a, b) = equality.expect("found equality");
+        let a = monkeys[a].evaluate(&monkeys);
+        let b = monkeys[b].evaluate(&monkeys);
+        let (x, c) = match (a, b) {
+            (Term::Number(c), Term::Equation(x)) => (x, c),
+            (Term::Equation(x), Term::Number(c)) => (x, c),
+            _ => panic!("expected exact one Number and one Equation"),
+        };
+        x.solve(c)
+    }
+
+    fn parse_input(input: &str) -> (Option<(&str, &str)>, HashMap<&str, Expression>) {
+        let mut equality = None;
+        let monkeys: HashMap<&str, Expression> = input
+            .lines()
+            .flat_map(|line| {
+                let (name, operation) = line.split_once(": ").unwrap();
+                if let Ok(num) = operation.parse() {
+                    let term = if name == "humn" {
+                        Expression::Input
+                    } else {
+                        Expression::Number(num)
+                    };
+                    Some((name, term))
+                } else {
+                    let mut tokens = operation.split_whitespace();
+                    let a = tokens.next().expect("first token");
+                    let operator = tokens.next().expect("second token");
+                    let b = tokens.next().expect("third token");
+                    if name == "root" {
+                        assert!(equality.is_none(), "expect one equality");
+                        equality = Some((a, b));
+                        None
+                    } else {
+                        let operator = Operator::try_from(operator).unwrap();
+                        Some((name, Expression::Expressions(a, operator, b)))
+                    }
+                }
+            })
+            .collect();
+        (equality, monkeys)
     }
 
     #[derive(Debug)]
     enum Expression<'a> {
         Input,
         Number(i64),
-        Operation(&'a str, Operator, &'a str),
+        Expressions(&'a str, Operator, &'a str),
     }
 
     impl<'a> Expression<'a> {
-        fn parse(line: &'a str) -> (&'a str, Expression<'a>) {
-            let (name, operation) = line.split_once(": ").unwrap();
-            if let Ok(num) = operation.parse() {
-                let operation = if name == "humn" {
-                    Expression::Input
-                } else {
-                    Expression::Number(num)
-                };
-                (name, operation)
-            } else {
-                let mut tokens = operation.split_whitespace();
-                let a = tokens.next().unwrap();
-                let operator = tokens.next().unwrap();
-                let b = tokens.next().unwrap();
-                let operation = match operator {
-                    _ if name == "root" => Expression::Operation(a, Operator::Eql, b),
-                    "+" => Expression::Operation(a, Operator::Add, b),
-                    "-" => Expression::Operation(a, Operator::Sub, b),
-                    "/" => Expression::Operation(a, Operator::Div, b),
-                    "*" => Expression::Operation(a, Operator::Mul, b),
-                    _ => panic!("unknown operator {operator}"),
-                };
-                (name, operation)
+        fn evaluate(&self, monkeys: &HashMap<&'a str, Expression>) -> Term {
+            match self {
+                Expression::Input => Term::Equation(Equation::Input),
+                Expression::Number(number) => Term::Number(*number),
+                Expression::Expressions(a, operator, b) => {
+                    let a = monkeys[a].evaluate(monkeys);
+                    let b = monkeys[b].evaluate(monkeys);
+                    match (a, b) {
+                        (Term::Number(a), Term::Number(b)) => {
+                            let number = operator.operate(a, b);
+                            Term::Number(number)
+                        }
+                        (Term::Number(a), Term::Equation(b)) => {
+                            let equation = Equation::Right(a, *operator, Box::new(b));
+                            Term::Equation(equation)
+                        }
+                        (Term::Equation(a), Term::Number(b)) => {
+                            let equation = Equation::Left(Box::new(a), *operator, b);
+                            Term::Equation(equation)
+                        }
+                        (Term::Equation(a), Term::Equation(b)) => {
+                            panic!("expected at most one equation {a:?} {b:?}")
+                        }
+                    }
+                }
             }
         }
     }
 
-    #[derive(Debug, PartialEq, Eq)]
-    pub enum Equation {
-        Input,
+    #[derive(Debug)]
+    enum Term {
         Number(i64),
+        Equation(Equation),
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    enum Equation {
+        Input,
         Left(Box<Equation>, Operator, i64),
         Right(i64, Operator, Box<Equation>),
     }
 
-    #[derive(Debug)]
-    pub struct Monkeys<'a>(HashMap<&'a str, Expression<'a>>);
-
-    impl<'a> Monkeys<'a> {
-        pub fn operate(&self, name: &str) -> Equation {
-            let expression = &self.0[name];
-            match expression {
-                Expression::Input => Equation::Input,
-                Expression::Number(num) => Equation::Number(*num),
-                Expression::Operation(a, op, b) => self.sub_operate(a, *op, b),
-            }
-        }
-
-        fn sub_operate(&self, a: &'a str, operator: Operator, b: &'a str) -> Equation {
-            match (self.operate(a), self.operate(b)) {
-                (
-                    a @ Equation::Left(..) | a @ Equation::Right(..) | a @ Equation::Input,
-                    Equation::Number(b),
-                ) => Equation::Left(Box::new(a), operator, b),
-                (
-                    Equation::Number(a),
-                    b @ Equation::Left(..) | b @ Equation::Right(..) | b @ Equation::Input,
-                ) => Equation::Right(a, operator, Box::new(b)),
-                (Equation::Number(a), Equation::Number(b)) => {
-                    let number = match operator {
-                        Operator::Add => a + b,
-                        Operator::Sub => a - b,
-                        Operator::Div => a / b,
-                        Operator::Mul => a * b,
-                        Operator::Eql => panic!("unexpected {a:?} {operator:?} {b:?}"),
-                    };
-                    Equation::Number(number)
-                }
-                (a, b) => panic!("{a:?} {operator:?} {b:?}"),
-            }
-        }
-
-        pub fn un_operate(equation: &Equation, c: i64) -> i64 {
-            match equation {
+    impl Equation {
+        fn solve(&self, c: i64) -> i64 {
+            match self {
                 Equation::Input => c,
                 Equation::Left(x, operator, b) => match operator {
-                    Operator::Add => Monkeys::un_operate(x, c - b),
-                    Operator::Sub => Monkeys::un_operate(x, c + b),
-                    Operator::Div => Monkeys::un_operate(x, c * b),
-                    Operator::Mul => Monkeys::un_operate(x, c / b),
-                    Operator::Eql => panic!("unexpected {x:?} {operator:?} {b:?}"),
+                    Operator::Add => x.solve(c - b),
+                    Operator::Sub => x.solve(c + b),
+                    Operator::Div => x.solve(c * b),
+                    Operator::Mul => x.solve(c / b),
                 },
                 Equation::Right(a, operator, x) => match operator {
-                    Operator::Add => Monkeys::un_operate(x, c - a),
-                    Operator::Sub => Monkeys::un_operate(x, a - c),
-                    Operator::Div => Monkeys::un_operate(x, a / c),
-                    Operator::Mul => Monkeys::un_operate(x, c / a),
-                    Operator::Eql => panic!("unexpected {a:?} {operator:?} {x:?}"),
+                    Operator::Add => x.solve(c - a),
+                    Operator::Sub => x.solve(a - c),
+                    Operator::Div => x.solve(a / c),
+                    Operator::Mul => x.solve(c / a),
                 },
-                Equation::Number(num) => panic!("invariant number {num}"),
             }
-        }
-    }
-
-    impl<'a> From<&'a str> for Monkeys<'a> {
-        fn from(input: &'a str) -> Self {
-            Monkeys(input.lines().map(Expression::parse).collect())
         }
     }
 }
