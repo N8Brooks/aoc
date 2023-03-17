@@ -1,4 +1,5 @@
 use ahash::AHashSet;
+use itertools::Itertools;
 use num::Complex;
 
 pub fn part_1(input: &str) -> usize {
@@ -17,23 +18,24 @@ const MOVES: [Complex<isize>; 5] = [
     Complex::new(0, 0),
 ];
 
-pub fn min_steps_to_checkpoint(input: &str, checkpoint: usize) -> usize {
+pub fn min_steps_to_checkpoint(input: &str, checkpoint_index: usize) -> usize {
     let (mut blizzard_locations, blizzard_directions) = parse_blizzards(input);
     let max_i = input.lines().count() as isize - 2;
     let max_j = input.lines().next().unwrap().len() as isize - 2;
     let start = Complex::new(-1, 0);
     let goal = Complex::new(max_i, max_j - 1);
     let mut step = 0;
-    let mut locations = AHashSet::from([(0, start)]);
-    while !locations.contains(&(checkpoint, goal)) {
-        blizzard_locations
+    let mut locations = vec![(0, start)];
+    while !locations.contains(&(checkpoint_index, goal)) {
+        let blizzards: AHashSet<_> = blizzard_locations
             .iter_mut()
             .zip(&blizzard_directions)
-            .for_each(|(location, direction)| {
+            .map(|(location, direction)| {
                 let Complex { re: i, im: j } = *location + direction;
                 *location = Complex::new(i.rem_euclid(max_i), j.rem_euclid(max_j));
-            });
-        let blizzards = AHashSet::from_iter(blizzard_locations.iter());
+                location
+            })
+            .collect();
         locations = locations
             .into_iter()
             .flat_map(|(checkpoint, location)| {
@@ -53,7 +55,8 @@ pub fn min_steps_to_checkpoint(input: &str, checkpoint: usize) -> usize {
                 }
             })
             .filter(|(_, location)| !blizzards.contains(location))
-            .collect();
+            .unique()
+            .max_set_by_key(|(checkpoint, _)| *checkpoint); // Checkpoints are 'safe'
         step += 1;
     }
     step
