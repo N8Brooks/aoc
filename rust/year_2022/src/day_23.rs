@@ -78,13 +78,13 @@ impl Elves {
     ) -> impl Iterator<Item = Result<([isize; 2], [isize; 2]), [isize; 2]>> + '_ {
         self.0.iter().copied().map(move |from_elf| {
             let others = Others::new(&from_elf, self);
-            if others.is_no_other_elf() {
-                Err(from_elf)
-            } else {
+            if others.is_other_elf() {
                 let [i, j] = from_elf;
                 let [d_i, d_j] = others.next_valid_direction(index);
                 let to_elf = [i + d_i, j + d_j];
                 Ok((from_elf, to_elf))
+            } else {
+                Err(from_elf)
             }
         })
     }
@@ -132,14 +132,8 @@ impl Others {
         Others(others)
     }
 
-    fn is_no_other_elf(&self) -> bool {
-        !self
-            .0
-            .iter()
-            .flatten()
-            .copied()
-            .flatten()
-            .any(|is_elf| is_elf)
+    fn is_other_elf(&self) -> bool {
+        self.0.iter().flatten().flatten().any(|is_elf| *is_elf)
     }
 
     fn next_valid_direction(&self, index: usize) -> [isize; 2] {
