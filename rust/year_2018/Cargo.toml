@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 test-case = "3.0"
 itertools = "0.10"
+ahash = "0.8"
