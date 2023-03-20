@@ -5,7 +5,7 @@ use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 enum Event {
     BeginShift(usize),
     FallAsleep,
@@ -18,10 +18,12 @@ fn parse_input(input: &str) -> HashMap<usize, [usize; 60]> {
     }
     RE.captures_iter(input)
         .map(|caps| {
-            let time = NaiveDateTime::parse_from_str(&caps[1], "%Y-%m-%d %H:%M")
-                .unwrap()
-                .timestamp()
-                / 60;
+            let time = {
+                NaiveDateTime::parse_from_str(&caps[1], "%Y-%m-%d %H:%M")
+                    .unwrap()
+                    .timestamp()
+                    / 60
+            };
             let event = {
                 let event_name = caps.name("event").unwrap().as_str();
                 let guard_id = caps.name("guard_id");
@@ -29,32 +31,42 @@ fn parse_input(input: &str) -> HashMap<usize, [usize; 60]> {
                     ("falls asleep", None) => Event::FallAsleep,
                     ("wakes up", None) => Event::WakeUp,
                     (_, Some(guard_id)) => Event::BeginShift(guard_id.as_str().parse().unwrap()),
-                    _ => panic!("unkown event"),
+                    _ => panic!("unknown event"),
                 }
             };
             (time, event)
         })
         .sorted_unstable_by_key(|(time, _)| *time)
         .scan(None, |guard_id, (time, event)| {
-            *guard_id = match event {
-                Event::BeginShift(guard_id) => Some(guard_id),
-                _ => *guard_id,
-            };
+            if let Event::BeginShift(new_guard_id) = event {
+                *guard_id = Some(new_guard_id);
+            }
             Some((
                 usize::try_from(time.rem_euclid(60)).unwrap(),
                 guard_id.expect("guard began shift"),
                 event,
             ))
         })
-        .tuple_windows()
-        .filter(|((_, _, event), _)| *event == Event::FallAsleep)
-        .map(|((minute_0, guard_id_0, _), (minute_1, _, _))| (guard_id_0, minute_0..minute_1))
+        .group_by(|(_, guard_id, event)| {
+            let is_sleep_cycle = event == &Event::WakeUp || event == &Event::FallAsleep;
+            (is_sleep_cycle, *guard_id)
+        })
+        .into_iter()
+        .filter_map(|((is_sleep_cycle, guard_id), data)| {
+            is_sleep_cycle.then(|| {
+                let sleep_ranges = data
+                    .map(|(minute, ..)| minute)
+                    .tuples()
+                    .map(|(fall_asleep_minute, wake_up_minute)| fall_asleep_minute..wake_up_minute);
+                (guard_id, sleep_ranges)
+            })
+        })
         .into_grouping_map_by(|(guard_id, _)| *guard_id)
-        .fold([0; 60], |mut acc, _, (_, minutes)| {
-            for minute in minutes {
-                acc[minute] += 1;
+        .fold([0; 60], |mut minute_counts, _, (_, sleep_ranges)| {
+            for minute in sleep_ranges.flatten() {
+                minute_counts[minute] += 1;
             }
-            acc
+            minute_counts
         })
 }
 
@@ -71,14 +83,14 @@ pub fn part_2(input: &str) -> usize {
     let (guard_id, minute, _) = parse_input(input)
         .into_iter()
         .map(|(guard_id, minute_counts)| {
-            let (minute, count) = minute_counts
+            let (max_minute, count) = minute_counts
                 .into_iter()
                 .enumerate()
                 .max_by_key(|(_, count)| *count)
                 .unwrap();
-            (guard_id, minute, count)
+            (guard_id, max_minute, count)
         })
-        .max_by_key(|(_, _, count)| *count)
+        .max_by_key(|(.., count)| *count)
         .unwrap();
     guard_id * minute
 }
