@@ -786,6 +786,7 @@ dependencies = [
  "chrono",
  "itertools",
  "lazy_static",
+ "num",
  "regex",
  "test-case 3.0.0",
 ]
