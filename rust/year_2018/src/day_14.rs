@@ -19,15 +19,16 @@ fn gen_recipes_while(mut predicate: impl FnMut(&[u8]) -> bool) -> Vec<u8> {
     while predicate(&recipes) {
         let (a, b) = (recipes[i], recipes[j]);
         match (a + b).div_rem(&10) {
-            (0, b) => recipes.push(b),
-            (a @ 1.., b) => {
-                recipes.push(a);
+            (0, r) => recipes.push(r),
+            (q @ 1..=9, r) => {
+                recipes.push(q);
                 if !predicate(&recipes) {
                     return recipes;
                 }
-                recipes.push(b);
+                recipes.push(r);
             }
-        }
+            _ => panic!("multi-digit quotient"),
+        };
         i = (i + 1 + a as usize) % recipes.len();
         j = (j + 1 + b as usize) % recipes.len();
     }
