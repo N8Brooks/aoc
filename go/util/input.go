@@ -1,0 +1,44 @@
+package util
+
+import (
+	"fmt"
+	"os"
+)
+
+const testdata = "../../../testdata"
+
+var cache = map[problem]string{}
+
+// Returns the input for the problem
+// Caches results in memory
+// Panics if it does not exist on disk
+// Not set up for concurrent access
+func Input(year uint16, day uint8) string {
+	p := problem{year, day}
+	if input, exists := cache[p]; exists {
+		return input
+	}
+	input := p.read_input()
+	cache[p] = input
+	return input
+}
+
+// The year and day of a problem
+type problem struct {
+	Year uint16
+	Day  uint8
+}
+
+// The input for the problem, panics if it does not exist
+func (p problem) read_input() string {
+	b, err := os.ReadFile(p.input_name())
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
+}
+
+// The file name for the problem input
+func (p problem) input_name() string {
+	return fmt.Sprintf("%s/year_%04d/day_%02d.txt", testdata, p.Year, p.Day)
+}
