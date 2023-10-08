@@ -6,30 +6,30 @@ import (
 	"util"
 )
 
-func Part1(input *string) int {
-	var max_calories int
-	for _, calories := range strings.Split(*input, "\n\n") {
-		var total_calories int
+func Part1(input string) int {
+	var maxCalories int
+	for _, calories := range strings.Split(input, "\n\n") {
+		var totalCalories int
 		for _, calories := range strings.Split(calories, "\n") {
 			calories, _ := strconv.Atoi(calories)
-			total_calories += calories
+			totalCalories += calories
 		}
-		if total_calories > max_calories {
-			max_calories = total_calories
+		if totalCalories > maxCalories {
+			maxCalories = totalCalories
 		}
 	}
-	return max_calories
+	return maxCalories
 }
 
-func Part2(input *string) int {
+func Part2(input string) int {
 	h := &util.IntHeap{0, 0, 0}
-	for _, calories := range strings.Split(*input, "\n\n") {
-		var total_calories int
+	for _, calories := range strings.Split(input, "\n\n") {
+		var totalCalories int
 		for _, calories := range strings.Split(calories, "\n") {
 			calories, _ := strconv.Atoi(calories)
-			total_calories += calories
+			totalCalories += calories
 		}
-		h.PushPop(total_calories)
+		h.PushPop(totalCalories)
 	}
 	return h.Sum()
 }

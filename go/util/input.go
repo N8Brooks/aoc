@@ -18,7 +18,7 @@ func Input(year uint16, day uint8) string {
 	if input, exists := cache[p]; exists {
 		return input
 	}
-	input := p.read_input()
+	input := p.readInput()
 	cache[p] = input
 	return input
 }
@@ -30,8 +30,8 @@ type problem struct {
 }
 
 // The input for the problem, panics if it does not exist
-func (p problem) read_input() string {
-	b, err := os.ReadFile(p.input_name())
+func (p problem) readInput() string {
+	b, err := os.ReadFile(p.inputName())
 	if err != nil {
 		panic(err)
 	}
@@ -39,6 +39,6 @@ func (p problem) read_input() string {
 }
 
 // The file name for the problem input
-func (p problem) input_name() string {
+func (p problem) inputName() string {
 	return fmt.Sprintf("%s/year_%04d/day_%02d.txt", testdata, p.Year, p.Day)
 }

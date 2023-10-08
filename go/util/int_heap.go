@@ -25,7 +25,6 @@ func (h *IntHeap) PushPop(x int) int {
 	old := *h
 	if len(old) > 0 && old[0] < x {
 		x, old[0] = old[0], x
-		*h = old
 		heap.Fix(h, 0)
 	}
 	return x
