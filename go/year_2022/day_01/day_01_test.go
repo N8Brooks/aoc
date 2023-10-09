@@ -1,4 +1,4 @@
-package day_01
+package year_2022
 
 import (
 	_ "embed"
