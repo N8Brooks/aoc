@@ -1,7 +1,5 @@
 package year_2022
 
-import ()
-
 func Part1(input string) int {
 	return FindStartOfPacketMarker(input, 4)
 }
