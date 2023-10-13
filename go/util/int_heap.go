@@ -37,3 +37,11 @@ func (h *IntHeap) Sum() int {
 	}
 	return sum
 }
+
+func (h *IntHeap) Prod() int {
+	prod := 1
+	for _, x := range []int(*h) {
+		prod *= x
+	}
+	return prod
+}
