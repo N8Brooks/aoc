@@ -3,7 +3,7 @@ package year_2022
 import (
 	"strconv"
 	"strings"
-	"util"
+	"util/imath"
 )
 
 func Part1(input string) int {
@@ -76,12 +76,12 @@ func (knot *Knot) Move(di, dj int) {
 func (knot *Knot) Follow(leader *Knot) {
 	di := leader.i - knot.i
 	dj := leader.j - knot.j
-	if util.Abs(di)+util.Abs(dj) > 2 {
-		knot.i += util.Sign(di)
-		knot.j += util.Sign(dj)
-	} else if di == 0 && util.Abs(dj) == 2 {
+	if imath.Abs(di)+imath.Abs(dj) > 2 {
+		knot.i += imath.Sign(di)
+		knot.j += imath.Sign(dj)
+	} else if di == 0 && imath.Abs(dj) == 2 {
 		knot.j += dj / 2
-	} else if util.Abs(di) == 2 && dj == 0 {
+	} else if imath.Abs(di) == 2 && dj == 0 {
 		knot.i += di / 2
 	}
 }

@@ -3,7 +3,7 @@ package year_2022
 import (
 	"strconv"
 	"strings"
-	"util"
+	"util/imath"
 )
 
 type Pos = struct{ x, y int }
@@ -62,8 +62,8 @@ func ParseInput(input string) (map[Pos]bool, int) {
 	for _, positions := range rockStructures {
 		curPos := positions[0]
 		for _, endPos := range positions {
-			dx := util.Sign(endPos.x - curPos.x)
-			dy := util.Sign(endPos.y - curPos.y)
+			dx := imath.Sign(endPos.x - curPos.x)
+			dy := imath.Sign(endPos.y - curPos.y)
 			blocks[curPos] = true
 			for curPos != endPos {
 				curPos.x += dx
