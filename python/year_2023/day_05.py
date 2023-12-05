@@ -3,28 +3,30 @@ from bisect import bisect_left, bisect_right
 
 
 def part_1(input: str) -> int:
-    seeds, *maps = input.split("\n\n")
-    _, _, seeds = seeds.partition(": ")
-    nums = list(map(int, seeds.split()))
-    for indexes in map(parse_map, maps):
+    seeds, maps = parse_input(input)
+    nums = list(seeds)
+    for map_ in maps:
         nums[:] = (
-            next((j + num - i for j, i, n in indexes if i <= num < i + n), num)
+            next((dst + num - src for dst, src, n in map_ if src <= num < src + n), num)
             for num in nums
         )
     return min(nums)
 
 
 def part_2(input: str) -> int:
-    seeds, *maps = input.split("\n\n")
-    _, _, seeds = seeds.partition(": ")
-    seeds = map(int, seeds.split())
+    seeds, maps = parse_input(input)
+
+    # Initialize ranges from seeds
     a = RangeModule()
     for i, n in zip(seeds, seeds):
         a.add_range(i, i + n)
-    for indexes in map(parse_map, maps):
+
+    for map_ in maps:
         b = RangeModule()
+
+        # Map ranges across transformations
         for i, j in zip(a.intervals[::2], a.intervals[1::2]):
-            for i_dst, i_src, n in indexes:
+            for i_dst, i_src, n in map_:
                 i_cut = max(i, i_src)
                 j_cut = min(j, i_src + n)
                 if j_cut <= i_cut:
@@ -32,15 +34,25 @@ def part_2(input: str) -> int:
                 a.remove_range(i_cut, j_cut)
                 diff = i_dst - i_src
                 b.add_range(i_cut + diff, j_cut + diff)
-        indexes = iter(a.intervals)
-        for i, j in zip(indexes, indexes):
+
+        # Clean up unmapped ranges
+        map_ = iter(a.intervals)
+        for i, j in zip(map_, map_):
             b.add_range(i, j)
+
         a = b
+
     return a.intervals[0]
 
 
-def parse_map(lines: str):
-    return [tuple(map(int, row.split())) for row in lines.splitlines()[1:]]
+def parse_input(input: str):
+    seeds, *maps = input.split("\n\n")
+    _, _, seeds = seeds.partition(": ")
+    seeds = map(int, seeds.split())
+    indexes = (
+        [tuple(map(int, row.split())) for row in rows.splitlines()[1:]] for rows in maps
+    )
+    return seeds, indexes
 
 
 class RangeModule:
