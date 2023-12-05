@@ -18,25 +18,25 @@ def part_2(input: str) -> int:
     seeds, *maps = input.split("\n\n")
     _, _, seeds = seeds.partition(": ")
     seeds = map(int, seeds.split())
-    intervals = RangeModule()
-    for i2, n in zip(seeds, seeds):
-        intervals.addRange(i2, i2 + n)
+    a = RangeModule()
+    for i, n in zip(seeds, seeds):
+        a.add_range(i, i + n)
     for indexes in map(parse_map, maps):
-        next_intervals = RangeModule()
-        for i1, j1 in zip(intervals.intervals[::2], intervals.intervals[1::2]):
-            for dst_i, src_i, n in indexes:
-                i2 = max(i1, src_i)
-                j2 = min(j1, src_i + n)
-                if j2 <= i2:
+        b = RangeModule()
+        for i, j in zip(a.intervals[::2], a.intervals[1::2]):
+            for i_dst, i_src, n in indexes:
+                i_cut = max(i, i_src)
+                j_cut = min(j, i_src + n)
+                if j_cut <= i_cut:
                     continue
-                intervals.removeRange(i2, j2)
-                diff = dst_i - src_i
-                next_intervals.addRange(i2 + diff, j2 + diff)
-        indexes = iter(intervals.intervals)
-        for i2, j2 in zip(indexes, indexes):
-            next_intervals.addRange(i2, j2)
-        intervals = next_intervals
-    return intervals.intervals[0]
+                a.remove_range(i_cut, j_cut)
+                diff = i_dst - i_src
+                b.add_range(i_cut + diff, j_cut + diff)
+        indexes = iter(a.intervals)
+        for i, j in zip(indexes, indexes):
+            b.add_range(i, j)
+        a = b
+    return a.intervals[0]
 
 
 def parse_map(lines: str):
@@ -47,19 +47,13 @@ class RangeModule:
     def __init__(self):
         self.intervals = []
 
-    def addRange(self, left: int, right: int) -> None:
+    def add_range(self, left: int, right: int) -> None:
         # [start0:stop0, start1:stop1] -> [min(start0, left):max(stop1, right)]
         i = bisect_left(self.intervals, left)
         j = bisect_right(self.intervals, right, i)
         self.intervals[i:j] = chain([] if i & 1 else [left], [] if j & 1 else [right])
 
-    def queryRange(self, left: int, right: int) -> bool:
-        # Checks start < left < stop and start < right <= stop
-        i = bisect_right(self.intervals, left)
-        j = bisect_left(self.intervals, right)
-        return i == j and bool(i & 1)
-
-    def removeRange(self, left: int, right: int) -> None:
+    def remove_range(self, left: int, right: int) -> None:
         # [start0:stop0, start1:stop1] -> [max(stop0, left), min(start1, right)]
         i = bisect_left(self.intervals, left)
         j = bisect_right(self.intervals, right, i)
