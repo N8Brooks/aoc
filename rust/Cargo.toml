@@ -1,4 +1,11 @@
 [workspace]
 
-members = ["year_2018", "year_2020", "year_2021", "year_2022", "util"]
+members = [
+  "year_2018",
+  "year_2020",
+  "year_2021",
+  "year_2022",
+  "year_2023",
+  "util",
+]
 resolver = "2"
