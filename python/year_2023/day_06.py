@@ -10,13 +10,13 @@ def part_1(input: str) -> int:
 
 def part_2(input: str) -> int:
     time, _, distance = input.rstrip().partition("\n")
-    time = int("".join(time.strip("Time:").split()))
-    distance = int("".join(distance.strip("Distance:").split()))
+    time = int(time.strip("Time:").replace(" ", ""))
+    distance = int(distance.strip("Distance:").replace(" ", ""))
     return count_ways_to_beat(time, distance)
 
 
 def count_ways_to_beat(time: int, distance: int) -> int:
-    sqrt_discriminant = isqrt(time**2 - 4 * distance - 1) + 1
+    sqrt_discriminant = isqrt(time * time - 4 * distance - 1) + 1
     i = (-time + sqrt_discriminant) // -2 + 1
     j = ceil_div(-time - sqrt_discriminant, -2)
     return j - i
