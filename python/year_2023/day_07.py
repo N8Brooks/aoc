@@ -1,11 +1,9 @@
 from collections import Counter
 from typing import Callable
+from functools import reduce
 
 
-type Rank = list[tuple[int, ...]]
-
-
-def total_winnings(input: str, rank: Callable[[str], Rank]) -> int:
+def total_winnings(input: str, rank: Callable[[str], int]) -> int:
     hand_bids = (line.split(" ") for line in input.rstrip().splitlines())
     hand_bids = [(rank(hand), int(bid)) for hand, bid in hand_bids]
     hand_bids.sort(key=lambda hand_bid: hand_bid[0])
@@ -16,60 +14,53 @@ def part_1(input: str) -> int:
     return total_winnings(input, rank_1)
 
 
-def rank_1(hand: str) -> Rank:
+def rank_1(hand: str) -> int:
     counter = Counter(hand)
-    counts = sorted(counter.values(), reverse=True)
-    indexes = tuple(map(CARDS_1.index, hand))
-    value = [tuple() for _ in range(7)]
-    match counts:
-        case [5]:
-            value[0] = indexes
-        case [4, 1]:
-            value[1] = indexes
-        case [3, 2]:
-            value[2] = indexes
-        case [3, 1, 1]:
-            value[3] = indexes
-        case [2, 2, 1]:
-            value[4] = indexes
-        case [2, 1, 1, 1]:
-            value[5] = indexes
-        case _:
-            value[6] = indexes
-    return value
+    counts = iter(sorted(counter.values(), reverse=True))
+    mode_1 = next(counts)
+    mode_2 = next(counts, 0)
+    hand_type = HAND_TYPES_1.index((mode_1, mode_2))
+    return reduce(lambda a, b: a * 13 + b, map(CARDS_1.index, hand), hand_type)
 
 
 CARDS_1 = "23456789TJQKA"
+
+HAND_TYPES_1 = [
+    (1, 1),  # High Card
+    (2, 1),  # One Pair
+    (2, 2),  # Two Pair
+    (3, 1),  # Three of a Kind
+    (3, 2),  # Full House
+    (4, 1),  # Four of a Kind
+    (5, 0),  # Five of a Kind
+]
 
 
 def part_2(input: str) -> int:
     return total_winnings(input, rank_2)
 
 
-def rank_2(hand: str):
+def rank_2(hand: str) -> int:
     counter = Counter(hand)
     wildcards = counter.pop("J", 0)
-    counts = sorted(counter.values(), reverse=True)
-    indexes = tuple(map(CARDS_2.index, hand))
-    value = [tuple() for _ in range(7)]
-    if wildcards == 5 or counts[0] + wildcards == 5:
-        value[0] = indexes
-    elif counts[0] + wildcards == 4:
-        value[1] = indexes
-    elif counts[0] + wildcards >= 3 and counts[1] + (counts[0] + wildcards - 3) >= 2:
-        value[2] = indexes
-    elif counts[0] + wildcards == 3:
-        value[3] = indexes
-    elif counts[0] + wildcards >= 2 and counts[1] + (counts[0] + wildcards - 2) >= 2:
-        value[4] = indexes
-    elif counts[0] + wildcards == 2:
-        value[5] = indexes
-    else:
-        value[6] = indexes
-    return value
+    counts = iter(sorted(counter.values(), reverse=True))
+    mode_1 = next(counts, 0) + wildcards
+    mode_2 = next(counts, 0)
+    hand_type = HAND_TYPES_2.index((mode_1, mode_2))
+    return reduce(lambda a, b: a * 13 + b, map(CARDS_2.index, hand), hand_type)
 
 
 CARDS_2 = "J23456789TQKA"
+
+HAND_TYPES_2 = [
+    (1, 1),  # High Card
+    (2, 1),  # One Pair
+    (2, 2),  # Two Pair
+    (3, 1),  # Three of a Kind
+    (3, 2),  # Full House
+    (4, 1),  # Four of a Kind
+    (5, 0),  # Five of a Kind
+]
 
 
 def test_part_1_example_1():
