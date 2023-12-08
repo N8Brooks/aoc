@@ -1,5 +1,5 @@
-from itertools import chain
 from bisect import bisect_left, bisect_right
+from itertools import chain
 
 
 def part_1(input: str) -> int:

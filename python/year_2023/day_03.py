@@ -1,5 +1,5 @@
-from itertools import chain, repeat, product
 import re
+from itertools import chain, product, repeat
 
 
 def part_1(input: str) -> int:

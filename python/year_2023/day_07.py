@@ -1,6 +1,6 @@
-from typing import Callable
 from functools import reduce
 from heapq import nlargest
+from typing import Callable
 
 
 def part_1(input: str) -> int:
