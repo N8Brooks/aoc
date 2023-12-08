@@ -1,5 +1,5 @@
 pub fn part_1(input: &str) -> isize {
-    let (times, distances) = input.trim_end().split_once("\n").unwrap();
+    let (times, distances) = input.trim_end().split_once('\n').unwrap();
     let times = times
         .strip_prefix("Time:")
         .unwrap()
@@ -17,17 +17,17 @@ pub fn part_1(input: &str) -> isize {
 }
 
 pub fn part_2(input: &str) -> isize {
-    let (time, distance) = input.trim_end().split_once("\n").unwrap();
+    let (time, distance) = input.trim_end().split_once('\n').unwrap();
     let time = time
         .strip_prefix("Time:")
         .unwrap()
-        .replace(" ", "")
+        .replace(' ', "")
         .parse::<isize>()
         .unwrap();
     let distance = distance
         .strip_prefix("Distance:")
         .unwrap()
-        .replace(" ", "")
+        .replace(' ', "")
         .parse::<isize>()
         .unwrap();
     count_ways_to_beat(time, distance)
@@ -37,7 +37,7 @@ fn count_ways_to_beat(time: isize, distance: isize) -> isize {
     let sqrt_discriminant = (time * time - 4 * distance - 1).isqrt() + 1;
     let i = (-time + sqrt_discriminant) / -2 + 1;
     let j = (-time - sqrt_discriminant).div_ceil(-2);
-    return j - i;
+    j - i
 }
 
 #[cfg(test)]
