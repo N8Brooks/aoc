@@ -1,11 +1,9 @@
 from __future__ import annotations
-from itertools import cycle
-from typing import Callable
+
 import re
+from itertools import cycle
 from math import lcm
-
-
-PATTERN = re.compile(r"(\w{3}) = \((\w{3}), (\w{3})\)")
+from typing import Callable, Iterable
 
 
 def part_1(input: str) -> int:
@@ -14,10 +12,19 @@ def part_1(input: str) -> int:
 
 def part_2(input: str) -> int:
     network = Network.from_input(input, lambda node: node[-1] != "Z")
-    return lcm(*(network.steps(node) for node in network.network if node[-1] == "A"))
+    return lcm(*map(network.steps, network.roots()))
 
 
 class Network:
+    @staticmethod
+    def from_input(input: str, predicate: Callable[[str], bool]) -> Network:
+        instructions, _, network_input = input.partition("\n\n")
+        instructions = list(map("LR".index, instructions))
+        network = {
+            match[1]: (match[2], match[3]) for match in PATTERN.finditer(network_input)
+        }
+        return Network(instructions, network, predicate)
+
     def __init__(
         self,
         instructions: list[int],
@@ -28,15 +35,6 @@ class Network:
         self.network = network
         self.predicate = predicate
 
-    @staticmethod
-    def from_input(input: str, predicate: Callable[[str], bool]) -> Network:
-        instructions, _, network_input = input.partition("\n\n")
-        instructions = list(map("LR".index, instructions))
-        network = {
-            match[1]: (match[2], match[3]) for match in PATTERN.finditer(network_input)
-        }
-        return Network(instructions, network, predicate)
-
     def steps(self, node: str) -> int:
         instructions = cycle(self.instructions)
         count = 0
@@ -44,6 +42,12 @@ class Network:
             node = self.network[node][next(instructions)]
             count += 1
         return count
+
+    def roots(self) -> Iterable[str]:
+        return (node for node in self.network if node[-1] == "A")
+
+
+PATTERN = re.compile(r"(\w{3}) = \((\w{3}), (\w{3})\)")
 
 
 def test_part_1_example_1():
