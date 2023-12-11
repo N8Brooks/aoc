@@ -17,6 +17,10 @@ def part_1(input: str) -> int:
 
 
 def part_2(input: str) -> int:
+    lines = input.rstrip().splitlines()
+    m = len(lines)
+    n = len(lines[0])
+
     init, get_neighbors = parse_loop(input)
     frontier = {init}
     seen = set()
@@ -81,30 +85,52 @@ def parse_loop(
         if char == "S"
     )
 
-    def pipes(i: int, j: int) -> tuple[tuple[int, int], ...]:
-        match lines[i][j]:
-            case ".":
-                return tuple()
+    def pipes(i1: int, j1: int) -> tuple[tuple[int, int], ...]:
+        match lines[i1][j1]:
             case "-":
-                return ((i, j - 1), (i, j + 1))
+                return ((i1, j1 - 1), (i1, j1 + 1))
             case "|":
-                return ((i - 1, j), (i + 1, j))
+                return ((i1 - 1, j1), (i1 + 1, j1))
             case "L":
-                return ((i - 1, j), (i, j + 1))
+                return ((i1 - 1, j1), (i1, j1 + 1))
             case "J":
-                return ((i - 1, j), (i, j - 1))
+                return ((i1 - 1, j1), (i1, j1 - 1))
             case "F":
-                return ((i, j + 1), (i + 1, j))
+                return ((i1, j1 + 1), (i1 + 1, j1))
             case "7":
-                return ((i, j - 1), (i + 1, j))
+                return ((i1, j1 - 1), (i1 + 1, j1))
             case "S":
                 return tuple(
-                    cur
-                    for cur in ((i - 1, j), (i, j + 1), (i + 1, j), (i, j - 1))
-                    if (i, j) in pipes(*cur)
+                    sorted(
+                        (i2, j2)
+                        for i2, j2 in (
+                            (i1 - 1, j1),
+                            (i1, j1 + 1),
+                            (i1 + 1, j1),
+                            (i1, j1 - 1),
+                        )
+                        if lines[i2][j2] != "." and (i1, j1) in pipes(i2, j2)
+                    )
                 )
             case _:
-                raise ValueError(f"Unknown character {lines[i][j]} at {i}, {j}")
+                raise ValueError(f"Unknown character {lines[i1][j1]} at {i1}, {j1}")
+
+    m = len(lines)
+    n = len(lines[0])
+    connections: list[list[tuple[tuple[int, int], ...]]] = [
+        [None for _ in range(n)] for _ in range(m)
+    ]  # type: ignore
+
+    frontier = {init}
+    while frontier:
+        for i, j in frontier:
+            connections[i][j] = pipes(i, j)
+        frontier = {
+            nxt
+            for cur in frontier
+            for nxt in connections[cur[0]][cur[1]]
+            if connections[nxt[0]][nxt[1]] is None
+        }
 
     return init, pipes
 
