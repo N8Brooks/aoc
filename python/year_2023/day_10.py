@@ -1,23 +1,19 @@
-from itertools import product
-from typing import Callable
-
-
 def part_1(input: str) -> int:
-    return (len(parse_loop(input)) + 1) // 2
+    loop, _ = parse_loop(input)
+    return (len(loop) + 1) // 2
 
 
 def part_2(input: str) -> int:
-    lines = input.rstrip().splitlines()
+    loop, lines = parse_loop(input)
     m = len(lines)
     n = len(lines[0])
-    loop = parse_loop(input)
-    chars = "-|JFS"
     total = 0
+
     for i in range(m):
         parity = 0
         for i, j in zip(range(i, m), range(n)):
             if (i, j) in loop:
-                if lines[i][j] in chars:
+                if lines[i][j] in CHARS:
                     parity ^= 1
             else:
                 total += parity
@@ -26,7 +22,7 @@ def part_2(input: str) -> int:
         parity = 0
         for i, j in zip(range(m), range(j, n)):
             if (i, j) in loop:
-                if lines[i][j] in chars:
+                if lines[i][j] in CHARS:
                     parity ^= 1
             else:
                 total += parity
@@ -34,7 +30,10 @@ def part_2(input: str) -> int:
     return total
 
 
-def parse_loop(input: str) -> set[tuple[int, int]]:
+CHARS = "-|JF"
+
+
+def parse_loop(input: str) -> tuple[set[tuple[int, int]], list[str]]:
     lines = input.rstrip().splitlines()
 
     def neighbors(i: int, j: int) -> tuple[tuple[int, int], ...]:
@@ -51,50 +50,53 @@ def parse_loop(input: str) -> set[tuple[int, int]]:
                 return ((i, j + 1), (i + 1, j))
             case "7":
                 return ((i, j - 1), (i + 1, j))
-            case "S":
-                return tuple(
-                    sorted(
-                        (i2, j2)
-                        for i2, j2 in (
-                            (i - 1, j),
-                            (i, j + 1),
-                            (i + 1, j),
-                            (i, j - 1),
-                        )
-                        if lines[i2][j2] != "."
-                        and (i, j) in neighbors(i2, j2)
-                        and (i, j) != (i2, j2)
-                    )
-                )
             case _:
                 raise ValueError(f"Unknown character {lines[i][j]} at {i}, {j}")
 
-    frontier = {
-        next(
-            (i, j)
-            for i, line in enumerate(lines)
-            for j, char in enumerate(line)
-            if char == "S"
+    init = a = i, j = next(
+        (i, j)
+        for i, line in enumerate(lines)
+        for j, char in enumerate(line)
+        if char == "S"
+    )
+    seen = {a}
+    b = next(
+        (i, j)
+        for i, j in (
+            (i - 1, j),
+            (i, j + 1),
+            (i + 1, j),
+            (i, j - 1),
         )
-    }
-    seen: set[tuple[int, int]] = set()
-    while frontier:
-        seen |= frontier
-        frontier = {
-            nxt for cur in frontier for nxt in neighbors(*cur) if nxt not in seen
-        }
+        if lines[i][j] != "." and init in neighbors(i, j)
+    )
+    while b != init:
+        seen.add(b)
+        c, d = neighbors(*b)
+        a, b = b, c if a != c else d
 
-    return seen
+    # Fix "S" character
+    up = lines[i - 1][j] in "|7F"
+    down = lines[i + 1][j] in "|LJ"
+    left = lines[i][j - 1] in "-LF"
+    right = lines[i][j + 1] in "-J7"
 
+    r = ""
+    if up and down:
+        r = "|"
+    elif left and right:
+        r = "-"
+    elif up and right:
+        r = "L"
+    elif up and left:
+        r = "J"
+    elif down and right:
+        r = "F"
+    elif down and left:
+        r = "7"
+    lines[i] = lines[i].replace("S", r, 1)
 
-CHARS = {
-    "-": [(0, -1), (0, 1)],
-    "|": [(-1, 0), (1, 0)],
-    "L": [(-1, 0), (0, 1)],
-    "J": [(-1, 0), (0, -1)],
-    "F": [(0, 1), (1, 0)],
-    "7": [(0, -1), (1, 0)],
-}
+    return seen, lines
 
 
 def test_part_1_example_1_a():
