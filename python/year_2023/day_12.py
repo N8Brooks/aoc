@@ -14,19 +14,17 @@ def part_2(input: str) -> int:
 
 def arrangements(line: str, r: int) -> int:
     @cache
-    def visit(conditions: str, n: int, groups: tuple[int, ...]) -> int:
+    def visit(conditions: str, groups: tuple[int, ...]) -> int:
         group = groups[0]
         groups = groups[1:]
         j = len(groups) + sum(groups)
         count = 0
-        for i in range(n - j - group + 1):
+        for i in range(len(conditions) - j - group + 1):
             if "." not in conditions[i : i + group]:
                 if not groups:
                     count += "#" not in conditions[i + group :]
                 elif conditions[i + group] != "#":
-                    count += visit(
-                        conditions[i + group + 1 :], n - group - i - 1, groups
-                    )
+                    count += visit(conditions[i + group + 1 :], groups)
             if conditions[i] == "#":
                 break
         return count
@@ -34,7 +32,7 @@ def arrangements(line: str, r: int) -> int:
     conditions, _, groups = line.partition(" ")
     conditions = "?".join(repeat(conditions, r))
     groups = tuple(map(int, groups.split(","))) * r
-    return visit(conditions, len(conditions), groups)
+    return visit(conditions, groups)
 
 
 def test_part_1_example_1():
