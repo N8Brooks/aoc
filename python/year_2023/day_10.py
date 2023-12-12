@@ -3,136 +3,98 @@ from typing import Callable
 
 
 def part_1(input: str) -> int:
-    init, get_neighbors = parse_loop(input)
-    frontier = {init}
-    pipes = set()
-    count = -1
-    while frontier:
-        pipes |= frontier
-        frontier = {
-            nxt for cur in frontier for nxt in get_neighbors(*cur) if nxt not in pipes
-        }
-        count += 1
-    return count
+    return (len(parse_loop(input)) + 1) // 2
 
 
 def part_2(input: str) -> int:
     lines = input.rstrip().splitlines()
     m = len(lines)
     n = len(lines[0])
+    loop = parse_loop(input)
+    chars = "-|JFS"
+    total = 0
+    for i in range(m):
+        parity = 0
+        for i, j in zip(range(i, m), range(n)):
+            if (i, j) in loop:
+                if lines[i][j] in chars:
+                    parity ^= 1
+            else:
+                total += parity
 
-    init, get_neighbors = parse_loop(input)
-    frontier = {init}
-    seen = set()
-    walls = set()
-    while frontier:
-        seen |= frontier
-        next_frontier = set()
-        for cur in frontier:
-            for nxt in get_neighbors(*cur):
-                if nxt not in seen:
-                    walls.add(frozenset((cur, nxt)))
-                    next_frontier.add(nxt)
-        frontier = next_frontier
+    for j in range(1, n):
+        parity = 0
+        for i, j in zip(range(m), range(j, n)):
+            if (i, j) in loop:
+                if lines[i][j] in chars:
+                    parity ^= 1
+            else:
+                total += parity
 
+    return total
+
+
+def parse_loop(input: str) -> set[tuple[int, int]]:
     lines = input.rstrip().splitlines()
-    m = len(lines)
-    n = len(lines[0])
-    corners = set()
-    stack: list[tuple[int, int]] = [(-1, -1)]
 
-    while stack:
-        top_left = i, j = stack.pop()
-        if not -1 <= i <= m or not -1 <= j <= n or top_left in corners:
-            continue
-        corners.add(top_left)
-
-        top_right = (i, j + 1)
-        bot_left = (i + 1, j)
-        bot_right = (i + 1, j + 1)
-
-        if frozenset((top_left, top_right)) not in walls:
-            stack.append((i - 1, j))
-        if frozenset((top_left, bot_left)) not in walls:
-            stack.append((i, j - 1))
-        if frozenset((bot_left, bot_right)) not in walls:
-            stack.append((i + 1, j))
-        if frozenset((top_right, bot_right)) not in walls:
-            stack.append((i, j + 1))
-
-    count = 0
-    for i, j in product(range(0, m - 1), range(0, n - 1)):
-        top_left = (i, j)
-        top_right = (i, j + 1)
-        bot_left = (i + 1, j)
-        bot_right = (i + 1, j + 1)
-        count += all(
-            corner not in corners
-            for corner in (top_left, top_right, bot_left, bot_right)
-        )
-
-    return count
-
-
-def parse_loop(
-    input: str
-) -> tuple[tuple[int, int], Callable[[int, int], tuple[tuple[int, int], ...]]]:
-    lines = input.rstrip().splitlines()
-    init = next(
-        (i, j)
-        for i, line in enumerate(lines)
-        for j, char in enumerate(line)
-        if char == "S"
-    )
-
-    def pipes(i1: int, j1: int) -> tuple[tuple[int, int], ...]:
-        match lines[i1][j1]:
+    def neighbors(i: int, j: int) -> tuple[tuple[int, int], ...]:
+        match lines[i][j]:
             case "-":
-                return ((i1, j1 - 1), (i1, j1 + 1))
+                return ((i, j - 1), (i, j + 1))
             case "|":
-                return ((i1 - 1, j1), (i1 + 1, j1))
+                return ((i - 1, j), (i + 1, j))
             case "L":
-                return ((i1 - 1, j1), (i1, j1 + 1))
+                return ((i - 1, j), (i, j + 1))
             case "J":
-                return ((i1 - 1, j1), (i1, j1 - 1))
+                return ((i - 1, j), (i, j - 1))
             case "F":
-                return ((i1, j1 + 1), (i1 + 1, j1))
+                return ((i, j + 1), (i + 1, j))
             case "7":
-                return ((i1, j1 - 1), (i1 + 1, j1))
+                return ((i, j - 1), (i + 1, j))
             case "S":
                 return tuple(
                     sorted(
                         (i2, j2)
                         for i2, j2 in (
-                            (i1 - 1, j1),
-                            (i1, j1 + 1),
-                            (i1 + 1, j1),
-                            (i1, j1 - 1),
+                            (i - 1, j),
+                            (i, j + 1),
+                            (i + 1, j),
+                            (i, j - 1),
                         )
-                        if lines[i2][j2] != "." and (i1, j1) in pipes(i2, j2)
+                        if lines[i2][j2] != "."
+                        and (i, j) in neighbors(i2, j2)
+                        and (i, j) != (i2, j2)
                     )
                 )
             case _:
-                raise ValueError(f"Unknown character {lines[i1][j1]} at {i1}, {j1}")
+                raise ValueError(f"Unknown character {lines[i][j]} at {i}, {j}")
 
-    m = len(lines)
-    n = len(lines[0])
-    connections: list[list[tuple[tuple[int, int], ...]]] = [
-        [None for _ in range(n)] for _ in range(m)
-    ]  # type: ignore
-
-    frontier = {init}
+    frontier = {
+        next(
+            (i, j)
+            for i, line in enumerate(lines)
+            for j, char in enumerate(line)
+            if char == "S"
+        )
+    }
+    seen: set[tuple[int, int]] = set()
     while frontier:
-        for i, j in frontier:
-            connections[i][j] = pipes(i, j)
+        seen |= frontier
         frontier = {
-            nxt
-            for cur in frontier
-            for nxt in connections[cur[0]][cur[1]]
-            if connections[nxt[0]][nxt[1]] is None
+            nxt for cur in frontier for nxt in neighbors(*cur) if nxt not in seen
         }
 
-    return init, pipes
+    return seen
+
+
+CHARS = {
+    "-": [(0, -1), (0, 1)],
+    "|": [(-1, 0), (1, 0)],
+    "L": [(-1, 0), (0, 1)],
+    "J": [(-1, 0), (0, -1)],
+    "F": [(0, 1), (1, 0)],
+    "7": [(0, -1), (1, 0)],
+}
 
 
 def test_part_1_example_1_a():
