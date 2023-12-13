@@ -1,4 +1,5 @@
 from typing import Optional
+from operator import eq
 
 
 def part_1(input: str) -> int:
@@ -6,43 +7,17 @@ def part_1(input: str) -> int:
 
 
 def reflection_1(input: str) -> Optional[int]:
-    pattern = input.splitlines()
+    rows = input.splitlines()
+    m = len(rows)
+    for i2 in range(1, m):
+        if all(map(eq, rows[i2 - 1 :: -1], rows[i2:])):
+            return i2 * 100
 
-    for i in range(1, len(pattern)):
-        fwd = pattern[:i][::-1]
-        rev = pattern[i:]
-        if all(x == y for x, y in zip(fwd, rev)):
-            return (i) * 100
-
-    for j in range(1, len(pattern[0])):
-        fwd = [line[:j][::-1] for line in pattern]
-        rev = [line[j:] for line in pattern]
-        if all(x.startswith(y) or y.startswith(x) for x, y in zip(fwd, rev)):
-            return j
-
-
-def reflection_2(input: str, x: int, y: int) -> Optional[int]:
-    pattern = input.splitlines()
-
-    for i in range(1, len(pattern)):
-        fwd = pattern[:i][::-1]
-        rev = pattern[i:]
-        start = i - 1 - min(len(fwd), len(rev))
-        end = i + min(len(fwd), len(rev))
-        if not start < x < end:
-            continue
-        if all(x == y for x, y in zip(fwd, rev)):
-            return (i) * 100
-
-    for j in range(1, len(pattern[0])):
-        fwd = [line[:j][::-1] for line in pattern]
-        rev = [line[j:] for line in pattern]
-        start = j - 1 - min(len(fwd[0]), len(rev[0]))
-        end = j + min(len(fwd[0]), len(rev[0]))
-        if not start < y < end:
-            continue
-        if all(x.startswith(y) or y.startswith(x) for x, y in zip(fwd, rev)):
-            return j
+    cols = list(zip(*rows))
+    n = len(cols)
+    for j2 in range(1, n):
+        if all(map(eq, cols[j2 - 1 :: -1], cols[j2:])):
+            return j2
 
 
 def part_2(input: str) -> int:
@@ -51,16 +26,29 @@ def part_2(input: str) -> int:
         pattern = list(map(list, pattern.splitlines()))
         for i in range(len(pattern)):
             for j in range(len(pattern[0])):
-                pattern[i][j] = "." if pattern[i][j] == "#" else "#"
-                x = reflection_2("\n".join("".join(line) for line in pattern), i, j)
-                if x is not None:
-                    total += x
+                original = pattern[i][j]
+                changed = "." if original == "#" else "#"
+                pattern[i][j] = changed
+                num = reflection_2(pattern, i, j)
+                if num is not None:
+                    total += num
                     break
-                pattern[i][j] = "." if pattern[i][j] == "#" else "#"
+                pattern[i][j] = original
             else:
                 continue
             break
     return total
+
+
+def reflection_2(rows: list[list[str]], i1: int, j1: int) -> Optional[int]:
+    for i2 in range(i1 // 2 + 1, i1 + 1):
+        if all(map(eq, rows[i2 - 1 :: -1], rows[i2:])):
+            return i2 * 100
+
+    cols = list(zip(*rows))
+    for j2 in range(j1 // 2 + 1, j1 + 1):
+        if all(map(eq, cols[j2 - 1 :: -1], cols[j2:])):
+            return j2
 
 
 def test_part_1_example_1():
@@ -77,7 +65,6 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    # NOT: 17918
     with open("../testdata/year_2023/day_13.txt", "r") as f:
         assert part_2(f.read()) == 30842
 
