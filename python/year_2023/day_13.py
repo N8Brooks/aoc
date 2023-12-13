@@ -1,54 +1,47 @@
-from typing import Optional
-from operator import eq
+from typing import Iterable, Optional
+from operator import eq, ne
 
 
 def part_1(input: str) -> int:
-    return sum(map(reflection_1, input.split("\n\n")))  # type: ignore
+    return sum(map(reflection_1, input.rstrip().split("\n\n")))  # type: ignore
 
 
 def reflection_1(input: str) -> Optional[int]:
     rows = input.splitlines()
     m = len(rows)
-    for i2 in range(1, m):
-        if all(map(eq, rows[i2 - 1 :: -1], rows[i2:])):
-            return i2 * 100
+    for i in range(1, m):
+        if all(map(eq, rows[i - 1 :: -1], rows[i:])):
+            return i * 100
 
     cols = list(zip(*rows))
     n = len(cols)
-    for j2 in range(1, n):
-        if all(map(eq, cols[j2 - 1 :: -1], cols[j2:])):
-            return j2
+    for j in range(1, n):
+        if all(map(eq, cols[j - 1 :: -1], cols[j:])):
+            return j
 
 
 def part_2(input: str) -> int:
-    total = 0
-    for pattern in input.split("\n\n"):
-        pattern = list(map(list, pattern.splitlines()))
-        for i in range(len(pattern)):
-            for j in range(len(pattern[0])):
-                original = pattern[i][j]
-                changed = "." if original == "#" else "#"
-                pattern[i][j] = changed
-                num = reflection_2(pattern, i, j)
-                if num is not None:
-                    total += num
-                    break
-                pattern[i][j] = original
-            else:
-                continue
-            break
-    return total
+    return sum(map(reflection_2, input.rstrip().split("\n\n")))  # type: ignore
 
 
-def reflection_2(rows: list[list[str]], i1: int, j1: int) -> Optional[int]:
-    for i2 in range(i1 // 2 + 1, i1 + 1):
-        if all(map(eq, rows[i2 - 1 :: -1], rows[i2:])):
-            return i2 * 100
+def reflection_2(input: str) -> Optional[int]:
+    rows = input.splitlines()
+    for i in range(1, len(rows)):
+        if sum_diffs_2d(rows[i - 1 :: -1], rows[i:]) == 1:
+            return i * 100
 
-    cols = list(zip(*rows))
-    for j2 in range(j1 // 2 + 1, j1 + 1):
-        if all(map(eq, cols[j2 - 1 :: -1], cols[j2:])):
-            return j2
+    cols = tuple(zip(*rows))
+    for j in range(1, len(cols)):
+        if sum_diffs_2d(cols[j - 1 :: -1], cols[j:]) == 1:
+            return j
+
+
+def sum_diffs_2d(a: Iterable[Iterable[str]], b: Iterable[Iterable[str]]) -> int:
+    return sum(map(sum_diffs_1d, a, b))
+
+
+def sum_diffs_1d(a: Iterable[str], b: Iterable[str]) -> int:
+    return sum(map(ne, a, b))
 
 
 def test_part_1_example_1():
