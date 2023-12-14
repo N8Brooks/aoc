@@ -1,77 +1,62 @@
-from functools import partial
 from itertools import repeat
 from typing import Iterable
 
 
 def part_1(input: str) -> int:
-    platform = tuple(map(tuple, input.rstrip().splitlines()))
-    platform = slide_north(platform)
-    return total_load(platform)
-
-
-def total_load(platform: tuple[tuple[str, ...], ...]) -> int:
-    return sum(i * line.count("O") for i, line in enumerate(reversed(platform), 1))
-
-
-def slide_2d(
-    input: tuple[tuple[str, ...], ...], iter_2d, iter_1d
-) -> tuple[tuple[str, ...], ...]:
-    return tuple(iter_2d(map(slide_1d, iter_2d(input), repeat(iter_1d))))
-
-
-def transpose(input: list[list[str]]) -> Iterable[list[str]]:
-    return zip(*input)
-
-
-slide_north = partial(slide_2d, iter_2d=transpose, iter_1d=reversed)
-slide_south = partial(slide_2d, iter_2d=transpose, iter_1d=iter)
-slide_east = partial(slide_2d, iter_2d=iter, iter_1d=iter)
-slide_west = partial(slide_2d, iter_2d=iter, iter_1d=reversed)
-
-
-def slide_1d(input: tuple[str], iter_1d) -> tuple[str, ...]:
-    res: list[str] = []
-    count = 0
-    total = 0
-    for char in iter_1d(input):
-        if char == "#":
-            res.extend(repeat(".", total))
-            res.extend(repeat("O", count))
-            res.append("#")
-            count = 0
-            total = 0
-        elif char == ".":
-            total += 1
-        elif char == "O":
-            count += 1
-        else:
-            raise ValueError("Invalid character")
-    res.extend(repeat(".", total))
-    res.extend(repeat("O", count))
-    return tuple(iter_1d(res))
+    east = input.splitlines()
+    north = slide_2d(east)
+    west = tuple(zip(*north))
+    return total_load(west[::-1])
 
 
 def part_2(input: str) -> int:
     platform = tuple(map(tuple, input.splitlines()))
     i = ITERATIONS
-    memo = {}
-    for i in reversed(range(ITERATIONS)):
-        for slide in (slide_north, slide_west, slide_south, slide_east):
-            platform = slide(platform)
+    memo = {platform: i}
+    for i in reversed(range(i)):
+        platform = cycle(platform)
         if platform in memo:
-            cycle_len = memo[platform] - i
-            i %= cycle_len
+            i %= memo[platform] - i
             break
         memo[platform] = i
-
     for _ in range(i):
-        for slide in (slide_north, slide_west, slide_south, slide_east):
-            platform = slide(platform)
-
+        platform = cycle(platform)
     return total_load(platform)
 
 
 ITERATIONS = 1_000_000_000
+
+
+def cycle(platform: tuple[tuple[str, ...], ...]) -> tuple[tuple[str, ...], ...]:
+    north = slide_2d(platform)
+    west = slide_2d(north)
+    south = slide_2d(west)
+    east = slide_2d(south)
+    return tuple(map(tuple, east))
+
+
+def slide_2d(x):
+    return (slide_1d(reversed(row)) for row in zip(*x))
+
+
+def slide_1d(it: Iterable[str]) -> Iterable[str]:
+    round = 0
+    for char in it:
+        if char == "#":
+            yield from repeat("O", round)
+            yield "#"
+            round = 0
+        elif char == ".":
+            yield "."
+        elif char == "O":
+            round += 1
+        else:
+            raise ValueError("Invalid character")
+    yield from repeat("O", round)
+
+
+def total_load(east: tuple[tuple[str, ...], ...]) -> int:
+    return sum(i * col.count("O") for i, col in enumerate(reversed(east), 1))
 
 
 def test_part_1_example_1():
