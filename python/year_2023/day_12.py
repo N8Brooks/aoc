@@ -1,8 +1,6 @@
 from functools import cache
 from itertools import repeat
 
-# Based on: https://github.com/morgoth1145/advent-of-code/blob/6c4ef0a7f27f14993bc937ab8a7fabe736f73fe6/2023/12/solution.py
-
 
 def part_1(input: str) -> int:
     return sum(arrangements(line, 1) for line in input.rstrip().splitlines())
@@ -14,25 +12,27 @@ def part_2(input: str) -> int:
 
 def arrangements(line: str, r: int) -> int:
     @cache
-    def visit(conditions: str, groups: tuple[int, ...]) -> int:
-        group = groups[0]
-        groups = groups[1:]
-        j = len(groups) + sum(groups)
+    def visit(condition_idx: int, group_idx: int) -> int:
+        group = groups[group_idx]
+        group_idx += 1
+        j = sum(groups[group_idx:]) + n - group_idx
         count = 0
-        for i in range(len(conditions) - j - group + 1):
+        for i in range(condition_idx, m - j - group + 1):
             if "." not in conditions[i : i + group]:
-                if not groups:
+                if group_idx == n:
                     count += "#" not in conditions[i + group :]
                 elif conditions[i + group] != "#":
-                    count += visit(conditions[i + group + 1 :], groups)
+                    count += visit(i + group + 1, group_idx)
             if conditions[i] == "#":
                 break
         return count
 
-    conditions, _, groups = line.partition(" ")
+    conditions, _, groups_str = line.partition(" ")
     conditions = "?".join(repeat(conditions, r))
-    groups = tuple(map(int, groups.split(","))) * r
-    return visit(conditions, groups)
+    m = len(conditions)
+    groups = tuple(map(int, groups_str.split(","))) * r
+    n = len(groups)
+    return visit(0, 0)
 
 
 def test_part_1_example_1():
