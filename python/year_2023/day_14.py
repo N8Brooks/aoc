@@ -1,16 +1,15 @@
-from itertools import repeat
 from typing import Iterable
 
 
 def part_1(input: str) -> int:
-    east = input.splitlines()
-    north = slide_2d(east)
-    west = tuple(zip(*north))
-    return total_load(west[::-1])
+    platform = input.splitlines()
+    platform = slide_2d(platform)
+    platform = tuple(zip(*platform))
+    return total_load(platform)
 
 
 def part_2(input: str) -> int:
-    platform = tuple(map(tuple, input.splitlines()))
+    platform = tuple(input.splitlines())
     i = ITERATIONS
     memo = {platform: i}
     for i in reversed(range(i)):
@@ -21,42 +20,44 @@ def part_2(input: str) -> int:
         memo[platform] = i
     for _ in range(i):
         platform = cycle(platform)
-    return total_load(platform)
+    return total_load(platform[::-1])
 
 
 ITERATIONS = 1_000_000_000
 
 
-def cycle(platform: tuple[tuple[str, ...], ...]) -> tuple[tuple[str, ...], ...]:
+def cycle(platform: tuple[str, ...]) -> tuple[str, ...]:
     north = slide_2d(platform)
     west = slide_2d(north)
     south = slide_2d(west)
     east = slide_2d(south)
-    return tuple(map(tuple, east))
+    return tuple(east)
 
 
-def slide_2d(x):
-    return (slide_1d(reversed(row)) for row in zip(*x))
+def slide_2d(x: Iterable[str]) -> Iterable[str]:
+    return map(slide_1d, zip(*x))
 
 
-def slide_1d(it: Iterable[str]) -> Iterable[str]:
-    round = 0
+def slide_1d(it: str) -> str:
+    empty = 0
+    res = ""
     for char in it:
         if char == "#":
-            yield from repeat("O", round)
-            yield "#"
-            round = 0
+            res += "." * empty
+            res += "#"
+            empty = 0
         elif char == ".":
-            yield "."
+            empty += 1
         elif char == "O":
-            round += 1
+            res += "O"
         else:
             raise ValueError("Invalid character")
-    yield from repeat("O", round)
+    res += "." * empty
+    return res[::-1]
 
 
-def total_load(east: tuple[tuple[str, ...], ...]) -> int:
-    return sum(i * col.count("O") for i, col in enumerate(reversed(east), 1))
+def total_load(platform: tuple[str, ...]) -> int:
+    return sum(i * row.count("O") for i, row in enumerate(platform, 1))
 
 
 def test_part_1_example_1():
