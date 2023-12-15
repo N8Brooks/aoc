@@ -15,7 +15,7 @@ pub fn part_2(input: &str) -> usize {
             panic!("Invalid operation: {}", operation);
         }
     }
-    return hash_map.focussing_power();
+    hash_map.focussing_power()
 }
 
 fn hash(input: &str) -> usize {
