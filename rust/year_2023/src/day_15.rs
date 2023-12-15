@@ -5,7 +5,7 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> usize {
-    let mut hash_map = HashMap::new();
+    let mut hash_map = HashMap::default();
     for operation in input.trim_end().split(',') {
         if let Some(label) = operation.strip_suffix('-') {
             hash_map.remove(label);
@@ -27,42 +27,66 @@ fn hash(input: &str) -> usize {
 
 #[derive(Debug)]
 struct HashMap<'a> {
-    buckets: [Vec<(&'a str, usize)>; 256],
+    buckets: [Bucket<'a>; 256],
+}
+
+impl Default for HashMap<'_> {
+    fn default() -> Self {
+        Self {
+            buckets: array::from_fn(|_| Bucket::default()),
+        }
+    }
 }
 
 impl<'a> HashMap<'a> {
-    fn new() -> Self {
-        Self {
-            buckets: array::from_fn(|_| Vec::new()),
-        }
-    }
-
     fn insert(&mut self, key: &'a str, value: usize) {
-        let i = hash(key);
-        let bucket = &mut self.buckets[i];
-        if let Some(j) = bucket.iter().position(|&(k, _)| k == key) {
-            bucket[j] = (key, value);
-        } else {
-            bucket.push((key, value));
-        }
+        self.find(key).insert(key, value);
     }
 
     fn remove(&mut self, key: &'a str) {
-        let i = hash(key);
-        let bucket = &mut self.buckets[i];
-        if let Some(j) = bucket.iter().position(|&(k, _)| k == key) {
-            bucket.remove(j);
-        }
+        self.find(key).remove(key);
+    }
+
+    fn find(&mut self, key: &str) -> &mut Bucket<'a> {
+        &mut self.buckets[hash(key)]
     }
 
     fn focussing_power(&self) -> usize {
         (1..)
             .zip(&self.buckets)
-            .flat_map(|(i, bucket)| {
-                (1..)
-                    .zip(bucket)
-                    .map(move |(j, (_, focal_length))| i * j * focal_length)
-            })
+            .map(|(i, bucket)| i * bucket.focussing_power())
+            .sum()
+    }
+}
+
+#[derive(Debug, Default)]
+struct Bucket<'a> {
+    items: Vec<(&'a str, usize)>,
+}
+
+impl<'a> Bucket<'a> {
+    fn insert(&mut self, key: &'a str, value: usize) {
+        if let Some(i) = self.index(key) {
+            self.items[i] = (key, value)
+        } else {
+            self.items.push((key, value))
+        }
+    }
+
+    fn remove(&mut self, key: &'a str) {
+        if let Some(i) = self.index(key) {
+            self.items.remove(i);
+        }
+    }
+
+    fn index(&self, key: &str) -> Option<usize> {
+        self.items.iter().position(|&(k, _)| k == key)
+    }
+
+    fn focussing_power(&self) -> usize {
+        (1..)
+            .zip(&self.items)
+            .map(|(i, (_, focal_length))| i * focal_length)
             .sum()
     }
 }
