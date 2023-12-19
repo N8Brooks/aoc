@@ -1,15 +1,12 @@
-from typing import Callable
+from typing import Iterable
 
 
 # https://www.reddit.com/r/adventofcode/comments/18l0qtr/comment/kduuicl/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 
 
-def compute_area(
-    input: str, parse_instruction: Callable[[str], tuple[int, int, int]]
-) -> int:
+def compute_area(instructions: Iterable[tuple[int, int, int]]) -> int:
     y = perimiter = area = 0
-    for line in input.splitlines():
-        dx, dy, distance = parse_instruction(line)
+    for dx, dy, distance in instructions:
         y += dy * distance
         perimiter += distance
         area += y * (distance * dx)
@@ -17,7 +14,7 @@ def compute_area(
 
 
 def part_1(input: str) -> int:
-    return compute_area(input, parse_instruction_1)
+    return compute_area(map(parse_instruction_1, input.splitlines()))
 
 
 def parse_instruction_1(line: str) -> tuple[int, int, int]:
@@ -32,12 +29,11 @@ def parse_instruction_1(line: str) -> tuple[int, int, int]:
             dy = 1
         case "D":
             dy = -1
-    distance = int(distance_str)
-    return dx, dy, distance
+    return dx, dy, int(distance_str)
 
 
 def part_2(input: str) -> int:
-    return compute_area(input, parse_instruction_2)
+    return compute_area(map(parse_instruction_2, input.splitlines()))
 
 
 def parse_instruction_2(line: str) -> tuple[int, int, int]:
@@ -52,8 +48,7 @@ def parse_instruction_2(line: str) -> tuple[int, int, int]:
             dx = -1
         case "3":
             dy = 1
-    distance = int(color[2:7], 16)
-    return dx, dy, distance
+    return dx, dy, int(color[2:7], 16)
 
 
 def test_part_1_example_1():
