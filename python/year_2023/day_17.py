@@ -68,10 +68,10 @@ def part_2(input: str) -> int:
                 lambda j: 0 <= j < n,
                 accumulate(repeat(dj2, 9), initial=j1 + dj2),
             )
-            indexes = list(zip(row_indexes, col_indexes))
-            it_dist = accumulate((grid[i][j] for i, j in indexes), initial=dist1)
-            next(it_dist)  # skip init
-            for (i2, j2), dist2 in islice(zip(indexes, it_dist), 3, None):
+            indexes = zip(row_indexes, col_indexes)
+            dist2 = dist1 + sum(grid[i2][j2] for i2, j2 in islice(indexes, 3))
+            for i2, j2 in indexes:
+                dist2 += grid[i2][j2]
                 if dists[i2][j2].get(delta2, inf) > dist2:
                     dists[i2][j2][(delta2)] = dist2
                     fscore2 = dist2 + fscores[i2][j2]
