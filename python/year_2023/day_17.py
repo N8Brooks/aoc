@@ -6,16 +6,17 @@ from operator import ne
 
 def part_1(input: str) -> int:
     grid = [list(map(int, line)) for line in input.splitlines()]
+    fscores = get_fscores(grid)
     m = len(grid)
     n = len(grid[0])
-    queue: list[tuple[int, tuple[int, int], tuple[tuple[int, int], ...]]] = [
-        (0, (0, 0), ((0, 0),))
+    queue: list[tuple[int, int, tuple[int, int], tuple[tuple[int, int], ...]]] = [
+        (fscores[0][0], 0, (0, 0), ((0, 0),))
     ]
     dists = [[{} for _ in range(n)] for _ in range(m)]
     dists[0][0][((0, 0),)] = 0
     target = (m - 1, n - 1)
-    while queue[0][1] != target:
-        dist1, (i1, j1), path1 = heappop(queue)
+    while queue[0][2] != target:
+        _, dist1, (i1, j1), path1 = heappop(queue)
         if dist1 > dists[i1][j1][path1]:
             continue
         for delta2 in ((1, 0), (0, 1), (-1, 0), (0, -1)):
@@ -24,31 +25,33 @@ def part_1(input: str) -> int:
             j2 = j1 + dj
             if not (0 <= i2 < m and 0 <= j2 < n):
                 continue
+            if path1[-1] == (-di, -dj) or all(delta1 == delta2 for delta1 in path1):
+                continue
             path2 = path1[-2:] + (delta2,)
             dist2 = dist1 + grid[i2][j2]
-            if (
-                path1[-1] != (-di, -dj)
-                and any(delta1 != delta2 for delta1 in path1)
-                and dist2 < dists[i2][j2].get(path2, inf)
-            ):
+            if dist2 < dists[i2][j2].get(path2, inf):
                 dists[i2][j2][path2] = dist2
+                fscore = dist2 + fscores[i2][j2]
                 heappush(
                     queue,
-                    (dist2, (i2, j2), path2),
+                    (fscore, dist2, (i2, j2), path2),
                 )
-    return queue[0][0]
+    return queue[0][1]
 
 
 def part_2(input: str) -> int:
     grid = [list(map(int, line)) for line in input.splitlines()]
+    fscores = get_fscores(grid)
     m = len(grid)
     n = len(grid[0])
-    queue: list[tuple[int, tuple[int, int], tuple[int, int]]] = [(0, (0, 0), (0, 0))]
+    queue: list[tuple[int, int, tuple[int, int], tuple[int, int]]] = [
+        (fscores[0][0], 0, (0, 0), (0, 0))
+    ]
     dists = [[{} for _ in range(n)] for _ in range(m)]
     dists[0][0][(0, 0)] = 0
     target = (m - 1, n - 1)
-    while queue[0][1] != target:
-        dist1, (i1, j1), delta1 = heappop(queue)
+    while queue[0][2] != target:
+        _, dist1, (i1, j1), delta1 = heappop(queue)
         if dist1 > dists[i1][j1][delta1]:
             continue
         for delta2 in (
@@ -71,11 +74,33 @@ def part_2(input: str) -> int:
             for (i2, j2), dist2 in islice(zip(indexes, it_dist), 3, None):
                 if dists[i2][j2].get(delta2, inf) > dist2:
                     dists[i2][j2][(delta2)] = dist2
+                    fscore2 = dist2 + fscores[i2][j2]
                     heappush(
                         queue,
-                        (dist2, (i2, j2), delta2),
+                        (fscore2, dist2, (i2, j2), delta2),
                     )
-    return queue[0][0]
+    return queue[0][1]
+
+
+def get_fscores(grid: list[list[int]]) -> list[list[int]]:
+    m = len(grid)
+    n = len(grid[0])
+    i = m - 1
+    j = n - 1
+    fscores = [[-1 for _ in range(n)] for _ in range(m)]
+    queue = [(grid[i][j], i, j)]
+    while queue:
+        fscore1, i1, j1 = heappop(queue)
+        for di, dj in ((1, 0), (0, 1), (-1, 0), (0, -1)):
+            i2 = i1 + di
+            j2 = j1 + dj
+            if not (0 <= i2 < m and 0 <= j2 < n):
+                continue
+            if fscores[i2][j2] == -1:
+                fscore2 = fscore1 + grid[i2][j2]
+                fscores[i2][j2] = fscore2
+                heappush(queue, (fscore2, i2, j2))
+    return fscores
 
 
 def test_part_1_example_1():
