@@ -19,7 +19,7 @@ def part_1(input: str) -> int:
         _, dist1, (i1, j1), path1 = heappop(queue)
         if dist1 > dists[i1][j1][path1]:
             continue
-        for delta2 in ((1, 0), (0, 1), (-1, 0), (0, -1)):
+        for delta2 in DIRECTIONS:
             di, dj = delta2
             i2 = i1 + di
             j2 = j1 + dj
@@ -56,7 +56,7 @@ def part_2(input: str) -> int:
             continue
         for delta2 in (
             delta2
-            for delta2 in ((1, 0), (0, 1), (-1, 0), (0, -1))
+            for delta2 in DIRECTIONS
             if any(map(ne, map(bool, delta1), map(bool, delta2)))
         ):
             di2, dj2 = delta2
@@ -91,7 +91,7 @@ def get_fscores(grid: list[list[int]]) -> list[list[int]]:
     queue = [(grid[i][j], i, j)]
     while queue:
         fscore1, i1, j1 = heappop(queue)
-        for di, dj in ((1, 0), (0, 1), (-1, 0), (0, -1)):
+        for di, dj in DIRECTIONS:
             i2 = i1 + di
             j2 = j1 + dj
             if not (0 <= i2 < m and 0 <= j2 < n):
@@ -101,6 +101,9 @@ def get_fscores(grid: list[list[int]]) -> list[list[int]]:
                 fscores[i2][j2] = fscore2
                 heappush(queue, (fscore2, i2, j2))
     return fscores
+
+
+DIRECTIONS = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
 
 def test_part_1_example_1():
