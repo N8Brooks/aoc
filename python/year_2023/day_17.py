@@ -31,10 +31,10 @@ def part_1(input: str) -> int:
             dist2 = dist1 + grid[i2][j2]
             if dist2 < dists[i2][j2].get(path2, inf):
                 dists[i2][j2][path2] = dist2
-                fscore = dist2 + fscores[i2][j2]
+                fscore2 = dist2 + fscores[i2][j2]
                 heappush(
                     queue,
-                    (fscore, dist2, (i2, j2), path2),
+                    (fscore2, dist2, (i2, j2), path2),
                 )
     return queue[0][1]
 
