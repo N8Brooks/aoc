@@ -1,56 +1,59 @@
-def part_1(input: str) -> int:
-    loc = 0j
-    edges = set()
+from typing import Callable
+
+
+# https://www.reddit.com/r/adventofcode/comments/18l0qtr/comment/kduuicl/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+
+
+def compute_area(
+    input: str, parse_instruction: Callable[[str], tuple[int, int, int]]
+) -> int:
+    y = perimiter = area = 0
     for line in input.splitlines():
-        direction, distance = parse_instruction_1(line)
-        for _ in range(distance):
-            loc += direction
-            edges.add(loc)
-
-    min_x = min(int(loc.real) for loc in edges) - 1
-    max_x = max(int(loc.real) for loc in edges) + 2
-    min_y = min(int(loc.imag) for loc in edges) - 1
-    max_y = max(int(loc.imag) for loc in edges) + 2
-
-    outside = set()
-
-    stack = [min_x + min_y * 1j]
-
-    while stack:
-        loc = stack.pop()
-        outside.add(loc)
-        for delta in (1, -1, 1j, -1j):
-            new_loc = loc + delta
-            if (
-                min_x <= new_loc.real < max_x
-                and min_y <= new_loc.imag < max_y
-                and new_loc not in edges
-                and new_loc not in outside
-            ):
-                stack.append(new_loc)
-
-    return (max_y - min_y) * (max_x - min_x) - len(outside)
+        dx, dy, distance = parse_instruction(line)
+        y += dy * distance
+        perimiter += distance
+        area += y * (distance * dx)
+    return area + perimiter // 2 + 1
 
 
-def parse_instruction_1(line: str) -> tuple[complex, int]:
+def part_1(input: str) -> int:
+    return compute_area(input, parse_instruction_1)
+
+
+def parse_instruction_1(line: str) -> tuple[int, int, int]:
     direction_str, distance_str, _ = line.split()
+    dx = dy = 0
     match direction_str:
         case "R":
-            direction = 1
+            dx = 1
         case "L":
-            direction = -1
+            dx = -1
         case "U":
-            direction = -1j
+            dy = 1
         case "D":
-            direction = 1j
-        case _:
-            raise ValueError(f"Unknown direction {direction_str}")
+            dy = -1
     distance = int(distance_str)
-    return direction, distance
+    return dx, dy, distance
 
 
 def part_2(input: str) -> int:
-    return 0
+    return compute_area(input, parse_instruction_2)
+
+
+def parse_instruction_2(line: str) -> tuple[int, int, int]:
+    _, _, color = line.split()
+    dx = dy = 0
+    match color[7]:
+        case "0":
+            dx = 1
+        case "1":
+            dy = -1
+        case "2":
+            dx = -1
+        case "3":
+            dy = 1
+    distance = int(color[2:7], 16)
+    return dx, dy, distance
 
 
 def test_part_1_example_1():
@@ -63,12 +66,12 @@ def test_part_1_input():
 
 
 def test_part_2_example_1():
-    assert part_2(EXAMPLE_1) == 0
+    assert part_2(EXAMPLE_1) == 952408144115
 
 
 def test_part_2_input():
     with open("../testdata/year_2023/day_18.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 0
+        assert part_2(f.read().rstrip()) == 104454050898331
 
 
 EXAMPLE_1 = """R 6 (#70c710)
