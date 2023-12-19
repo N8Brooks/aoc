@@ -84,7 +84,7 @@ def test_part_1_example_1():
 
 def test_part_1_input():
     with open("../testdata/year_2023/day_17.txt", "r") as f:
-        assert part_1(f.read()) == 758
+        assert part_1(f.read().rstrip()) == 758
 
 
 def test_part_2_example_1():
@@ -93,7 +93,7 @@ def test_part_2_example_1():
 
 def test_part_2_input():
     with open("../testdata/year_2023/day_17.txt", "r") as f:
-        assert part_2(f.read()) == 892
+        assert part_2(f.read().rstrip()) == 892
 
 
 EXAMPLE_1 = """2413432311323
