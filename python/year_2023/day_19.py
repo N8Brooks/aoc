@@ -33,31 +33,36 @@ def part_2(input: str) -> int:
     workflows_str, _, _ = input.partition("\n\n")
     workflows = parse_workflows(workflows_str)
 
-    def distinct_combinations(name: str, starts1: list[int], ends1: list[int]) -> int:
-        if name == "A":
-            return prod(map(sub, ends1, starts1))
-        elif name == "R":
-            return 0
+    total = 0
+    stack: list[tuple[str, list[int], list[int]]] = [("in", [1] * 4, [4001] * 4)]
 
-        total = 0
+    while stack:
+        name, starts1, ends1 = stack.pop()
+
+        if name == "A":
+            total += prod(map(sub, ends1, starts1))
+            continue
+        elif name == "R":
+            continue
+
         items, default = workflows[name]
         for index, condition, value, result in items:
             if condition == ">":
                 if starts1[index] < value <= ends1[index]:
                     starts2 = starts1[:]
                     starts2[index] = value + 1
-                    total += distinct_combinations(result, starts2, ends1[:])
+                    stack.append((result, starts2, ends1[:]))
                     ends1[index] = value + 1
             else:
                 if starts1[index] < value <= ends1[index]:
                     ends2 = ends1[:]
                     ends2[index] = value
-                    total += distinct_combinations(result, starts1[:], ends2)
+                    stack.append((result, starts1[:], ends2))
                     starts1[index] = value
 
-        return total + distinct_combinations(default, starts1, ends1)
+        stack.append((default, starts1, ends1))
 
-    return distinct_combinations("in", [1] * 4, [4001] * 4)
+    return total
 
 
 def parse_workflows(input: str):
