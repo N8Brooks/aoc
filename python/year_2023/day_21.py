@@ -6,43 +6,40 @@ from typing import Iterable
 
 
 def part_1(input: str) -> int:
-    return nth(count_reachable_plots_1(input), 64)  # type: ignore
+    return nth(iter_reachable_plots(input), 64)
 
 
-def count_reachable_plots_1(input: str) -> Iterable[int]:
+def iter_reachable_plots(input: str) -> Iterable[int]:
     lines = input.splitlines()
     n = len(lines)
     a = set()
     x = 0
-    init = next(
-        (i, j)
-        for i, line in enumerate(lines)
-        for j, char in enumerate(line)
-        if char == "S"
-    )
-    b = {init}
+    b = {(n // 2, n // 2)}
     y = 1
     yield y
     while True:
-        c = {
-            (i2, j2)
-            for i1, j1 in b
-            for i2, j2 in ((i1, j1 + 1), (i1, j1 - 1), (i1 + 1, j1), (i1 - 1, j1))
-            if lines[i2 % n][j2 % n] != "#"
-        } - a
-        a, b = (b, c)
+        a, b = (
+            b,
+            {
+                (i2, j2)
+                for i1, j1 in b
+                for i2, j2 in ((i1, j1 + 1), (i1, j1 - 1), (i1 + 1, j1), (i1 - 1, j1))
+                if lines[i2 % n][j2 % n] != "#"
+            }
+            - a,
+        )
         x, y = y, x + len(b)
         yield y
 
 
 def part_2(input: str) -> int:
-    return count_reachable_plots_2(input, 26501365)
+    return count_reachable_plots(input, 26501365)
 
 
-def count_reachable_plots_2(input: str, steps: int) -> int:
+def count_reachable_plots(input: str, steps: int) -> int:
     n = input.count("\n") + 1
     q, r = divmod(steps, n)
-    it = count_reachable_plots_1(input)
+    it = iter_reachable_plots(input)
     b0 = nth(it, r)
     b1 = nth(it, n - 1)
     b2 = nth(it, n - 1)
@@ -57,7 +54,7 @@ def nth(iterable, n):
 
 
 def test_part_1_example_1():
-    assert nth(count_reachable_plots_1(EXAMPLE_1), 6) == 16
+    assert nth(iter_reachable_plots(EXAMPLE_1), 6) == 16
 
 
 def test_part_1_input():
