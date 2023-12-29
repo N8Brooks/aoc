@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import deque
-from itertools import repeat
+from itertools import count, repeat
+from math import lcm
 from typing import Iterable
 
 
@@ -25,7 +26,33 @@ def part_1(input: str) -> int:
 
 
 def part_2(input: str) -> int:
-    return 0
+    modules = Module.parse_modules(input)
+    conj = {}
+    for presses in count(1):
+        stack: deque[tuple[str, int, str]] = deque([("button", 0, "broadcaster")])
+        while stack:
+            parent, signal, child = stack.popleft()
+            if child == "rx":
+                continue
+            module = modules[child]
+            if (
+                signal == 0
+                and isinstance(module, Conjunction)
+                and len(module.memory) == 1
+                and "rx" not in module.memory
+                and child not in conj
+            ):
+                conj[child] = presses
+                if len(conj) == 4:
+                    break
+            stack.extend(
+                (child, signal, grandchild)
+                for grandchild, signal in module.receive(parent, signal)
+            )
+        else:
+            continue
+        break
+    return lcm(*list(conj.values()))
 
 
 class Module(ABC):
@@ -81,7 +108,7 @@ class Conjunction(Module):
 
     def receive(self, name: str, signal: int):
         self.memory[name] = signal
-        signal = 0 if all(self.memory.values()) else 1
+        signal = 1 - all(self.memory.values())
         return zip(self.outputs, repeat(signal))
 
     def add_input(self, name: str):
@@ -109,9 +136,13 @@ def test_part_1_input():
         assert part_1(f.read().rstrip()) == 788848550
 
 
+# def test_part_2_example_2():
+#     assert part_2(EXAMPLE_2.replace("output", "rx")) == 1
+
+
 def test_part_2_input():
     with open("../testdata/year_2023/day_20.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 0
+        assert part_2(f.read().rstrip()) == 228300182686739
 
 
 EXAMPLE_1 = """broadcaster -> a, b, c
