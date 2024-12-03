@@ -6,7 +6,7 @@ struct RegisterXParser<'a> {
     register_x: i64,
 }
 
-impl<'a> Iterator for RegisterXParser<'a> {
+impl Iterator for RegisterXParser<'_> {
     type Item = Vec<i64>;
 
     fn next(&mut self) -> Option<Self::Item> {

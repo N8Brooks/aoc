@@ -52,7 +52,7 @@ fn simulate_plants(input: &str) -> impl Iterator<Item = isize> {
                     }
                 })
                 .collect();
-            while state.last().map_or(false, |is_plant| !is_plant.0) {
+            while state.last().is_some_and(|is_plant| !is_plant.0) {
                 state.pop();
             }
             Some(sum_plant_indexes(offset, state))

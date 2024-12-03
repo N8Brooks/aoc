@@ -1,6 +1,4 @@
-#![feature(isqrt)]
 #![feature(int_roundings)]
-#![feature(lazy_cell)]
 
 pub mod day_01;
 

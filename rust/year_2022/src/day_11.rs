@@ -1,5 +1,4 @@
 use lazy_static::lazy_static;
-use num::Integer;
 use regex::Regex;
 use std::collections::VecDeque;
 
@@ -38,7 +37,7 @@ impl Monkey {
     }
 
     fn get_test_index(&self, item: u64) -> usize {
-        if item.is_multiple_of(&self.divisor) {
+        if item.is_multiple_of(self.divisor) {
             self.true_monkey_index
         } else {
             self.false_monkey_index

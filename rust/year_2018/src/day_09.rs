@@ -1,7 +1,6 @@
 use std::collections::VecDeque;
 
 use lazy_static::lazy_static;
-use num::Integer;
 use regex::Regex;
 
 pub fn part_1(input: &str) -> usize {
@@ -29,7 +28,7 @@ fn winning_score(n_players: usize, last_marble: usize) -> usize {
     let mut player_scores = vec![0; n_players];
     let mut marbles = VecDeque::from([0]);
     for marble in 1..=last_marble {
-        if marble.is_multiple_of(&23) {
+        if marble.is_multiple_of(23) {
             marbles.rotate_right(7);
             let player_index = (marble - 1) % n_players;
             player_scores[player_index] += marble + marbles.pop_back().unwrap();

@@ -8,7 +8,7 @@ pub fn part_1(input: &str) -> usize {
         .iter()
         .enumerate()
         .flat_map(|(i, line)| line.iter().enumerate().map(move |(j, byte)| (i, j, byte)))
-        .filter_map(|(i, j, &byte)| {
+        .filter(|&(i, j, &byte)| {
             [
                 i.checked_sub(1).map(|i| (i, j)),
                 (i + 1 < m).then_some((i + 1, j)),
@@ -18,8 +18,8 @@ pub fn part_1(input: &str) -> usize {
             .into_iter()
             .flatten()
             .all(|(i, j)| input[i][j] > byte)
-            .then(|| usize::from(byte - b'0' + 1))
         })
+        .map(|(_, _, &byte)| usize::from(byte - b'0' + 1))
         .sum()
 }
 
