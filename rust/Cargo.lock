@@ -834,6 +834,7 @@ name = "year_2024"
 version = "0.1.0"
 dependencies = [
  "itertools 0.13.0",
+ "num",
  "regex",
  "test-case 3.3.1",
 ]
