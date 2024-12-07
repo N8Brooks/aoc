@@ -3,6 +3,10 @@ use itertools::Itertools as _;
 use num::complex::Complex;
 
 pub fn part_1(input: &str) -> usize {
+    fun_name(input).len()
+}
+
+fn fun_name(input: &str) -> HashSet<Complex<isize>> {
     let (mut guard, obstacles, (m, n)) = parse_input(input);
     let mut direction = Complex::new(-1, 0);
     let mut positions = HashSet::new();
@@ -19,31 +23,26 @@ pub fn part_1(input: &str) -> usize {
             positions.insert(guard);
         }
     }
-    positions.len()
+    positions
 }
 
 pub fn part_2(input: &str) -> usize {
-    let (guard, mut obstacles, (m, n)) = parse_input(input);
-    (0..m)
-        .cartesian_product(0..n)
-        .filter(|&(i, j)| {
+    let (guard, obstacles, (m, n)) = parse_input(input);
+    fun_name(input)
+        .into_iter()
+        .filter(|coord| {
             let mut guard = guard;
             let mut direction = Complex::new(-1, 0);
             let mut positions = HashSet::new();
-            if !obstacles.insert(Complex::new(i, j)) {
-                return false;
-            }
             loop {
                 if !positions.insert((guard, direction)) {
-                    obstacles.remove(&Complex::new(i, j));
                     return true;
                 }
                 guard += direction;
                 if !(0..m).contains(&guard.re) || !(0..n).contains(&guard.im) {
-                    obstacles.remove(&Complex::new(i, j));
                     return false;
                 }
-                if obstacles.contains(&guard) {
+                if &guard == coord || obstacles.contains(&guard) {
                     guard -= direction;
                     direction *= Complex::new(0, -1);
                 }
