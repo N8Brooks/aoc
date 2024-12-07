@@ -1,4 +1,4 @@
-use itertools::Itertools;
+use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     let (lefts, rights) = parse_input(input);

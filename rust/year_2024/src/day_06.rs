@@ -1,5 +1,5 @@
 use hashbrown::HashSet;
-use itertools::Itertools;
+use itertools::Itertools as _;
 use num::complex::Complex;
 
 pub fn part_1(input: &str) -> usize {

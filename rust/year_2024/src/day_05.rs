@@ -1,6 +1,6 @@
 use hashbrown::{HashMap, HashSet};
 
-use itertools::Itertools;
+use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     let (rules, pages) = parse_input(input);
