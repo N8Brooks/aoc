@@ -1,83 +1,71 @@
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
-    let (antennas, (m, n)) = parse_input(input);
-    antennas
-        .flat_map(|v| {
-            v.into_iter()
-                .tuple_combinations()
-                .flat_map(|((i1, j1), (i2, j2))| {
-                    let di = i2 - i1;
-                    let dj = j2 - j1;
-                    let [is1, is2]: [Box<dyn Iterator<Item = isize>>; 2] = if di >= 0 {
-                        let di = di as usize;
-                        [
-                            Box::new((0..=i1).rev().step_by(di).skip(1).take(1)),
-                            Box::new((i2..m).step_by(di).skip(1).take(1)),
-                        ]
-                    } else {
-                        let di = -di as usize;
-                        [
-                            Box::new((i1..m).step_by(di).skip(1).take(1)),
-                            Box::new((0..=i2).rev().step_by(di).skip(1).take(1)),
-                        ]
-                    };
-                    let [js1, js2]: [Box<dyn Iterator<Item = isize>>; 2] = if dj >= 0 {
-                        let dj = dj as usize;
-                        [
-                            Box::new((0..=j1).rev().step_by(dj).skip(1).take(1)),
-                            Box::new((j2..n).step_by(dj).skip(1).take(1)),
-                        ]
-                    } else {
-                        let dj = -dj as usize;
-                        [
-                            Box::new((j1..n).step_by(dj).skip(1).take(1)),
-                            Box::new((0..=j2).rev().step_by(dj).skip(1).take(1)),
-                        ]
-                    };
-                    [is1.into_iter().zip(js1), is2.into_iter().zip(js2)]
-                        .into_iter()
-                        .flatten()
-                })
-        })
-        .unique()
-        .count()
+    let (antennas, n) = parse_input(input);
+    let inc_range = |x1: usize, x2: usize, step: usize| -> [Box<dyn Iterator<Item = usize>>; 2] {
+        [
+            Box::new((x1.checked_sub(step)).into_iter()),
+            Box::new((x2 + step < n).then(|| x2 + step).into_iter()),
+        ]
+    };
+    let dec_range = |x1: usize, x2: usize, step: usize| -> [Box<dyn Iterator<Item = usize>>; 2] {
+        [
+            Box::new((x1 + step < n).then(|| x1 + step).into_iter()),
+            Box::new(x2.checked_sub(step).into_iter()),
+        ]
+    };
+    count_antinodes(antennas, inc_range, dec_range)
 }
 
 pub fn part_2(input: &str) -> usize {
-    let (antennas, (m, n)) = parse_input(input);
+    let (antennas, n) = parse_input(input);
+    let inc_range = |x1: usize, x2: usize, step: usize| -> [Box<dyn Iterator<Item = usize>>; 2] {
+        [
+            Box::new((0..=x1).rev().step_by(step)),
+            Box::new((x2..n).step_by(step)),
+        ]
+    };
+    let dec_range = |x1: usize, x2: usize, step: usize| -> [Box<dyn Iterator<Item = usize>>; 2] {
+        [
+            Box::new((x1..n).step_by(step)),
+            Box::new((0..=x2).rev().step_by(step)),
+        ]
+    };
+    count_antinodes(antennas, inc_range, dec_range)
+}
+
+fn parse_input(input: &str) -> (impl Iterator<Item = Vec<(usize, usize)>>, usize) {
+    let mat = input.lines().collect_vec();
+    let n = mat.len(); // Assume square matrix
+    let group_map = mat
+        .into_iter()
+        .enumerate()
+        .flat_map(|(i, line)| line.bytes().enumerate().map(move |(j, c)| (c, (i, j))))
+        .filter(|(c, _)| *c != b'.')
+        .into_group_map()
+        .into_values();
+    (group_map, n)
+}
+
+fn count_antinodes(
+    antennas: impl Iterator<Item = Vec<(usize, usize)>>,
+    inc_range: impl Fn(usize, usize, usize) -> [Box<dyn Iterator<Item = usize>>; 2],
+    dec_range: impl Fn(usize, usize, usize) -> [Box<dyn Iterator<Item = usize>>; 2],
+) -> usize {
     antennas
         .flat_map(|v| {
             v.into_iter()
                 .tuple_combinations()
                 .flat_map(|((i1, j1), (i2, j2))| {
-                    let di = i2 - i1;
-                    let dj = j2 - j1;
-                    let [is1, is2]: [Box<dyn Iterator<Item = isize>>; 2] = if di >= 0 {
-                        let di = di as usize;
-                        [
-                            Box::new((0..=i1).rev().step_by(di)),
-                            Box::new((i2..m).step_by(di)),
-                        ]
+                    let [is1, is2] = if i2 > i1 {
+                        inc_range(i1, i2, i2 - i1)
                     } else {
-                        let di = -di as usize;
-                        [
-                            Box::new((i1..m).step_by(di)),
-                            Box::new((0..=i2).rev().step_by(di)),
-                        ]
+                        dec_range(i1, i2, i1 - i2)
                     };
-                    let [js1, js2]: [Box<dyn Iterator<Item = isize>>; 2] = if dj >= 0 {
-                        let dj = dj as usize;
-                        [
-                            Box::new((0..=j1).rev().step_by(dj)),
-                            Box::new((j2..n).step_by(dj)),
-                        ]
+                    let [js1, js2] = if j2 > j1 {
+                        inc_range(j1, j2, j2 - j1)
                     } else {
-                        let dj = -dj as usize;
-                        [
-                            Box::new((j1..n).step_by(dj)),
-                            Box::new((0..=j2).rev().step_by(dj)),
-                        ]
+                        dec_range(j1, j2, j1 - j2)
                     };
                     [is1.into_iter().zip(js1), is2.into_iter().zip(js2)]
                         .into_iter()
@@ -86,24 +74,6 @@ pub fn part_2(input: &str) -> usize {
         })
         .unique()
         .count()
-}
-
-fn parse_input(input: &str) -> (impl Iterator<Item = Vec<(isize, isize)>>, (isize, isize)) {
-    let mat = input.lines().collect_vec();
-    let m = mat.len() as isize;
-    let n = mat[0].len() as isize;
-    let group_map = mat
-        .into_iter()
-        .enumerate()
-        .flat_map(|(i, line)| {
-            line.bytes()
-                .enumerate()
-                .map(move |(j, c)| (c, (i as isize, j as isize)))
-        })
-        .filter(|(c, _)| *c != b'.')
-        .into_group_map()
-        .into_values();
-    (group_map, (m, n))
 }
 
 #[cfg(test)]
