@@ -1,35 +1,34 @@
-use std::iter::{repeat, repeat_n};
+use std::iter::{repeat, repeat_n, repeat_with};
 
 use itertools::Itertools;
 
 pub fn part_1(input: &str) -> usize {
-    const SPACE_ID: usize = usize::MAX;
-    let ids = (0..).zip(repeat(SPACE_ID)).flat_map(|(a, b)| [a, b]);
-    let mut disk = ids
-        .zip(input.trim_end().bytes())
+    let mut disk = (0..)
+        .map(Some)
+        .zip(repeat(None))
+        .flat_map(|(a, b)| [a, b])
+        .zip(input.bytes())
         .flat_map(|(id, count)| repeat_n(id, (count - b'0') as usize))
-        .collect_vec();
-    let (mut i, mut j) = (0, disk.len() - 1);
-    while i < j {
-        while i < j && disk[i] != SPACE_ID {
-            i += 1;
-        }
-        while i < j && disk[j] == SPACE_ID {
-            j -= 1;
-        }
-        if i < j {
-            disk.swap(i, j);
-        }
-    }
-    disk.into_iter()
-        .take_while(|&id| id != SPACE_ID)
+        .collect_vec()
+        .into_iter();
+    repeat(())
+        .map_while(|_| {
+            disk.next().and_then(|next_block| {
+                let last_file = || {
+                    repeat_with(|| disk.next_back())
+                        .while_some()
+                        .flatten()
+                        .next()
+                };
+                next_block.or_else(last_file)
+            })
+        })
         .enumerate()
         .map(|(i, id)| i * id)
         .sum()
 }
 
 pub fn part_2(input: &str) -> usize {
-    let input = input.trim_end();
     let (mut files, mut spaces): (Vec<_>, Vec<_>) = input
         .bytes()
         .chain([b'0']) // Sentinel space for tuples + unzip
