@@ -80,7 +80,7 @@ fn parse_input(input: &str) -> (Complex<isize>, HashSet<Complex<isize>>, (isize,
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../test_data/year_2024/day_06.txt");
+    const INPUT: &str = include_str!("../test_data/day_06.txt");
 
     const EXAMPLE: &str = "....#.....
 .........#

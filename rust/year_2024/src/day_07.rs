@@ -44,7 +44,7 @@ fn concat(a: usize, b: usize) -> usize {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../test_data/year_2024/day_07.txt");
+    const INPUT: &str = include_str!("../test_data/day_07.txt");
 
     const EXAMPLE: &str = "190: 10 19
 3267: 81 40 27

@@ -36,7 +36,7 @@ pub fn part_2(input: &str) -> usize {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../test_data/year_2024/day_03.txt");
+    const INPUT: &str = include_str!("../test_data/day_03.txt");
 
     const EXAMPLE_1: &str =
         "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
