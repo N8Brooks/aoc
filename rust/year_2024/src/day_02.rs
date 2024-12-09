@@ -46,7 +46,7 @@ fn parse_input(input: &str) -> impl Iterator<Item = Vec<usize>> + '_ {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2024/day_02.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2024/day_02.txt");
 
     const EXAMPLE: &str = "7 6 4 2 1
 1 2 7 8 9

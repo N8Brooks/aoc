@@ -24,7 +24,7 @@ cargo test -- --test-thread=1 --nocapture day_01
 ```
 
 Solutions are tested using the example(s) provided in the problem description, as well as the input data.
-This input data is read using the `include_str!` macro from the `../testdata` directory.
+This input data is read using the `include_str!` macro from the `../test_data` directory.
 In addition to these basic tests, some solutions may also include additional tests for edge cases.
 These tests make use of the [test_case](https://docs.rs/test-case/latest/test_case/) crate.
 
@@ -51,7 +51,7 @@ The layout of each day's module follows the pattern shown in the table below:
 | `part_2`    | Solution for part 2.                               |
 | `tests`     | Testing module.                                    |
 | ├ `EXAMPLE` | Multi-line, static `&str` example data.            |
-| ├ `INPUT`   | Static `include_str!` input data to `../testdata`. |
+| ├ `INPUT`   | Static `include_str!` input data to `../test_data`. |
 | ├ `part_1`  | Part 1 tests.                                      |
 | └ `part_2`  | Part 2 tests.                                      |
 

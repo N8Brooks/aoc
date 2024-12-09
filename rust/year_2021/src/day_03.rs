@@ -64,7 +64,7 @@ mod test {
 00010
 01010";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2021/day_03.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2021/day_03.txt");
 
     #[test_case(EXAMPLE, 198)]
     #[test_case(INPUT, 3242606)]

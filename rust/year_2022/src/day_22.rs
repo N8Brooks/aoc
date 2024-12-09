@@ -129,7 +129,7 @@ mod test {
 
 10R5L5R10L4R5L5";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_22.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_22.txt");
 
     #[test_case(EXAMPLE, 6032)]
     #[test_case(INPUT, 97356)]

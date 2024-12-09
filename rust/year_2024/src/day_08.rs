@@ -78,7 +78,7 @@ fn count_antinodes(
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2024/day_08.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2024/day_08.txt");
 
     const EXAMPLE: &str = "\
 ............

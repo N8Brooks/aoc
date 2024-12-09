@@ -97,7 +97,7 @@ mod test {
 
     const EXAMPLE_1: &str = "rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2023/day_15.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2023/day_15.txt");
 
     #[test_case(EXAMPLE_1, 1320)]
     #[test_case(INPUT, 517315)]

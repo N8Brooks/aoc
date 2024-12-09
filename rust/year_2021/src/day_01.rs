@@ -35,7 +35,7 @@ mod tests {
 260
 263";
 
-    static INPUT: &str = include_str!("../../../testdata/year_2021/day_01.txt");
+    static INPUT: &str = include_str!("../../../test_data/year_2021/day_01.txt");
 
     #[test_case(EXAMPLE, 7)]
     #[test_case(INPUT, 1557)]

@@ -149,7 +149,7 @@ Sensor at x=16, y=7: closest beacon is at x=15, y=3
 Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_15.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_15.txt");
 
     #[test_case(EXAMPLE, 10, 26)]
     #[test_case(INPUT, 2_000_000, 4717631)]

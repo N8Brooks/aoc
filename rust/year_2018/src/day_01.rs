@@ -23,7 +23,7 @@ mod test {
 
     const EXAMPLE_1: &str = "+1\n-2\n+3\n+1";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2018/day_01.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2018/day_01.txt");
 
     #[test_case(EXAMPLE_1, 3; "example_1")]
     #[test_case("+1\n+1\n+1", 3; "example_2")]

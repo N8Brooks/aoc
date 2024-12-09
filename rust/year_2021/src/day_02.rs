@@ -45,7 +45,7 @@ up 3
 down 8
 forward 2";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2021/day_02.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2021/day_02.txt");
 
     #[test_case(EXAMPLE, 150)]
     #[test_case(INPUT, 1855814)]

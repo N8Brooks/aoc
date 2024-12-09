@@ -109,7 +109,7 @@ accszExk
 acctuvwj
 abdefghi";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_12.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_12.txt");
 
     #[test]
     fn get_height_c() {

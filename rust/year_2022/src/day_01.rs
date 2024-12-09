@@ -42,7 +42,7 @@ mod tests {
 
 10000";
 
-    static INPUT: &str = include_str!("../../../testdata/year_2022/day_01.txt");
+    static INPUT: &str = include_str!("../../../test_data/year_2022/day_01.txt");
 
     #[test_case(EXAMPLE, 24000)]
     #[test_case(INPUT, 68802)]

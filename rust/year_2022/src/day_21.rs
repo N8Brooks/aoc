@@ -219,7 +219,7 @@ lgvd: ljgn * ptdq
 drzm: hmdt - zczc
 hmdt: 32";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_21.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_21.txt");
 
     #[test_case(EXAMPLE, 152)]
     #[test_case(INPUT, 93813115694560)]

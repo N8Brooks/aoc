@@ -96,7 +96,7 @@ pub fn parse_input(input: &str) -> (Vec<(usize, usize)>, Vec<Vec<usize>>) {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2024/day_05.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2024/day_05.txt");
 
     const EXAMPLE: &str = "47|53
 97|13

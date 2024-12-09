@@ -274,7 +274,7 @@ position=< 5,  9> velocity=< 1, -2>
 position=<14,  7> velocity=<-2,  0>
 position=<-3,  6> velocity=< 2, -1>";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2018/day_10.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2018/day_10.txt");
 
     #[test_case(EXAMPLE, "HI"; "example")]
     #[test_case(INPUT, "ERKECKJJ"; "input")]

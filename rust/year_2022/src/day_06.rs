@@ -24,7 +24,7 @@ pub fn part_2(input: &str) -> usize {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_06.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_06.txt");
 
     #[test_case("bvwbjplbgvbhsrlpgdmjqwftvncz", 5)]
     #[test_case("nppdvjthqldpwncqszvftbrmjlhg", 6)]

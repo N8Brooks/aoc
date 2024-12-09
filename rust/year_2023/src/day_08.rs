@@ -102,7 +102,7 @@ ZZZ = (ZZZ, ZZZ)";
         assert_eq!(super::part_2(input), expected);
     }
 
-    const INPUT: &str = include_str!("../../../testdata/year_2023/day_08.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2023/day_08.txt");
 
     const EXAMPLE_3: &str = "LR
 

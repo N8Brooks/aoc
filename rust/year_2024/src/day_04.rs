@@ -59,7 +59,7 @@ pub fn part_2(input: &str) -> usize {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2024/day_04.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2024/day_04.txt");
 
     const EXAMPLE: &str = "\
 MMMSXXMASM

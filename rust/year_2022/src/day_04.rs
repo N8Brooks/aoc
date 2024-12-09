@@ -46,7 +46,7 @@ mod test {
 6-6,4-6
 2-6,4-8";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_04.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_04.txt");
 
     #[test_case(EXAMPLE, 2)]
     #[test_case(INPUT, 540)]

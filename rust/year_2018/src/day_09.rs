@@ -45,7 +45,7 @@ fn winning_score(n_players: usize, last_marble: usize) -> usize {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2018/day_09.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2018/day_09.txt");
 
     #[test_case("9 players; last marble is worth 25 points", 32; "example_1")]
     #[test_case("10 players; last marble is worth 1618 points", 8317; "example_2")]

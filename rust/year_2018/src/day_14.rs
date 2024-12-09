@@ -39,7 +39,7 @@ fn gen_recipes_while(mut predicate: impl FnMut(&[u8]) -> bool) -> Vec<u8> {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2018/day_14.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2018/day_14.txt");
 
     #[test_case("9", "5158916779"; "example_1")]
     #[test_case("5", "0124515891"; "example_2")]

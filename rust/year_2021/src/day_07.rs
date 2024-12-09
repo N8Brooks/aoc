@@ -50,7 +50,7 @@ mod test {
 
     const EXAMPLE: &str = "16,1,2,0,4,2,7,1,2,14";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2021/day_07.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2021/day_07.txt");
 
     #[test_case(EXAMPLE, 37)]
     #[test_case(INPUT, 345035)]

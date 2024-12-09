@@ -117,7 +117,7 @@ mod test {
 [1518-11-05 00:45] falls asleep
 [1518-11-05 00:55] wakes up";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2018/day_04.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2018/day_04.txt");
 
     #[test_case(EXAMPLE, 240; "example")]
     #[test_case(INPUT, 94040; "input")]

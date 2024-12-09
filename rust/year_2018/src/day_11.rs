@@ -77,7 +77,7 @@ fn power_level((x, y): (usize, usize), grid_serial_number: i64) -> i64 {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2018/day_11.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2018/day_11.txt");
 
     #[test_case("18", "33,45"; "example_1")]
     #[test_case("42", "21,61"; "example_2")]

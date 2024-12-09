@@ -37,7 +37,7 @@ fn parse_input(
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2024/day_01.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2024/day_01.txt");
 
     const EXAMPLE: &str = "3   4
 4   3

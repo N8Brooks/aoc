@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-const testdata = "../../../testdata"
+const testdata = "../../../test_data"
 
 var cache = map[problem]string{}
 

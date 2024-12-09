@@ -63,7 +63,7 @@ move 3 from 1 to 3
 move 2 from 2 to 1
 move 1 from 1 to 2";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_05.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_05.txt");
 
     #[test_case(EXAMPLE, "CMZ")]
     #[test_case(INPUT, "TDCHVHJTG")]

@@ -242,7 +242,7 @@ noop
 noop
 noop";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_10.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_10.txt");
 
     #[test_case(EXAMPLE, 13140)]
     #[test_case(INPUT, 15120)]

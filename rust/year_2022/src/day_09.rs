@@ -60,7 +60,7 @@ D 1
 L 5
 R 2";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_09.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_09.txt");
 
     #[test_case(EXAMPLE_1, 13)]
     #[test_case(INPUT, 6190)]

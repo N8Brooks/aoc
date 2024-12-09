@@ -44,7 +44,7 @@ fn count_ways_to_beat(time: isize, distance: isize) -> isize {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../testdata/year_2023/day_06.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2023/day_06.txt");
 
     const EXAMPLE_1: &str = "Time:      7  15   30
 Distance:  9  40  200";

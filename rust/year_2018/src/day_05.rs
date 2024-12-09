@@ -65,7 +65,7 @@ mod test {
 
     const EXAMPLE: &str = "dabAcCaCBAcCcaDA";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2018/day_05.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2018/day_05.txt");
 
     #[test_case("aA", 0; "reaction_example_1")]
     #[test_case("abBA", 0; "reaction_example_2")]

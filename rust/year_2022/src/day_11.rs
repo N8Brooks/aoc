@@ -128,7 +128,7 @@ Monkey 3:
     If true: throw to monkey 0
     If false: throw to monkey 1";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_11.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_11.txt");
 
     #[test_case(EXAMPLE, 10605)]
     #[test_case(INPUT, 56120)]

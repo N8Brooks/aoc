@@ -84,7 +84,7 @@ mod test {
 [1,[2,[3,[4,[5,6,7]]]],8,9]
 [1,[2,[3,[4,[5,6,0]]]],8,9]";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2022/day_13.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2022/day_13.txt");
 
     #[test_case(EXAMPLE, 13)]
     #[test_case(INPUT, 5506)]

@@ -7,9 +7,9 @@ This repository contains my solutions to the [Advent of Code](https://adventofco
 Each language has its own directory, with subdirectories for each year.
 The directory structure for each language may vary, but should be organized in a way that makes it easy to find and navigate the solutions.
 
-Test data for the challenges can be found in the `testdata` directory under the root of the project.
+Test data for the challenges can be found in the `test_data` directory under the root of the project.
 This test data is specific to my input for the challenges and may not be the same as the input provided to other users.
-For example, the input for the day 1 problem in 2022 can be found at `testdata/year_2022/day_01.txt`.
+For example, the input for the day 1 problem in 2022 can be found at `test_data/year_2022/day_01.txt`.
 
 ## Language-Specific Details
 

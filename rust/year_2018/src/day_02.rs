@@ -42,7 +42,7 @@ aabcdd
 abcdee
 ababab";
 
-    const INPUT: &str = include_str!("../../../testdata/year_2018/day_02.txt");
+    const INPUT: &str = include_str!("../../../test_data/year_2018/day_02.txt");
 
     #[test_case(EXAMPLE_1, 12; "example_1")]
     #[test_case(INPUT, 5681; "input")]

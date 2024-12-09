@@ -41,7 +41,7 @@ def test_part_1_example():
 
 
 def test_part_1_input():
-    with open("../testdata/year_2022/day_01.txt", "r") as f:
+    with open("../test_data/year_2022/day_01.txt", "r") as f:
         assert part_1(f.read()) == 68802
 
 
@@ -50,5 +50,5 @@ def test_part_2_example():
 
 
 def test_part_2_input():
-    with open("../testdata/year_2022/day_01.txt", "r") as f:
+    with open("../test_data/year_2022/day_01.txt", "r") as f:
         assert part_2(f.read()) == 205370
