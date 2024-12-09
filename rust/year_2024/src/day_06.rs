@@ -3,32 +3,12 @@ use itertools::Itertools as _;
 use num::complex::Complex;
 
 pub fn part_1(input: &str) -> usize {
-    fun_name(input).len()
-}
-
-fn fun_name(input: &str) -> HashSet<Complex<isize>> {
-    let (mut guard, obstacles, (m, n)) = parse_input(input);
-    let mut direction = Complex::new(-1, 0);
-    let mut positions = HashSet::new();
-    loop {
-        positions.insert(guard);
-        guard += direction;
-        if !(0..m).contains(&guard.re) || !(0..n).contains(&guard.im) {
-            break;
-        }
-        if obstacles.contains(&guard) {
-            guard -= direction;
-            direction *= Complex::new(0, -1);
-        } else {
-            positions.insert(guard);
-        }
-    }
-    positions
+    guard_positions(input).len()
 }
 
 pub fn part_2(input: &str) -> usize {
     let (guard, obstacles, (m, n)) = parse_input(input);
-    fun_name(input)
+    guard_positions(input)
         .into_iter()
         .filter(|coord| {
             let mut guard = guard;
@@ -49,6 +29,26 @@ pub fn part_2(input: &str) -> usize {
             }
         })
         .count()
+}
+
+fn guard_positions(input: &str) -> HashSet<Complex<isize>> {
+    let (mut guard, obstacles, (m, n)) = parse_input(input);
+    let mut direction = Complex::new(-1, 0);
+    let mut positions = HashSet::new();
+    loop {
+        positions.insert(guard);
+        guard += direction;
+        if !(0..m).contains(&guard.re) || !(0..n).contains(&guard.im) {
+            break;
+        }
+        if obstacles.contains(&guard) {
+            guard -= direction;
+            direction *= Complex::new(0, -1);
+        } else {
+            positions.insert(guard);
+        }
+    }
+    positions
 }
 
 fn parse_input(input: &str) -> (Complex<isize>, HashSet<Complex<isize>>, (isize, isize)) {
