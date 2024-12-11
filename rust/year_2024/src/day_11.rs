@@ -13,8 +13,8 @@ fn count_stones(input: &str, n: u32) -> usize {
     let mut knapsack_1 = input
         .trim()
         .split(' ')
-        .map(|stone| stone.parse::<u64>().unwrap())
         .fold(HashMap::new(), |mut knapsack, stone| {
+            let stone = stone.parse::<u64>().unwrap();
             *knapsack.entry(stone).or_insert(0) += 1;
             knapsack
         });
@@ -29,9 +29,9 @@ fn count_stones(input: &str, n: u32) -> usize {
                 }
                 let n = stone.ilog10() + 1;
                 if n & 1 == 0 {
-                    let len = 10u64.pow(n / 2);
-                    let (x, y) = stone.div_mod_floor(&len);
-                    vec![(x, count), (y, count)]
+                    let d = 10u64.pow(n / 2);
+                    let (l, r) = stone.div_mod_floor(&d);
+                    vec![(l, count), (r, count)]
                 } else {
                     vec![(stone * 2024, count)]
                 }
