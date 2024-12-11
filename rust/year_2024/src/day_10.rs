@@ -55,7 +55,7 @@ pub fn part_2(input: &str) -> usize {
         .map(|(i, j)| {
             let mut stack = vec![(Vec::new(), i, j, b'0')];
             let mut nines = HashSet::new();
-            while let Some((pre, i1, j1, c1)) = stack.pop() {
+            while let Some((path, i1, j1, c1)) = stack.pop() {
                 let new = [
                     i1.checked_sub(1).map(|i2| (i2, j1)),
                     (i1 + 1 < m).then(|| (i1 + 1, j1)),
@@ -66,15 +66,15 @@ pub fn part_2(input: &str) -> usize {
                 .flatten()
                 .filter_map(|(i2, j2)| match mat[i2][j2] {
                     b'9' if c1 == b'8' => {
-                        let mut pre = pre.clone();
-                        pre.push((i2, j2));
-                        nines.insert(pre);
+                        let mut path = path.clone();
+                        path.push((i2, j2));
+                        nines.insert(path);
                         None
                     }
                     c2 if c1 + 1 == c2 => {
-                        let mut pre = pre.clone();
-                        pre.push((i2, j2));
-                        Some((pre, i2, j2, c2))
+                        let mut path = path.clone();
+                        path.push((i2, j2));
+                        Some((path, i2, j2, c2))
                     }
                     _ => None,
                 });
@@ -91,12 +91,12 @@ mod test {
 
     const INPUT: &str = include_str!("../test_data/day_10.txt");
 
-    const EXAMPLE_1: &str = "0123
+    const EXAMPLE_1_1: &str = "0123
 1234
 8765
 9876";
 
-    const EXAMPLE_2: &str = "...0...
+    const EXAMPLE_1_2: &str = "...0...
 ...1...
 ...2...
 6543456
@@ -104,7 +104,7 @@ mod test {
 8.....8
 9.....9";
 
-    const EXAMPLE_3: &str = "10..9..
+    const EXAMPLE_1_3: &str = "10..9..
 2...8..
 3...7..
 4567654
@@ -112,7 +112,7 @@ mod test {
 ...9..2
 .....01";
 
-    const EXAMPLE_4: &str = "..90..9
+    const EXAMPLE_1_4: &str = "..90..9
 ...1.98
 ...2..7
 6543456
@@ -129,10 +129,10 @@ mod test {
 01329801
 10456732";
 
-    #[test_case(EXAMPLE_1, 1)]
-    #[test_case(EXAMPLE_2, 2)]
-    #[test_case(EXAMPLE_4, 4)]
-    #[test_case(EXAMPLE_3, 3)]
+    #[test_case(EXAMPLE_1_1, 1)]
+    #[test_case(EXAMPLE_1_2, 2)]
+    #[test_case(EXAMPLE_1_4, 4)]
+    #[test_case(EXAMPLE_1_3, 3)]
     #[test_case(EXAMPLE_LARGE, 36)]
     #[test_case(INPUT, 430)]
     fn part_1(input: &str, expected: usize) {
