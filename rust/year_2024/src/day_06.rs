@@ -7,73 +7,87 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> usize {
-    let (guard, obstacles, (m, n)) = parse_input(input);
+    let (pos, obstacles, (m, n)) = parse_input(input);
+    // Maybe remove first guard position
     guard_positions(input)
         .into_iter()
-        .filter(|coord| {
-            let mut guard = guard;
-            let mut direction = Complex::new(-1, 0);
-            let mut positions = HashSet::new();
-            loop {
-                if !positions.insert((guard, direction)) {
-                    return true;
+        .filter(|&obstacle| {
+            let f = |(pos_1, mut dir_1): (Complex<i16>, Complex<i16>)| loop {
+                let pos_2 = pos_1 + dir_1;
+                if !(0..m).contains(&pos_2.re) || !(0..n).contains(&pos_2.im) {
+                    return None;
                 }
-                guard += direction;
-                if !(0..m).contains(&guard.re) || !(0..n).contains(&guard.im) {
+                if obstacle == pos_2 || obstacles[pos_2.re as usize][pos_2.im as usize] {
+                    dir_1 *= Complex::new(0, -1);
+                } else {
+                    return Some((pos_2, dir_1));
+                }
+            };
+            let dir = Complex::new(-1, 0);
+            let mut x_1 = (pos, dir);
+            let mut x_2 = if let Some(x_2) = f(x_1) {
+                x_2
+            } else {
+                return false;
+            };
+            while x_1 != x_2 {
+                x_2 = if let Some(x_2) = f(x_2).and_then(f) {
+                    x_2
+                } else {
                     return false;
-                }
-                if &guard == coord || obstacles.contains(&guard) {
-                    guard -= direction;
-                    direction *= Complex::new(0, -1);
-                }
+                };
+                x_1 = f(x_1).expect("followed x_2's path");
             }
+            true
         })
         .count()
 }
 
-fn guard_positions(input: &str) -> HashSet<Complex<isize>> {
-    let (mut guard, obstacles, (m, n)) = parse_input(input);
-    let mut direction = Complex::new(-1, 0);
-    let mut positions = HashSet::new();
-    loop {
-        positions.insert(guard);
-        guard += direction;
-        if !(0..m).contains(&guard.re) || !(0..n).contains(&guard.im) {
-            break;
+fn guard_positions(input: &str) -> HashSet<Complex<i16>> {
+    let (pos, obstacles, (m, n)) = parse_input(input);
+    let f = |(pos_1, dir_1): (Complex<i16>, Complex<i16>)| {
+        let pos_2 = pos_1 + dir_1;
+        if !(0..m).contains(&pos_2.re) || !(0..n).contains(&pos_2.im) {
+            return None;
         }
-        if obstacles.contains(&guard) {
-            guard -= direction;
-            direction *= Complex::new(0, -1);
+        if obstacles[pos_2.re as usize][pos_2.im as usize] {
+            let dir_2 = dir_1 * Complex::new(0, -1);
+            let pos_2 = pos_1 + dir_2;
+            Some((pos_2, dir_2))
         } else {
-            positions.insert(guard);
+            Some((pos_2, dir_1))
         }
+    };
+    let mut positions = HashSet::from_iter([pos]);
+    let dir = Complex::new(-1, 0);
+    let mut x = (pos, dir);
+    while let Some(y) = f(x) {
+        x = y;
+        positions.insert(x.0);
     }
     positions
 }
 
-fn parse_input(input: &str) -> (Complex<isize>, HashSet<Complex<isize>>, (isize, isize)) {
-    let mut obstacles = HashSet::new();
+fn parse_input(input: &str) -> (Complex<i16>, Vec<Vec<bool>>, (i16, i16)) {
     let mut guard = None;
     let map = input.lines().collect_vec();
+    let (m, n) = (map.len(), map[0].len());
+    let mut obstacles = vec![vec![false; n]; m];
     for (i, line) in map.iter().enumerate() {
         for (j, c) in line.chars().enumerate() {
             match c {
                 '^' => {
-                    guard = Some(Complex::new(i as isize, j as isize));
+                    guard = Some(Complex::new(i as i16, j as i16));
                 }
                 '#' => {
-                    obstacles.insert(Complex::new(i as isize, j as isize));
+                    obstacles[i][j] = true;
                 }
                 '.' => {}
                 _ => panic!("unexpected char: {}", c),
             }
         }
     }
-    (
-        guard.unwrap(),
-        obstacles,
-        (map.len() as isize, map[0].len() as isize),
-    )
+    (guard.unwrap(), obstacles, (m as i16, n as i16))
 }
 
 #[cfg(test)]
