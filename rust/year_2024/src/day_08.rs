@@ -29,14 +29,14 @@ pub fn part_2(input: &str) -> usize {
 }
 
 fn parse_input(input: &str) -> (HashMap<u8, Vec<(usize, usize)>>, usize) {
-    let n = input.bytes().position(|c| c == b'\n').unwrap(); // Assume square matrix
-    let group_map = input
+    let antennas = input
         .lines()
         .enumerate()
         .flat_map(|(i, line)| line.bytes().enumerate().map(move |(j, c)| (c, (i, j))))
         .filter(|(c, _)| *c != b'.')
         .into_group_map();
-    (group_map, n)
+    let n = input.bytes().position(|c| c == b'\n').unwrap(); // Assume square matrix
+    (antennas, n)
 }
 
 fn count_antinodes(
