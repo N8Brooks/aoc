@@ -63,7 +63,7 @@ pub fn part_2(input: &str) -> usize {
             }
 
             let mut sorted = update.clone();
-            sorted.sort_by_key(|x| order[x]);
+            sorted.sort_unstable_by_key(|x| order[x]);
             (update != sorted).then(|| {
                 let i = sorted.len() / 2;
                 sorted[i]
