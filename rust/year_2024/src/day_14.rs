@@ -26,9 +26,8 @@ pub fn part_1(input: &str, m: i32, n: i32) -> i32 {
 }
 
 pub fn part_2(input: &str, m: i32, n: i32) -> i32 {
-    let robots = parse_input(input);
-    let (is, js, dis, djs): (Vec<_>, Vec<_>, Vec<_>, Vec<_>) = robots.multiunzip();
-    let [ti, tj] = [(is, dis, m), (js, djs, n)].map(|(mut xs, dxs, n)| {
+    let (is, js, dis, djs): (Vec<_>, Vec<_>, Vec<_>, Vec<_>) = parse_input(input).multiunzip();
+    let residues = [(is, dis, m), (js, djs, n)].map(|(mut xs, dxs, n)| {
         let mut ti = 0;
         let threshold = n as f32 / 4.;
         while maths::std(&xs) > threshold {
@@ -39,7 +38,7 @@ pub fn part_2(input: &str, m: i32, n: i32) -> i32 {
         }
         ti
     });
-    maths::chinese_remainder_theorem(&[ti, tj], &[m, n]).unwrap()
+    maths::chinese_remainder_theorem(&residues, &[m, n]).unwrap()
 }
 
 fn parse_input(input: &str) -> impl Iterator<Item = (i32, i32, i32, i32)> + '_ {
