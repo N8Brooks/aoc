@@ -35,11 +35,9 @@ fn is_valid<'a>(report: impl IntoIterator<Item = &'a usize>) -> bool {
 }
 
 fn parse_input(input: &str) -> impl Iterator<Item = Vec<usize>> + '_ {
-    input.lines().map(|line| {
-        line.split_whitespace()
-            .map(|num| num.parse().unwrap())
-            .collect()
-    })
+    input
+        .lines()
+        .map(|line| line.split(' ').map(|num| num.parse().unwrap()).collect())
 }
 
 #[cfg(test)]
