@@ -11,7 +11,6 @@ pub fn part_2(input: &str) -> usize {
 
 fn count_stones(input: &str, n: u32) -> usize {
     let mut knapsack_1 = input
-        .trim()
         .split(' ')
         .fold(HashMap::new(), |mut knapsack, stone| {
             let stone = stone.parse::<u64>().unwrap();
