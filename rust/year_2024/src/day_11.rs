@@ -30,7 +30,7 @@ fn count_stones(input: &str, n: u32) -> usize {
                 let n = stone.ilog10() + 1;
                 if n & 1 == 0 {
                     let d = 10u64.pow(n / 2);
-                    let (l, r) = stone.div_mod_floor(&d);
+                    let (l, r) = stone.div_rem(&d);
                     vec![(l, count), (r, count)]
                 } else {
                     vec![(stone * 2024, count)]
