@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, iter::once};
 
 use hashbrown::HashSet;
 
@@ -8,7 +8,7 @@ pub fn part_1(input: &str) -> usize {
     let (antennas, n) = parse_input(input);
     let iter_axis = |a: usize, b: usize| -> Box<dyn Iterator<Item = usize>> {
         if a > b {
-            Box::new([a + a - b].into_iter().filter(move |c| c < &n))
+            Box::new(once(a + a - b).filter(move |&c| c < n))
         } else {
             Box::new(a.checked_sub(b - a).into_iter())
         }
