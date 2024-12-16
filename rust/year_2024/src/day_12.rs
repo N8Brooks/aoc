@@ -105,7 +105,7 @@ pub fn part_2(input: &str) -> usize {
                 .filter_map(|(id_2, _)| id_2)
                 .for_each(|id_2| sides[id_2] += 1);
         }
-        for (row_1, row_2) in ids.iter().chain(once(&blank)).tuple_windows() {
+        for (row_1, row_2) in ids.iter().chain([&blank]).tuple_windows() {
             row_1
                 .iter()
                 .zip(row_2)
