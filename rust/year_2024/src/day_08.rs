@@ -1,11 +1,11 @@
-use std::{collections::HashMap, iter::once};
+use std::iter::once;
 
 use hashbrown::HashSet;
 
-use itertools::Itertools as _;
+use itertools::Itertools;
 
 pub fn part_1(input: &str) -> usize {
-    let (antennas, n) = parse_input(input);
+    let n = input.lines().next().unwrap().len(); // assume square matrix
     let iter_axis = |a: usize, b: usize| -> Box<dyn Iterator<Item = usize>> {
         if a > b {
             Box::new(once(a + a - b).filter(move |&c| c < n))
@@ -13,11 +13,11 @@ pub fn part_1(input: &str) -> usize {
             Box::new(a.checked_sub(b - a).into_iter())
         }
     };
-    count_antinodes(antennas, iter_axis)
+    count_antinodes(input, iter_axis)
 }
 
 pub fn part_2(input: &str) -> usize {
-    let (antennas, n) = parse_input(input);
+    let n = input.lines().next().unwrap().len(); // assume square matrix
     let iter_axis = |a: usize, b: usize| -> Box<dyn Iterator<Item = usize>> {
         if a > b {
             Box::new((a..n).step_by(a - b))
@@ -25,28 +25,23 @@ pub fn part_2(input: &str) -> usize {
             Box::new((0..=a).rev().step_by(b - a))
         }
     };
-    count_antinodes(antennas, iter_axis)
+    count_antinodes(input, iter_axis)
 }
 
-fn parse_input(input: &str) -> (HashMap<u8, Vec<(usize, usize)>>, usize) {
-    let antennas = input
+fn count_antinodes(
+    input: &str,
+    iter_axis: impl Fn(usize, usize) -> Box<dyn Iterator<Item = usize>>,
+) -> usize {
+    input
         .lines()
         .enumerate()
         .flat_map(|(i, line)| line.bytes().enumerate().map(move |(j, c)| (c, (i, j))))
         .filter(|(c, _)| *c != b'.')
-        .into_group_map();
-    let n = input.bytes().position(|c| c == b'\n').unwrap(); // Assume square matrix
-    (antennas, n)
-}
-
-fn count_antinodes(
-    antennas: HashMap<u8, Vec<(usize, usize)>>,
-    iter_axis: impl Fn(usize, usize) -> Box<dyn Iterator<Item = usize>>,
-) -> usize {
-    antennas
+        .into_group_map()
         .into_values()
-        .flat_map(|v| {
-            v.into_iter()
+        .flat_map(|antennas| {
+            antennas
+                .into_iter()
                 .tuple_combinations()
                 .flat_map(|((i1, j1), (i2, j2))| {
                     let rows_1 = iter_axis(i1, i2);
