@@ -12,21 +12,17 @@ fn design_counts(input: &str) -> impl Iterator<Item = usize> + '_ {
     towels.lines().map(move |towel| {
         let mut counts = vec![0; towel.len() + 1];
         counts[0] = 1;
-        for i in 0..=towel.len() {
-            if counts[i] == 0 {
+        for i in 0..towel.len() {
+            let count = counts[i];
+            if count == 0 {
                 continue;
             }
             towel[i..]
                 .bytes()
-                .scan(&trie, |node_1, c| {
-                    let k = (c - b'a') as usize;
-                    node_1.children[k]
-                        .as_ref()
-                        .inspect(|node_2| *node_1 = node_2)
-                })
+                .scan(&trie, |u, c| u[c].as_ref().inspect(|v| *u = v))
                 .enumerate()
-                .filter(|(_, node)| node.is_leaf)
-                .for_each(|(j, _)| counts[i + j + 1] += counts[i]);
+                .filter(|(_, u)| u.is_leaf)
+                .for_each(|(j, _)| counts[i + j + 1] += count);
         }
         counts[towel.len()]
     })
@@ -34,19 +30,32 @@ fn design_counts(input: &str) -> impl Iterator<Item = usize> + '_ {
 
 #[derive(Debug, Default)]
 struct Trie<'a> {
-    children: [Option<Box<Trie<'a>>>; 26],
-    is_leaf: bool, // assumes no duplicate patterns
+    children: [Option<Box<Trie<'a>>>; 26], // assumes lowercase ASCII
+    is_leaf: bool,                         // assumes no duplicate patterns
     _phantom: std::marker::PhantomData<&'a ()>,
 }
 
 impl<'a> Trie<'a> {
     fn insert<'b: 'a>(&mut self, s: &'b str) {
-        let mut node = self;
-        for c in s.bytes() {
-            let c = (c - b'a') as usize;
-            node = node.children[c].get_or_insert_default();
-        }
-        node.is_leaf = true;
+        s.bytes()
+            .fold(self, |u, c| u[c].get_or_insert_default())
+            .is_leaf = true;
+    }
+}
+
+impl<'a> std::ops::Index<u8> for Trie<'a> {
+    type Output = Option<Box<Trie<'a>>>;
+
+    fn index(&self, c: u8) -> &Self::Output {
+        let i = (c - b'a') as usize;
+        &self.children[i]
+    }
+}
+
+impl std::ops::IndexMut<u8> for Trie<'_> {
+    fn index_mut(&mut self, c: u8) -> &mut Self::Output {
+        let i = (c - b'a') as usize;
+        &mut self.children[i]
     }
 }
 
