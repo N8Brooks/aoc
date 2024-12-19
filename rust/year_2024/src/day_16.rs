@@ -82,8 +82,8 @@ pub fn part_2(input: &str) -> usize {
     let mut stack = [Complex::new(0, 1), Complex::new(-1, 0)]
         .into_iter()
         .map(|dir| (Complex::new(end.0, end.1), dir))
-        .filter(|coord| prevs.contains_key(coord))
-        .min_set_by_key(|&coord| dists[&coord])
+        .filter(|pose| prevs.contains_key(pose))
+        .min_set_by_key(|&pose| dists[&pose])
         .into_iter()
         .collect_vec();
     let mut seen: HashSet<Pose> = HashSet::from_iter(stack.iter().copied());
@@ -92,7 +92,7 @@ pub fn part_2(input: &str) -> usize {
             prevs[&(pos, dir)]
                 .iter()
                 .copied()
-                .filter(|&coord| seen.insert(coord)),
+                .filter(|&pose| seen.insert(pose)),
         );
     }
     seen.into_iter()
