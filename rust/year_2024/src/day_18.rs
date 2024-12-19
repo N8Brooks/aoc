@@ -61,7 +61,7 @@ pub fn part_2<const N: usize>(input: &str) -> String {
         }
     }
     let (i, j) = bytes[l]; // assumes some escapable
-    format!("{},{}", j, i)
+    format!("{j},{i}")
 }
 
 fn parse_input(input: &str) -> impl Iterator<Item = (usize, usize)> + '_ {
