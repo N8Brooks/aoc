@@ -13,16 +13,13 @@ fn design_counts(input: &str) -> impl Iterator<Item = usize> + '_ {
         let mut counts = vec![0; towel.len() + 1];
         counts[0] = 1;
         for i in 0..towel.len() {
-            let count = counts[i];
-            if count == 0 {
-                continue;
-            }
+            let count_1 = counts[i];
             towel[i..]
                 .bytes()
                 .scan(&trie, |u, c| u[c].as_ref().inspect(|v| *u = v))
-                .enumerate()
-                .filter(|(_, u)| u.is_leaf)
-                .for_each(|(j, _)| counts[i + j + 1] += count);
+                .zip(counts[i + 1..].iter_mut())
+                .filter(|(u, _)| u.is_leaf)
+                .for_each(|(_, count_2)| *count_2 += count_1);
         }
         counts[towel.len()]
     })
@@ -36,6 +33,7 @@ struct Trie<'a> {
 }
 
 impl<'a> Trie<'a> {
+    #[inline]
     fn insert<'b: 'a>(&mut self, s: &'b str) {
         s.bytes()
             .fold(self, |u, c| u[c].get_or_insert_default())
@@ -46,6 +44,7 @@ impl<'a> Trie<'a> {
 impl<'a> std::ops::Index<u8> for Trie<'a> {
     type Output = Option<Box<Trie<'a>>>;
 
+    #[inline]
     fn index(&self, c: u8) -> &Self::Output {
         let i = (c - b'a') as usize;
         &self.children[i]
@@ -53,6 +52,7 @@ impl<'a> std::ops::Index<u8> for Trie<'a> {
 }
 
 impl std::ops::IndexMut<u8> for Trie<'_> {
+    #[inline]
     fn index_mut(&mut self, c: u8) -> &mut Self::Output {
         let i = (c - b'a') as usize;
         &mut self.children[i]
@@ -60,6 +60,7 @@ impl std::ops::IndexMut<u8> for Trie<'_> {
 }
 
 impl<'a, 'b: 'a> FromIterator<&'b str> for Trie<'a> {
+    #[inline]
     fn from_iter<I: IntoIterator<Item = &'b str>>(iter: I) -> Self {
         let mut trie = Trie::default();
         iter.into_iter().for_each(|s| trie.insert(s));
