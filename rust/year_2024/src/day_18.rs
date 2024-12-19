@@ -1,3 +1,5 @@
+use itertools::Itertools as _;
+
 pub fn part_1<const N: usize>(input: &str, n: usize) -> usize {
     let mut free_memory = parse_input(input)
         .take(n)
@@ -27,16 +29,17 @@ pub fn part_1<const N: usize>(input: &str, n: usize) -> usize {
 }
 
 pub fn part_2<const N: usize>(input: &str) -> String {
-    let mut free_memory = [[true; N]; N];
-    for (i, j) in parse_input(input) {
-        free_memory[i][j] = false;
-        let mut free_memory = free_memory;
+    let bytes = parse_input(input).collect_vec();
+
+    let is_escapable = |idx: usize| -> bool {
+        let mut free_memory = [[true; N]; N];
+        for &(i, j) in &bytes[..=idx] {
+            free_memory[i][j] = false;
+        }
         let mut stack = vec![(0, 0)];
-        let mut is_escapable = true;
         while let Some((i, j)) = stack.pop() {
             if (i, j) == (N - 1, N - 1) {
-                is_escapable = false;
-                break;
+                return true;
             }
             for (i, j) in neighbors::<N>(i, j) {
                 if free_memory[i][j] {
@@ -45,11 +48,20 @@ pub fn part_2<const N: usize>(input: &str) -> String {
                 }
             }
         }
-        if is_escapable {
-            return format!("{j},{i}");
+        false
+    };
+
+    let (mut l, mut r) = (0, bytes.len());
+    while l < r {
+        let m = (l + r) / 2;
+        if is_escapable(m) {
+            l = m + 1;
+        } else {
+            r = m;
         }
     }
-    panic!("no solution found");
+    let (i, j) = bytes[l]; // assumes some escapable
+    format!("{},{}", j, i)
 }
 
 fn parse_input(input: &str) -> impl Iterator<Item = (usize, usize)> + '_ {
