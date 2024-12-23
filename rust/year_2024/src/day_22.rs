@@ -1,7 +1,7 @@
 use std::iter::once;
 
 use hashbrown::HashMap;
-use itertools::Itertools;
+use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> i64 {
     input

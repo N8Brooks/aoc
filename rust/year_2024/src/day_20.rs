@@ -1,6 +1,6 @@
 use std::iter::repeat;
 
-use itertools::Itertools;
+use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     count_cheats(input, 2, 100)
