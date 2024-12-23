@@ -1,4 +1,4 @@
-#![feature(random)]
+#![feature(unsigned_signed_diff)]
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;
@@ -20,3 +20,4 @@ pub mod day_18;
 pub mod day_19;
 pub mod day_20;
 pub mod day_21;
+pub mod day_22;
