@@ -16,71 +16,37 @@ pub fn part_2(input: &str) -> usize {
 }
 
 fn sum_complexities(input: &str, n: usize) -> usize {
+    const NUM_KEYPAD: &[&[u8]] = &[b"789", b"456", b"123", b".0A"];
     input
         .lines()
         .map(|line| {
-            let count = numeric_keypad(line.as_bytes(), n);
+            let len = shortest_sequence_len(NUM_KEYPAD, line.bytes().collect(), n + 1);
             let num = line[0..3].parse::<usize>().unwrap(); // assume num position
-            count * num
+            len * num
         })
         .sum()
 }
 
-fn numeric_keypad(code: &[u8], n: usize) -> usize {
-    const KEYPAD: &[&[u8]] = &[b"789", b"456", b"123", b".0A"];
-    let (mut i1, mut j1) = (3, 2); // assume static
-    code.iter()
-        .map(|c| {
-            let (i2, j2) = KEYPAD
-                .iter()
-                .enumerate()
-                .find_map(|(i, row)| row.iter().position(|b| b == c).map(|j| (i, j)))
-                .unwrap_or_else(|| panic!("invalid input: {}", *c as char));
-            let v = || {
-                if i2 > i1 {
-                    repeat_n(b'v', i2 - i1)
-                } else {
-                    repeat_n(b'^', i1 - i2)
-                }
-            };
-            let h = || {
-                if j2 > j1 {
-                    repeat_n(b'>', j2 - j1)
-                } else {
-                    repeat_n(b'<', j1 - j2)
-                }
-            };
-            let inputs = [
-                (KEYPAD[i2][j1] != b'.').then(|| v().chain(h())),
-                (KEYPAD[i1][j2] != b'.').then(|| h().chain(v())),
-            ];
-            (i1, j1) = (i2, j2);
-            inputs
-                .into_iter()
-                .flatten()
-                .map(|input| directional_keypad(input.chain(once(b'A')).collect(), n))
-                .min()
-                .unwrap()
-        })
-        .sum()
-}
-
-fn directional_keypad(input: Vec<u8>, n: usize) -> usize {
-    const KEYPAD: &[&[u8]] = &[b".^A", b"<v>"];
+fn shortest_sequence_len(keypad: &'static [&'static [u8]], code: Vec<u8>, n: usize) -> usize {
+    const DIR_KEYPAD: &[&[u8]] = &[b".^A", b"<v>"];
     #[allow(clippy::type_complexity)]
-    static MEMO: LazyLock<[Arc<Mutex<HashMap<Vec<u8>, usize>>>; 26]> =
+    static MEMO: LazyLock<[Arc<Mutex<HashMap<Vec<u8>, usize>>>; 27]> =
         LazyLock::new(|| array::from_fn(|_| Arc::new(Mutex::new(HashMap::new()))));
     if n == 0 {
-        return input.len();
+        return code.len();
     }
-    if let Some(&len) = MEMO[n].lock().unwrap().get(&input) {
+    if let Some(&len) = MEMO[n].lock().unwrap().get(&code) {
         return len;
     }
-    let (mut i1, mut j1) = (0, 2); // assume static
-    let res = input
+    let (mut i1, mut j1) = keypad
         .iter()
-        .map(move |c| {
-            let (i2, j2) = KEYPAD
+        .enumerate()
+        .find_map(|(i, row)| row.iter().position(|&b| b == b'A').map(|j| (i, j)))
+        .unwrap();
+    let res = code
+        .iter()
+        .map(|c| {
+            let (i2, j2) = keypad
                 .iter()
                 .enumerate()
                 .find_map(|(i, row)| row.iter().position(|b| b == c).map(|j| (i, j)))
@@ -99,20 +65,22 @@ fn directional_keypad(input: Vec<u8>, n: usize) -> usize {
                     repeat_n(b'<', j1 - j2)
                 }
             };
-            let inputs = [
-                (KEYPAD[i2][j1] != b'.').then(|| v().chain(h())),
-                (KEYPAD[i1][j2] != b'.').then(|| h().chain(v())),
+            let codes = [
+                (keypad[i2][j1] != b'.').then(|| v().chain(h())),
+                (keypad[i1][j2] != b'.').then(|| h().chain(v())),
             ];
             (i1, j1) = (i2, j2);
-            inputs
+            codes
                 .into_iter()
                 .flatten()
-                .map(|input| directional_keypad(input.chain(once(b'A')).collect(), n - 1))
+                .map(|code| {
+                    shortest_sequence_len(DIR_KEYPAD, code.chain(once(b'A')).collect(), n - 1)
+                })
                 .min()
                 .unwrap()
         })
         .sum();
-    MEMO[n].lock().unwrap().insert(input, res);
+    MEMO[n].lock().unwrap().insert(code, res);
     res
 }
 
