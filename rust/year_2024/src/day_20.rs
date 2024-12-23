@@ -10,7 +10,7 @@ pub fn part_2(input: &str) -> usize {
     count_cheats(input, 20, 100)
 }
 
-fn count_cheats(input: &str, range: isize, threshold: usize) -> usize {
+fn count_cheats(input: &str, range: usize, threshold: usize) -> usize {
     let track = &parse_track(input);
     let (m, n) = (track.len(), track[0].len());
     track
@@ -22,14 +22,14 @@ fn count_cheats(input: &str, range: isize, threshold: usize) -> usize {
                 .filter_map(move |(j, &dist)| dist.map(|dist| (i, j, dist)))
         })
         .flat_map(|(i1, j1, dist_1)| {
-            (-range..=range)
-                .flat_map(|di| {
-                    let dj = range - di.abs();
-                    repeat(di).zip(-dj..=dj)
+            (i1.saturating_sub(range)..=(i1 + range).min(m - 1))
+                .flat_map(move |i2| {
+                    let di = i1.abs_diff(i2);
+                    let dj = range - di;
+                    let js = j1.saturating_sub(dj)..=(j1 + dj).min(n - 1);
+                    repeat(i2).zip(js)
                 })
-                .filter_map(move |(di, dj)| {
-                    let i2 = i1.checked_add_signed(di).filter(|&i| i < m)?;
-                    let j2 = j1.checked_add_signed(dj).filter(|&j| j < n)?;
+                .filter_map(move |(i2, j2)| {
                     let dist_2 = track[i2][j2]? + 1;
                     let cheat_dist = i2.abs_diff(i1) + j2.abs_diff(j1);
                     dist_2.checked_sub(dist_1 + cheat_dist)
@@ -103,7 +103,7 @@ mod test {
 
     #[test_case(EXAMPLE, 2, 10, 10)]
     #[test_case(EXAMPLE, 20, 70, 41)]
-    fn count_cheats(input: &str, range: isize, threshold: usize, expected: usize) {
+    fn count_cheats(input: &str, range: usize, threshold: usize, expected: usize) {
         assert_eq!(super::count_cheats(input, range, threshold), expected);
     }
 }
