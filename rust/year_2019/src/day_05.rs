@@ -1,11 +1,11 @@
 pub fn part_1(input: &str) -> isize {
     const ID: isize = 1;
-    Intcode::new(input).intcode_2(ID)
+    Intcode::new(input).run(ID)
 }
 
 pub fn part_2(input: &str) -> isize {
     const ID: isize = 5;
-    Intcode::new(input).intcode_2(ID)
+    Intcode::new(input).run(ID)
 }
 
 fn parse_program(input: &str) -> Vec<isize> {
@@ -25,7 +25,7 @@ impl Intcode {
         }
     }
 
-    fn intcode_2(mut self, input: isize) -> isize {
+    fn run(mut self, input: isize) -> isize {
         let mut output = -1;
         loop {
             let value = self.next();
