@@ -1,6 +1,7 @@
-use std::iter;
+use std::iter::successors;
 
 use itertools::Itertools as _;
+use num::Integer as _;
 
 pub fn part_1(input: &str) -> isize {
     let program = parse_program(input);
@@ -22,10 +23,10 @@ pub fn part_2(input: &str) -> isize {
         .map(|phases| {
             let mut amps = phases
                 .into_iter()
-                .map(|p| Intcode::new(&program, p))
+                .map(|phase| Intcode::new(&program, phase))
                 .collect_array::<5>()
                 .unwrap();
-            iter::successors(Some(0), |&input| {
+            successors(Some(0), |&input| {
                 amps.iter_mut().try_fold(input, |input, amp| amp.run(input))
             })
             .last()
@@ -40,65 +41,68 @@ fn parse_program(input: &str) -> Vec<isize> {
 }
 
 struct Intcode {
+    /// Computer's memory
     memory: Vec<isize>,
+    /// Instruction pointer
     ip: usize,
-    init: Option<isize>,
+    /// Initial phase setting (consumed on first input)
+    phase: Option<isize>,
 }
 
 impl Intcode {
-    fn new(program: &[isize], init: isize) -> Self {
+    fn new(program: &[isize], input_0: isize) -> Self {
         Self {
             memory: program.to_vec(),
             ip: 0,
-            init: Some(init),
+            phase: Some(input_0),
         }
     }
 
+    /// Continues runing the program until it produces an output or halts.
     fn run(&mut self, input: isize) -> Option<isize> {
         loop {
-            let value = self.next();
-            let op = value % 100;
-            let m1 = (value / 100) & 1;
-            let m2 = value / 1000;
-            match op {
+            let instruction = self.next();
+            let (modes, opcode) = instruction.div_rem(&100);
+            let (mode_2, mode_1) = modes.div_rem(&10);
+            match opcode {
                 1 => {
-                    let l = self.read(m1);
-                    let r = self.read(m2);
-                    self.write(l + r);
+                    let param_1 = self.read(mode_1);
+                    let param_2 = self.read(mode_2);
+                    self.write(param_1 + param_2);
                 }
                 2 => {
-                    let l = self.read(m1);
-                    let r = self.read(m2);
-                    self.write(l * r);
+                    let param_1 = self.read(mode_1);
+                    let param_2 = self.read(mode_2);
+                    self.write(param_1 * param_2);
                 }
                 3 => {
-                    let input = self.init.take().unwrap_or(input);
+                    let input = self.phase.take().unwrap_or(input);
                     self.write(input);
                 }
-                4 => return Some(self.read(m1)),
+                4 => return Some(self.read(mode_1)),
                 5 => {
-                    let cond = self.read(m1);
-                    let target = self.read(m2);
-                    if cond != 0 {
-                        self.ip = target.try_into().unwrap();
+                    let param_1 = self.read(mode_1);
+                    let param_2 = self.read(mode_2);
+                    if param_1 != 0 {
+                        self.ip = param_2.try_into().unwrap();
                     }
                 }
                 6 => {
-                    let cond = self.read(m1);
-                    let target = self.read(m2);
-                    if cond == 0 {
-                        self.ip = target.try_into().unwrap();
+                    let param_1 = self.read(mode_1);
+                    let param_2 = self.read(mode_2);
+                    if param_1 == 0 {
+                        self.ip = param_2.try_into().unwrap();
                     }
                 }
                 7 => {
-                    let l = self.read(m1);
-                    let r = self.read(m2);
-                    self.write((l < r).into());
+                    let param_1 = self.read(mode_1);
+                    let param_2 = self.read(mode_2);
+                    self.write((param_1 < param_2).into());
                 }
                 8 => {
-                    let l = self.read(m1);
-                    let r = self.read(m2);
-                    self.write((l == r).into());
+                    let param_1 = self.read(mode_1);
+                    let param_2 = self.read(mode_2);
+                    self.write((param_1 == param_2).into());
                 }
                 99 => return None,
                 _ => panic!("unexpected opcode"),
@@ -107,12 +111,14 @@ impl Intcode {
     }
 
     fn read(&mut self, mode: isize) -> isize {
-        let value = self.next();
-        if mode == 0 {
-            let ip: usize = value.try_into().unwrap();
-            self.memory[ip]
-        } else {
-            value
+        let param = self.next();
+        match mode {
+            0 => {
+                let i: usize = param.try_into().unwrap();
+                self.memory[i]
+            }
+            1 => param,
+            _ => panic!("unexpected mode {mode}"),
         }
     }
 
@@ -122,9 +128,9 @@ impl Intcode {
     }
 
     fn next(&mut self) -> isize {
-        let value = self.memory[self.ip];
+        let word = self.memory[self.ip];
         self.ip += 1;
-        value
+        word
     }
 }
 
