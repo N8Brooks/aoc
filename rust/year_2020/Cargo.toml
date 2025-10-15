@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 
-itertools = "0.10"
-test-case = "2.2"
+itertools = "0.14.0"
+test-case = "3.3.1"
