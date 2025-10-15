@@ -21,6 +21,7 @@ fn parse_input(input: &str) -> HashMap<usize, [usize; 60]> {
             let time = {
                 NaiveDateTime::parse_from_str(&caps[1], "%Y-%m-%d %H:%M")
                     .unwrap()
+                    .and_utc()
                     .timestamp()
                     / 60
             };
@@ -47,7 +48,7 @@ fn parse_input(input: &str) -> HashMap<usize, [usize; 60]> {
                 event,
             ))
         })
-        .group_by(|(_, guard_id, event)| {
+        .chunk_by(|(_, guard_id, event)| {
             let is_sleep_cycle = event == &Event::WakeUp || event == &Event::FallAsleep;
             (is_sleep_cycle, *guard_id)
         })

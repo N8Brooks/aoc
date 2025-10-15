@@ -1,4 +1,4 @@
-use ahash::AHashMap;
+use hashbrown::HashMap;
 use itertools::{repeat_n, Itertools};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
@@ -42,7 +42,9 @@ fn simulate_plants(input: &str) -> impl Iterator<Item = isize> {
                 .chain(state.iter().copied())
                 .chain(repeat_n(IsPlant(false), 4))
                 .tuple_windows()
-                .map(|note_input| notes.get(&note_input).copied().unwrap_or(IsPlant(false)))
+                .map(|note_input: NoteInput| {
+                    notes.get(&note_input).copied().unwrap_or(IsPlant(false))
+                })
                 .skip_while(|is_plant| {
                     if is_plant.0 {
                         false
@@ -67,7 +69,7 @@ fn sum_plant_indexes(offset: &isize, state: &Vec<IsPlant>) -> isize {
         .sum()
 }
 
-fn parse_input(input: &str) -> (isize, Vec<IsPlant>, AHashMap<NoteInput, IsPlant>) {
+fn parse_input(input: &str) -> (isize, Vec<IsPlant>, HashMap<NoteInput, IsPlant>) {
     let (initial_state, notes) = input.split_once("\n\n").unwrap();
     let state = initial_state
         .strip_prefix("initial state: ")
@@ -83,7 +85,7 @@ fn parse_input(input: &str) -> (isize, Vec<IsPlant>, AHashMap<NoteInput, IsPlant
             let output = output.bytes().map(IsPlant::from).exactly_one().unwrap();
             (input, output)
         })
-        .collect::<AHashMap<_, _>>();
+        .collect::<HashMap<_, _>>();
     (0, state, notes)
 }
 

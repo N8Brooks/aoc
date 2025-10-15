@@ -1,4 +1,4 @@
-use ahash::AHashSet;
+use hashbrown::HashSet;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -46,11 +46,11 @@ pub fn part_1(input: &str) -> usize {
 
 pub fn part_2(input: &str) -> usize {
     let claims = input.lines().map(Claim::from).collect_vec();
-    let non_intact_locations = claims
+    let non_intact_locations: HashSet<_> = claims
         .iter()
         .flat_map(|claim| claim.iter_locations())
         .duplicates()
-        .collect::<AHashSet<_>>();
+        .collect();
     claims
         .iter()
         .filter(|claim| {

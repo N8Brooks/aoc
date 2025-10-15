@@ -6,7 +6,7 @@ use std::{
     ops::Index,
 };
 
-use ahash::AHashSet;
+use hashbrown::HashSet;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -79,7 +79,7 @@ impl Point {
 
 #[derive(Default)]
 struct Sky {
-    positions: AHashSet<[isize; 2]>,
+    positions: HashSet<[isize; 2]>,
     height: usize,
     width: usize,
     min_x: isize,
@@ -88,7 +88,7 @@ struct Sky {
 
 impl Sky {
     fn new(points: &[Point]) -> Sky {
-        let positions = AHashSet::from_iter(points.iter().map(|point| point.position));
+        let positions = HashSet::from_iter(points.iter().map(|point| point.position));
         let (min_x, width) = Sky::get_axis_bounds(&positions, 0);
         let (min_y, height) = Sky::get_axis_bounds(&positions, 1);
         Sky {
@@ -100,7 +100,7 @@ impl Sky {
         }
     }
 
-    fn get_axis_bounds(positions: &AHashSet<[isize; 2]>, axis: usize) -> (isize, usize) {
+    fn get_axis_bounds(positions: &HashSet<[isize; 2]>, axis: usize) -> (isize, usize) {
         let (min_x, max_x) = positions
             .iter()
             .map(|position| position[axis])
