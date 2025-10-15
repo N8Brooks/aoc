@@ -1,3 +1,5 @@
+use std::iter;
+
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> isize {
@@ -7,7 +9,6 @@ pub fn part_1(input: &str) -> isize {
         .map(|phases| {
             phases.into_iter().fold(0, |input, phase| {
                 Intcode::new(&program, phase).run(input).unwrap()
-                // intcode(&program, phase, input.into_iter())
             })
         })
         .max()
@@ -24,13 +25,11 @@ pub fn part_2(input: &str) -> isize {
                 .map(|p| Intcode::new(&program, p))
                 .collect_array::<5>()
                 .unwrap();
-            let mut input = 0;
-            let mut i = 0;
-            while let Some(output) = amps[i].run(input) {
-                input = output;
-                i = if i < 4 { i + 1 } else { 0 }
-            }
-            input
+            iter::successors(Some(0), |&input| {
+                amps.iter_mut().try_fold(input, |input, amp| amp.run(input))
+            })
+            .last()
+            .unwrap()
         })
         .max()
         .unwrap()
@@ -59,62 +58,73 @@ impl Intcode {
         loop {
             let value = self.next();
             let op = value % 100;
+            let m1 = (value / 100) & 1;
+            let m2 = value / 1000;
             match op {
-                1 | 2 | 7 | 8 => {
-                    let (l, r) = self.read2(value);
-                    let value = match op {
-                        1 => l + r,
-                        2 => l * r,
-                        7 => (l < r) as isize,
-                        8 => (l == r) as isize,
-                        _ => unreachable!(),
-                    };
-                    self.write(value);
+                1 => {
+                    let l = self.read(m1);
+                    let r = self.read(m2);
+                    self.write(l + r);
                 }
-                5 | 6 => {
-                    let (cond, target) = self.read2(value);
-                    if op == 5 && cond != 0 || op == 6 && cond == 0 {
+                2 => {
+                    let l = self.read(m1);
+                    let r = self.read(m2);
+                    self.write(l * r);
+                }
+                3 => {
+                    let input = self.init.take().unwrap_or(input);
+                    self.write(input);
+                }
+                4 => return Some(self.read(m1)),
+                5 => {
+                    let cond = self.read(m1);
+                    let target = self.read(m2);
+                    if cond != 0 {
                         self.ip = target.try_into().unwrap();
                     }
                 }
-                3 => {
-                    let value = self.init.take().unwrap_or(input);
-                    self.write(value);
+                6 => {
+                    let cond = self.read(m1);
+                    let target = self.read(m2);
+                    if cond == 0 {
+                        self.ip = target.try_into().unwrap();
+                    }
                 }
-                4 => return Some(self.read1(value)),
+                7 => {
+                    let l = self.read(m1);
+                    let r = self.read(m2);
+                    self.write((l < r).into());
+                }
+                8 => {
+                    let l = self.read(m1);
+                    let r = self.read(m2);
+                    self.write((l == r).into());
+                }
                 99 => return None,
                 _ => panic!("unexpected opcode"),
             }
         }
     }
 
-    fn read1(&mut self, value: isize) -> isize {
-        self.read((value / 100) % 10)
-    }
-
-    fn read2(&mut self, value: isize) -> (isize, isize) {
-        (self.read((value / 100) % 10), self.read(value / 1000))
-    }
-
     fn read(&mut self, mode: isize) -> isize {
         let value = self.next();
         if mode == 0 {
-            let i: usize = value.try_into().unwrap();
-            self.memory[i]
+            let ip: usize = value.try_into().unwrap();
+            self.memory[ip]
         } else {
             value
         }
+    }
+
+    fn write(&mut self, value: isize) {
+        let ip: usize = self.next().try_into().unwrap();
+        self.memory[ip] = value;
     }
 
     fn next(&mut self) -> isize {
         let value = self.memory[self.ip];
         self.ip += 1;
         value
-    }
-
-    fn write(&mut self, value: isize) {
-        let ip: usize = self.next().try_into().unwrap();
-        self.memory[ip] = value;
     }
 }
 
