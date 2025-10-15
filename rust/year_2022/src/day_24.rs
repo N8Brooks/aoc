@@ -1,4 +1,4 @@
-use ahash::AHashSet;
+use hashbrown::HashSet;
 use itertools::Itertools;
 use num::Complex;
 
@@ -27,7 +27,7 @@ pub fn min_steps_to_checkpoint(input: &str, checkpoint_index: usize) -> usize {
     let mut step = 0;
     let mut locations = vec![(0, start)];
     while !locations.contains(&(checkpoint_index, goal)) {
-        let blizzards: AHashSet<_> = blizzard_locations
+        let blizzards: HashSet<_> = blizzard_locations
             .iter_mut()
             .zip(&blizzard_directions)
             .map(|(location, direction)| {

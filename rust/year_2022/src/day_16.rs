@@ -14,7 +14,7 @@ struct VolcanoState<'a> {
 }
 
 impl VolcanoState<'_> {
-    fn from_input(input: &str) -> VolcanoState {
+    fn from_input(input: &str) -> VolcanoState<'_> {
         let mut valves = HashMap::new();
         let nodes = HashMap::from_iter(
             input

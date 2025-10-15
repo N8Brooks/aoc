@@ -1,4 +1,4 @@
-use std::iter::repeat;
+use std::iter::repeat_n;
 
 use num::Integer;
 
@@ -107,7 +107,7 @@ impl Simulation {
     fn insert_coordinates(&mut self, coordinates: &[(usize, usize)]) {
         let max_i = coordinates.iter().map(|(i, _)| i).max().unwrap();
         let delta_i = (max_i + 1).saturating_sub(self.chamber.len());
-        self.chamber.extend(repeat([false; 7]).take(delta_i));
+        self.chamber.extend(repeat_n([false; 7], delta_i));
         coordinates
             .iter()
             .for_each(|(i, j)| self.chamber[*i][*j] = true);

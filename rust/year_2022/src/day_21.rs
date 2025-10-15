@@ -106,7 +106,7 @@ mod part_2_context {
         x.solve(c)
     }
 
-    fn parse_input(input: &str) -> (Vec<(&str, &str)>, HashMap<&str, Expression>) {
+    fn parse_input(input: &str) -> (Vec<(&str, &str)>, HashMap<&str, Expression<'_>>) {
         input.lines().partition_map(|line| {
             let (name, operation) = line.split_once(": ").unwrap();
             if let Ok(num) = operation.parse() {

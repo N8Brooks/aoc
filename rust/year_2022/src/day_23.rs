@@ -1,10 +1,10 @@
 use std::fmt::Display;
 
-use ahash::{AHashMap, AHashSet};
+use hashbrown::{HashMap, HashSet};
 use itertools::{FoldWhile, Itertools};
 
 #[derive(Clone, Debug)]
-struct Elves(AHashSet<[isize; 2]>);
+struct Elves(HashSet<[isize; 2]>);
 
 impl From<&str> for Elves {
     fn from(input: &str) -> Self {
@@ -19,7 +19,7 @@ impl From<&str> for Elves {
                         .filter(|(_, byte)| *byte == b'#')
                         .map(move |(j, _)| [i, j as isize])
                 })
-                .collect::<AHashSet<_>>(),
+                .collect::<HashSet<_>>(),
         )
     }
 }
@@ -47,7 +47,7 @@ impl Display for Elves {
 
 impl Elves {
     fn update(&self, index: usize) -> FoldWhile<Elves> {
-        let mut moved_elves: AHashMap<_, Vec<_>> = AHashMap::with_capacity(self.0.len());
+        let mut moved_elves: HashMap<_, Vec<_>> = HashMap::with_capacity(self.0.len());
         let mut stuck_elves = Vec::new();
         for result in self.proposals(index) {
             match result {

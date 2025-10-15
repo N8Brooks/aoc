@@ -1,4 +1,4 @@
-use ahash::AHashSet;
+use hashbrown::HashSet;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use ndarray::Array1;
@@ -81,7 +81,7 @@ impl StateSpace {
         let max_clay_robots = *self.0.slice(s![.., 1]).iter().max().unwrap();
         let max_obsidian_robots = *self.0.slice(s![.., 2]).iter().max().unwrap();
         (0..n_minutes)
-            .fold(AHashSet::from([State::default()]), |states, i| {
+            .fold(HashSet::from([State::default()]), |states, i| {
                 let turns_remaining = n_minutes - i - 1;
                 let max_ore = max_ore_robots * turns_remaining;
                 let max_clay = max_clay_robots * turns_remaining;
@@ -100,7 +100,7 @@ impl StateSpace {
                     })
                     .sorted_by_cached_key(|state| self.fitness(state, turns_remaining))
                     .take(1_000_000)
-                    .collect::<AHashSet<State>>()
+                    .collect::<HashSet<State>>()
             })
             .into_iter()
             .map(|state| state.resources[3])
