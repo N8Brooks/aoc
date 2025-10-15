@@ -8,10 +8,6 @@ pub fn part_2(input: &str) -> isize {
     Intcode::new(input).run(ID)
 }
 
-fn parse_program(input: &str) -> Vec<isize> {
-    input.split(',').map(|num| num.parse().unwrap()).collect()
-}
-
 struct Intcode {
     program: Vec<isize>,
     i: usize,
@@ -19,10 +15,8 @@ struct Intcode {
 
 impl Intcode {
     fn new(input: &str) -> Self {
-        Self {
-            program: parse_program(input),
-            i: 0,
-        }
+        let program = input.split(',').map(|num| num.parse().unwrap()).collect();
+        Self { program, i: 0 }
     }
 
     fn run(mut self, input: isize) -> isize {
