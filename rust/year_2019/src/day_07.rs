@@ -46,15 +46,15 @@ struct Intcode {
     /// Instruction pointer
     ip: usize,
     /// Initial phase setting (consumed on first input)
-    phase: Option<isize>,
+    input_0: Option<isize>,
 }
 
 impl Intcode {
-    fn new(program: &[isize], input_0: isize) -> Self {
+    fn new(program: &[isize], phase: isize) -> Self {
         Self {
             memory: program.to_vec(),
             ip: 0,
-            phase: Some(input_0),
+            input_0: Some(phase),
         }
     }
 
@@ -76,7 +76,7 @@ impl Intcode {
                     self.write(param_1 * param_2);
                 }
                 3 => {
-                    let input = self.phase.take().unwrap_or(input);
+                    let input = self.input_0.take().unwrap_or(input);
                     self.write(input);
                 }
                 4 => return Some(self.read(mode_1)),
@@ -123,8 +123,8 @@ impl Intcode {
     }
 
     fn write(&mut self, value: isize) {
-        let ip: usize = self.next().try_into().unwrap();
-        self.memory[ip] = value;
+        let i: usize = self.next().try_into().unwrap();
+        self.memory[i] = value;
     }
 
     fn next(&mut self) -> isize {
