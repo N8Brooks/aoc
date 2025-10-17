@@ -1,5 +1,7 @@
-go 1.21
+go 1.24.4
 
-use ./year_2022
-
-use ./util
+use (
+	./util
+	./year_2019
+	./year_2022
+)
