@@ -3,7 +3,8 @@ package day01
 import (
 	_ "embed"
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const Example = `1000

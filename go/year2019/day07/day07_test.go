@@ -3,7 +3,8 @@ package day07
 import (
 	_ "embed"
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const example1A = "3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0"

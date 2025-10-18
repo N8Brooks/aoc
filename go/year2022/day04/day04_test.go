@@ -2,7 +2,8 @@ package day04
 
 import (
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const Example = `2-4,6-8

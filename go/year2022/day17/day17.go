@@ -3,7 +3,8 @@ package day17
 import (
 	"fmt"
 	"slices"
-	"util/imath"
+
+	"github.com/N8Brooks/aoc/go/util/imath"
 )
 
 func Part1(input string) int {

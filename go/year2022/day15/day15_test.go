@@ -2,7 +2,8 @@ package day15
 
 import (
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const Example = `Sensor at x=2, y=18: closest beacon is at x=-2, y=15

@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"util/itertools"
+
+	"github.com/N8Brooks/aoc/go/util/itertools"
 )
 
 func Part1(input string) int {

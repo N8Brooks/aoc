@@ -2,7 +2,8 @@ package day14
 
 import (
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const Example = `498,4 -> 498,6 -> 496,6

@@ -2,14 +2,17 @@ package day06
 
 import (
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
-const Example1 = "mjqjpqmgbljsphdztnvjfqwrcgsmlb"
-const Example2 = "bvwbjplbgvbhsrlpgdmjqwftvncz"
-const Example3 = "nppdvjthqldpwncqszvftbrmjlhg"
-const Example4 = "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"
-const Example5 = "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"
+const (
+	Example1 = "mjqjpqmgbljsphdztnvjfqwrcgsmlb"
+	Example2 = "bvwbjplbgvbhsrlpgdmjqwftvncz"
+	Example3 = "nppdvjthqldpwncqszvftbrmjlhg"
+	Example4 = "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"
+	Example5 = "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"
+)
 
 func TestPart1(t *testing.T) {
 	cases := []struct {

@@ -5,7 +5,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 func Part1(input string) string {
@@ -85,5 +86,4 @@ func TopCratesOfStacks(stacks [][]byte) string {
 		result = append(result, crate)
 	}
 	return strings.Join(result, "")
-
 }

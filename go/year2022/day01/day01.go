@@ -3,7 +3,8 @@ package day01
 import (
 	"strconv"
 	"strings"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 func Part1(input string) int {

@@ -3,7 +3,8 @@ package day14
 import (
 	"strconv"
 	"strings"
-	"util/imath"
+
+	"github.com/N8Brooks/aoc/go/util/imath"
 )
 
 type Pos = struct{ x, y int }

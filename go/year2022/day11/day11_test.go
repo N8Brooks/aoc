@@ -2,7 +2,8 @@ package day11
 
 import (
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const Example = `Monkey 0:

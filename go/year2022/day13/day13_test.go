@@ -2,7 +2,8 @@ package day13
 
 import (
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const Example = `[1,1,3,1,1]

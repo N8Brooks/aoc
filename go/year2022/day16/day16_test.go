@@ -2,7 +2,8 @@ package day16
 
 import (
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const Example = `Valve AA has flow rate=0; tunnels lead to valves DD, II, BB

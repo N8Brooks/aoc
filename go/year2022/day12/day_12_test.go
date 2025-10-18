@@ -2,7 +2,8 @@ package day12
 
 import (
 	"testing"
-	"util"
+
+	"github.com/N8Brooks/aoc/go/util"
 )
 
 const Example = `Sabqponm
