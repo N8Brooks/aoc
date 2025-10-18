@@ -12,15 +12,13 @@ func Part1(input string) int {
 	maxSignal := 0
 	for phases := range itertools.Permutations([]int{0, 1, 2, 3, 4}, 5) {
 		input := make(chan int)
-		defer close(input)
-		signal := 0
-		for _, phase := range phases {
-			output := intcode(program, input)
-			input <- phase
-			input <- signal
-			signal = <-output
-		}
+		output := chainAmps(input, program, phases)
+
+		input <- 0
+		signal := <-output
+
 		maxSignal = max(maxSignal, signal)
+		close(input)
 	}
 	return maxSignal
 }
@@ -29,28 +27,34 @@ func Part2(input string) int {
 	program := parseProgram(input)
 	maxSignal := 0
 	for phases := range itertools.Permutations([]int{5, 6, 7, 8, 9}, 5) {
-		input1 := make(chan int)
-		outputN := input1
-		for _, phase := range phases {
-			inputN := outputN
-			outputN = intcode(program, inputN)
-			inputN <- phase
-		}
+		input := make(chan int)
+		output := chainAmps(input, program, phases)
 
 		signal := 0
 	loop:
 		for {
 			select {
-			case input1 <- signal:
-				signal = <-outputN
+			case input <- signal:
+				signal = <-output
 			default:
 				break loop
 			}
 		}
+
 		maxSignal = max(maxSignal, signal)
-		close(input1)
+		close(input)
 	}
 	return maxSignal
+}
+
+func chainAmps(input1 chan int, program []int, phases []int) chan int {
+	outputN := input1
+	for _, phase := range phases {
+		inputN := outputN
+		outputN = intcode(program, inputN)
+		inputN <- phase
+	}
+	return outputN
 }
 
 func parseProgram(input string) []int {
