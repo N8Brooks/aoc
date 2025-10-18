@@ -10,15 +10,15 @@ import (
 func Part1(input string) int {
 	program := parseProgram(input)
 	maxSignal := 0
-	inputs := make(chan int)
-	defer close(inputs)
 	for phases := range itertools.Permutations([]int{0, 1, 2, 3, 4}, 5) {
+		input := make(chan int)
+		defer close(input)
 		signal := 0
 		for _, phase := range phases {
-			outputs := intcode(program, inputs)
-			inputs <- phase
-			inputs <- signal
-			signal = <-outputs
+			output := intcode(program, input)
+			input <- phase
+			input <- signal
+			signal = <-output
 		}
 		maxSignal = max(maxSignal, signal)
 	}
@@ -29,26 +29,26 @@ func Part2(input string) int {
 	program := parseProgram(input)
 	maxSignal := 0
 	for phases := range itertools.Permutations([]int{5, 6, 7, 8, 9}, 5) {
-		input0 := make(chan int)
-		output := input0
+		input1 := make(chan int)
+		outputN := input1
 		for _, phase := range phases {
-			input := output
-			output = intcode(program, input)
-			input <- phase
+			inputN := outputN
+			outputN = intcode(program, inputN)
+			inputN <- phase
 		}
 
 		signal := 0
 	loop:
 		for {
 			select {
-			case input0 <- signal:
-				signal = <-output
+			case input1 <- signal:
+				signal = <-outputN
 			default:
 				break loop
 			}
 		}
 		maxSignal = max(maxSignal, signal)
-		close(input0)
+		close(input1)
 	}
 	return maxSignal
 }
@@ -96,13 +96,13 @@ func intcode(program []int, inputs chan int) chan int {
 		for {
 			instr := next()
 			modes, opcode := instr/100, instr%100
-			mode_1, mode_2 := modes%10, modes/10
+			mode1, mode2 := modes%10, modes/10
 
 			switch opcode {
 			case 1:
-				write(read(mode_1) + read(mode_2))
+				write(read(mode1) + read(mode2))
 			case 2:
-				write(read(mode_1) * read(mode_2))
+				write(read(mode1) * read(mode2))
 			case 3:
 				if input, ok := <-inputs; !ok {
 					return
@@ -110,25 +110,25 @@ func intcode(program []int, inputs chan int) chan int {
 					write(input)
 				}
 			case 4:
-				outputs <- read(mode_1)
+				outputs <- read(mode1)
 			case 5:
-				param_1, param_2 := read(mode_1), read(mode_2)
-				if param_1 != 0 {
-					ip = param_2
+				param1, param2 := read(mode1), read(mode2)
+				if param1 != 0 {
+					ip = param2
 				}
 			case 6:
-				param_1, param_2 := read(mode_1), read(mode_2)
-				if param_1 == 0 {
-					ip = param_2
+				param1, param2 := read(mode1), read(mode2)
+				if param1 == 0 {
+					ip = param2
 				}
 			case 7:
-				if read(mode_1) < read(mode_2) {
+				if read(mode1) < read(mode2) {
 					write(1)
 				} else {
 					write(0)
 				}
 			case 8:
-				if read(mode_1) == read(mode_2) {
+				if read(mode1) == read(mode2) {
 					write(1)
 				} else {
 					write(0)
