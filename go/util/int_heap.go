@@ -2,7 +2,7 @@ package util
 
 import "container/heap"
 
-// An IntHeap is a min-heap of ints.
+// IntHeap is a min-heap of ints.
 type IntHeap []int
 
 func (h IntHeap) Len() int           { return len(h) }

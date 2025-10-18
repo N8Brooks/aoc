@@ -9,7 +9,7 @@ const testdata = "../../../test_data"
 
 var cache = map[problem]string{}
 
-// Returns the input for the problem
+// Input returns the input for the problem
 // Caches results in memory
 // Panics if it does not exist on disk
 // Not set up for concurrent access
