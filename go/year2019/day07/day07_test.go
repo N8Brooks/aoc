@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/N8Brooks/aoc/go/util"
+	"github.com/N8Brooks/aoc/go/util/input"
 )
 
 const example1A = "3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0"
@@ -23,7 +23,7 @@ func TestPart1(t *testing.T) {
 		{example1A, 43210},
 		{example1B, 54321},
 		{example1C, 65210},
-		{util.Input(2019, 7), 92663},
+		{input.Input(2019, 7), 92663},
 	}
 	for i, c := range cases {
 		actual := Part1(c.input)
@@ -47,7 +47,7 @@ func TestPart2(t *testing.T) {
 	}{
 		// {example2A, 139629729},
 		// {example2B, 18216},
-		{util.Input(2019, 7), 14365052},
+		{input.Input(2019, 7), 14365052},
 	}
 	for i, c := range cases {
 		actual := Part2(c.input)

@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/N8Brooks/aoc/go/util"
+	"github.com/N8Brooks/aoc/go/util/collections"
 )
 
 func Part1(input string) int {
@@ -23,7 +23,7 @@ func Part1(input string) int {
 }
 
 func Part2(input string) int {
-	h := &util.IntHeap{0, 0, 0}
+	h := &collections.BinaryHeap{0, 0, 0}
 	for calories := range strings.SplitSeq(input, "\n\n") {
 		var totalCalories int
 		for calories := range strings.SplitSeq(calories, "\n") {

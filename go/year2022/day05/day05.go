@@ -3,10 +3,9 @@ package day05
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
-
-	"github.com/N8Brooks/aoc/go/util"
 )
 
 func Part1(input string) string {
@@ -15,7 +14,7 @@ func Part1(input string) string {
 		j := len(stacks[r.from]) - r.move
 		crates := stacks[r.from][j:]
 		stacks[r.from] = stacks[r.from][:j]
-		util.Reverse(crates)
+		slices.Reverse(crates)
 		stacks[r.to] = append(stacks[r.to], crates...)
 	}
 	return TopCratesOfStacks(stacks)

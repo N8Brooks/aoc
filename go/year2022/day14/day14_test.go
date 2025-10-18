@@ -3,7 +3,7 @@ package day14
 import (
 	"testing"
 
-	"github.com/N8Brooks/aoc/go/util"
+	"github.com/N8Brooks/aoc/go/util/input"
 )
 
 const Example = `498,4 -> 498,6 -> 496,6
@@ -15,7 +15,7 @@ func TestPart1(t *testing.T) {
 		expected int
 	}{
 		{Example, 24},
-		{util.Input(2022, 14), 1133},
+		{input.Input(2022, 14), 1133},
 	}
 	for i, c := range cases {
 		actual := Part1(c.input)
@@ -31,7 +31,7 @@ func TestPart2(t *testing.T) {
 		expected int
 	}{
 		{Example, 93},
-		{util.Input(2022, 14), 27566},
+		{input.Input(2022, 14), 27566},
 	}
 	for i, c := range cases {
 		actual := Part2(c.input)

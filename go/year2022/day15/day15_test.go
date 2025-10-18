@@ -3,7 +3,7 @@ package day15
 import (
 	"testing"
 
-	"github.com/N8Brooks/aoc/go/util"
+	"github.com/N8Brooks/aoc/go/util/input"
 )
 
 const Example = `Sensor at x=2, y=18: closest beacon is at x=-2, y=15
@@ -42,7 +42,7 @@ func TestPart1(t *testing.T) {
 		input    string
 		expected int
 	}{
-		{util.Input(2022, 15), 4717631},
+		{input.Input(2022, 15), 4717631},
 	}
 	for i, c := range cases {
 		actual := Part1(c.input)
@@ -73,7 +73,7 @@ func TestPart2(t *testing.T) {
 		input    string
 		expected int
 	}{
-		{util.Input(2022, 15), 13197439355220},
+		{input.Input(2022, 15), 13197439355220},
 	}
 	for i, c := range cases {
 		actual := Part2(c.input)

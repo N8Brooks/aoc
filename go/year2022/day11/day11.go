@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/N8Brooks/aoc/go/util"
+	"github.com/N8Brooks/aoc/go/util/collections"
 )
 
 func Part1(input string) int {
@@ -62,7 +62,7 @@ func MonkeyBusiness(monkeysInput []MonkeyParams, makeOperate MakeOperate, rounds
 			monkey.operate()
 		}
 	}
-	h := &util.IntHeap{0, 0}
+	h := &collections.BinaryHeap{0, 0}
 	for _, monkey := range monkeys {
 		h.PushPop(monkey.count)
 	}

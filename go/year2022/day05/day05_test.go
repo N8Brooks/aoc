@@ -3,7 +3,7 @@ package day05
 import (
 	"testing"
 
-	"github.com/N8Brooks/aoc/go/util"
+	"github.com/N8Brooks/aoc/go/util/input"
 )
 
 const Example = `    [D]    
@@ -22,7 +22,7 @@ func TestPart1(t *testing.T) {
 		expected string
 	}{
 		{Example, "CMZ"},
-		{util.Input(2022, 5), "TDCHVHJTG"},
+		{input.Input(2022, 5), "TDCHVHJTG"},
 	}
 	for i, c := range cases {
 		actual := Part1(c.input)
@@ -38,7 +38,7 @@ func TestPart2(t *testing.T) {
 		expected string
 	}{
 		{Example, "MCD"},
-		{util.Input(2022, 5), "NGCMPJLHV"},
+		{input.Input(2022, 5), "NGCMPJLHV"},
 	}
 	for i, c := range cases {
 		actual := Part2(c.input)

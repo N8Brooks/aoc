@@ -3,7 +3,7 @@ package day02
 import (
 	"testing"
 
-	"github.com/N8Brooks/aoc/go/util"
+	"github.com/N8Brooks/aoc/go/util/input"
 )
 
 const Example = `A Y
@@ -40,7 +40,7 @@ func TestPart1(t *testing.T) {
 		expected int
 	}{
 		{Example, 15},
-		{util.Input(2022, 2), 12645},
+		{input.Input(2022, 2), 12645},
 	}
 	for i, c := range cases {
 		actual := Part1(c.input)
@@ -56,7 +56,7 @@ func TestPart2(t *testing.T) {
 		expected int
 	}{
 		{Example, 12},
-		{util.Input(2022, 2), 11756},
+		{input.Input(2022, 2), 11756},
 	}
 	for i, c := range cases {
 		actual := Part2(c.input)
