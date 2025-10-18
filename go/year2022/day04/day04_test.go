@@ -19,7 +19,7 @@ func TestPart1(t *testing.T) {
 		expected int
 	}{
 		{Example, 2},
-		{input.Input(2022, 4), 540},
+		{input.Load(2022, 4), 540},
 	}
 	for i, c := range cases {
 		actual := Part1(c.input)
@@ -35,7 +35,7 @@ func TestPart2(t *testing.T) {
 		expected int
 	}{
 		{Example, 4},
-		{input.Input(2022, 4), 872},
+		{input.Load(2022, 4), 872},
 	}
 	for i, c := range cases {
 		actual := Part2(c.input)

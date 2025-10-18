@@ -23,7 +23,7 @@ func TestPart1(t *testing.T) {
 		{example1A, 43210},
 		{example1B, 54321},
 		{example1C, 65210},
-		{input.Input(2019, 7), 92663},
+		{input.Load(2019, 7), 92663},
 	}
 	for i, c := range cases {
 		actual := Part1(c.input)
@@ -47,7 +47,7 @@ func TestPart2(t *testing.T) {
 	}{
 		// {example2A, 139629729},
 		// {example2B, 18216},
-		{input.Input(2019, 7), 14365052},
+		{input.Load(2019, 7), 14365052},
 	}
 	for i, c := range cases {
 		actual := Part2(c.input)

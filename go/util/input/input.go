@@ -3,22 +3,44 @@ package input
 import (
 	"fmt"
 	"os"
+	"sync"
 )
 
 const testdata = "../../../test_data"
 
-var cache = map[problem]string{}
+var (
+	cache   = map[problem]*cachedInput{}
+	cacheMu sync.RWMutex
+)
 
-// Input returns the input for the problem, caching contents in memory.
-// Not safe for concurrent use. Panics if the file does not exist.
-func Input(year uint16, day uint8) string {
+type cachedInput struct {
+	once  sync.Once
+	value string
+}
+
+// Load returns the input for the problem, caching contents in memory.
+// Safe for concurrent callers. Panics if the file does not exist.
+func Load(year uint16, day uint8) string {
 	p := problem{year, day}
-	if input, exists := cache[p]; exists {
-		return input
+
+	cacheMu.RLock()
+	entry := cache[p]
+	cacheMu.RUnlock()
+
+	if entry == nil {
+		cacheMu.Lock()
+		if entry = cache[p]; entry == nil {
+			entry = &cachedInput{}
+			cache[p] = entry
+		}
+		cacheMu.Unlock()
 	}
-	input := p.readInput()
-	cache[p] = input
-	return input
+
+	entry.once.Do(func() {
+		entry.value = p.readInput()
+	})
+
+	return entry.value
 }
 
 type problem struct {
