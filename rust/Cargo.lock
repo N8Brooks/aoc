@@ -660,6 +660,7 @@ dependencies = [
  "hashbrown",
  "itertools",
  "num",
+ "regex",
  "test-case",
 ]
 
