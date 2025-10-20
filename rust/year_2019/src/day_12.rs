@@ -1,100 +1,109 @@
-use itertools::{Itertools as _, multizip};
+use itertools::Itertools as _;
 use num::integer::lcm;
 
 pub fn part_1(input: &str, steps: usize) -> usize {
-    let mut positions = parse_moons(input);
-    let mut velocities = [[0; 3]; 4];
-
-    for _ in 0..steps {
-        for i in 0..4 {
-            for j in (i + 1)..4 {
-                let (v1s, v2s) = velocities.split_at_mut(j);
-                let (v1s, v2s) = (&mut v1s[i], &mut v2s[0]);
-                let (p1s, p2s) = (positions[i], positions[j]);
-                for (v1, p1, v2, p2) in multizip((v1s, p1s, v2s, p2s)) {
-                    *v1 += (p2 - p1).signum();
-                    *v2 += (p1 - p2).signum();
-                }
+    let [positions, velocities] = parse_moons(input)
+        .map(|mut pos| {
+            let mut vel = [0; 4];
+            for _ in 0..steps {
+                step(&mut vel, &mut pos);
             }
-        }
-
-        for (ps, vs) in positions.iter_mut().zip(velocities) {
-            for (p, v) in ps.iter_mut().zip(vs) {
-                *p += v;
-            }
-        }
-    }
+            [pos, vel]
+        })
+        .transpose()
+        .map(transpose);
 
     positions
         .into_iter()
         .zip(velocities)
         .map(|(ps, vs)| {
-            let potential_energy: usize = ps.into_iter().map(|p| p.unsigned_abs()).sum();
-            let kinetic_energy: usize = vs.into_iter().map(|v| v.unsigned_abs()).sum();
-            potential_energy * kinetic_energy
+            let pe: usize = ps.into_iter().map(|p| p.unsigned_abs()).sum();
+            let ke: usize = vs.into_iter().map(|v| v.unsigned_abs()).sum();
+            pe * ke
         })
         .sum()
 }
 
 pub fn part_2(input: &str) -> usize {
-    let initial_positions = parse_moons(input);
-    let mut positions = initial_positions;
-    let mut velocities = [[0; 3]; 4];
-    let mut periods = [0; 3];
-
-    for step in 1.. {
-        for i in 0..4 {
-            for j in (i + 1)..4 {
-                let (v1s, v2s) = velocities.split_at_mut(j);
-                let (v1s, v2s) = (&mut v1s[i], &mut v2s[0]);
-                let (p1s, p2s) = (positions[i], positions[j]);
-                for (v1, p1, v2, p2) in multizip((v1s, p1s, v2s, p2s)) {
-                    *v1 += (p2 - p1).signum();
-                    *v2 += (p1 - p2).signum();
-                }
-            }
-        }
-
-        for (ps, vs) in positions.iter_mut().zip(velocities) {
-            for (p, v) in ps.iter_mut().zip(vs) {
-                *p += v;
-            }
-        }
-
-        for dim in 0..3 {
-            if periods[dim] == 0
-                && positions.iter().zip(&velocities).all(|(pos, vel)| {
-                    pos[dim]
-                        == initial_positions[positions.iter().position(|p| p == pos).unwrap()][dim]
-                        && vel[dim] == 0
-                })
-            {
-                periods[dim] = step;
-            }
-        }
-
-        if !periods.contains(&0) {
-            break;
-        }
-    }
-
-    periods.into_iter().reduce(lcm).unwrap()
+    parse_moons(input)
+        .into_iter()
+        .map(|init: [isize; 4]| {
+            let mut vel = [0; 4];
+            let mut pos = init;
+            let mut steps = 0;
+            while {
+                step(&mut vel, &mut pos);
+                steps += 1;
+                pos != init || vel != [0; 4]
+            } {}
+            steps
+        })
+        .reduce(lcm)
+        .unwrap()
 }
 
-fn parse_moons(input: &str) -> [[isize; 3]; 4] {
+/// Unrolled update to velocity and position for 4 moons along a single axis.
+#[inline(always)]
+fn step(vel: &mut [isize; 4], pos: &mut [isize; 4]) {
+    let [p0, p1, p2, p3] = *pos;
+    let s01 = p1.cmp(&p0) as isize;
+    let s02 = p2.cmp(&p0) as isize;
+    let s03 = p3.cmp(&p0) as isize;
+    let s12 = p2.cmp(&p1) as isize;
+    let s13 = p3.cmp(&p1) as isize;
+    let s23 = p3.cmp(&p2) as isize;
+
+    vel[0] += s01 + s02 + s03;
+    vel[1] -= s01 - s12 - s13;
+    vel[2] -= s02 + s12 - s23;
+    vel[3] -= s03 + s13 + s23;
+
+    pos[0] += vel[0];
+    pos[1] += vel[1];
+    pos[2] += vel[2];
+    pos[3] += vel[3];
+}
+
+/// Parses the input into three arrays of four positions each, one per axis.
+fn parse_moons(input: &str) -> [[isize; 4]; 3] {
     use std::sync::OnceLock;
     static RE: OnceLock<regex::Regex> = OnceLock::new();
     let re = RE.get_or_init(|| regex::Regex::new(r"<x=(-?\d+), y=(-?\d+), z=(-?\d+)>").unwrap());
     re.captures_iter(input)
-        .map(|cap| {
-            [
-                cap[1].parse().unwrap(),
-                cap[2].parse().unwrap(),
-                cap[3].parse().unwrap(),
-            ]
-        })
+        .map(|cap| [1, 2, 3].map(|i| cap[i].parse().unwrap()))
         .collect_array()
         .unwrap()
+        .transpose()
+}
+
+/// Transposes a 2D array of size MxN into one of size NxM.
+fn transpose<const M: usize, const N: usize, T>(m: [[T; N]; M]) -> [[T; M]; N] {
+    use std::array::from_fn;
+    let mut iters = m.map(|r| r.into_iter());
+    from_fn(|_| from_fn(|i| iters[i].next().unwrap()))
+}
+
+pub trait Transpose<const R: usize, const C: usize> {
+    type Item;
+    fn transpose(self) -> [[Self::Item; R]; C];
+
+    #[inline(always)]
+    fn tranpose(self) -> [[Self::Item; R]; C]
+    where
+        Self: Sized,
+    {
+        self.transpose()
+    }
+}
+
+impl<T, const R: usize, const C: usize> Transpose<R, C> for [[T; C]; R] {
+    type Item = T;
+
+    /// Transposes a 2D array of size MxN into one of size NxM.
+    #[inline(always)]
+    fn transpose(self) -> [[T; R]; C] {
+        transpose::<R, C, T>(self)
+    }
 }
 
 #[cfg(test)]
