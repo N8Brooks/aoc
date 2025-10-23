@@ -2,14 +2,14 @@
 https://adventofcode.com/2015/day/19
 """
 
-
-from pathlib import Path
+import re
 from collections import defaultdict
 from itertools import chain, starmap
+from pathlib import Path
 from random import shuffle
-import re
 
 from iteration_utilities import empty
+
 
 def part_1(text):
     def replace(i, token):
@@ -80,17 +80,22 @@ HOH
 def test_part_1_input():
     assert part_1(_read_input()) == 576
 
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 4
+
 
 def test_part_1_example_2():
     assert part_1(EXAMPLE_2) == 4
 
+
 def test_part_2_input():
     assert part_2(_read_input()) == 207
 
+
 def test_part_2_example_1():
-    assert part_2(EXAMPLE_1, 'O') == 2
+    assert part_2(EXAMPLE_1, "O") == 2
+
 
 def test_part_2_example_2():
     assert part_2(EXAMPLE_2) == 3

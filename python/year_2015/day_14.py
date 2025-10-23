@@ -2,10 +2,9 @@
 https://adventofcode.com/2015/day/14
 """
 
-
-from pathlib import Path
-from itertools import accumulate, chain, cycle, islice, repeat, starmap
 import re
+from itertools import accumulate, chain, cycle, islice, repeat, starmap
+from pathlib import Path
 from statistics import mode
 
 from iteration_utilities import argmax
@@ -58,11 +57,14 @@ Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.
 def test_part_1_input():
     assert part_1(_read_input()) == 2696
 
+
 def test_part_1_example():
     assert part_1(EXAMPLE, 1000) == 1120
 
+
 def test_part_2_input():
     assert part_2(_read_input()) == 1084
+
 
 def test_part_2_example():
     assert part_2(EXAMPLE, 1000) == 688

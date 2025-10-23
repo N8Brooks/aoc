@@ -1,3 +1,5 @@
+from pathlib import Path
+
 def part_1(input: str) -> int:
     loop, _ = parse_loop(input)
     return (len(loop) + 1) // 2
@@ -99,6 +101,11 @@ def parse_loop(input: str) -> tuple[set[tuple[int, int]], list[str]]:
     return seen, lines
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_10.txt").read_text()
+
 def test_part_1_example_1_a():
     assert (
         part_1(
@@ -156,8 +163,7 @@ LJ.LJ"""
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_10.txt", "r") as f:
-        assert part_1(f.read()) == 6951
+    assert part_1(_read_input()) == 6951
 
 
 def test_part_2_example_1_a():
@@ -235,5 +241,4 @@ L7JLJL-JLJLJL--JLJ.L"""
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_10.txt", "r") as f:
-        assert part_2(f.read()) == 563
+    assert part_2(_read_input()) == 563

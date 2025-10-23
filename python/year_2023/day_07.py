@@ -1,3 +1,4 @@
+from pathlib import Path
 from functools import reduce
 from heapq import nlargest
 from typing import Callable
@@ -51,13 +52,17 @@ HANDS = [
 ]
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_07.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 6440
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_07.txt", "r") as f:
-        assert part_1(f.read()) == 248453531
+    assert part_1(_read_input()) == 248453531
 
 
 def test_part_2_example_1():
@@ -65,8 +70,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_07.txt", "r") as f:
-        assert part_2(f.read()) == 248781813
+    assert part_2(_read_input()) == 248781813
 
 
 EXAMPLE_1 = """32T3K 765

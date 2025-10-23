@@ -2,9 +2,9 @@
 https://adventofcode.com/2015/day/3
 """
 
-
-from pathlib import Path
 from itertools import accumulate, islice
+from pathlib import Path
+
 
 def direction(char):
     if char == "^":
@@ -36,23 +36,30 @@ def _read_input() -> str:
 def test_part_1_input():
     assert part_1(_read_input()) == 2081
 
+
 def test_part_1_example_1():
-    assert part_1('>') == 2
+    assert part_1(">") == 2
+
 
 def test_part_1_example_2():
-    assert part_1('^>v<') == 4
+    assert part_1("^>v<") == 4
+
 
 def test_part_1_example_3():
-    assert part_1('^v^v^v^v^v') == 2
+    assert part_1("^v^v^v^v^v") == 2
+
 
 def test_part_2_input():
     assert part_2(_read_input()) == 2341
 
+
 def test_part_2_example_1():
-    assert part_2('^v') == 3
+    assert part_2("^v") == 3
+
 
 def test_part_2_example_2():
-    assert part_2('^>v<') == 3
+    assert part_2("^>v<") == 3
+
 
 def test_part_2_example_3():
-    assert part_2('^v^v^v^v^v') == 11
+    assert part_2("^v^v^v^v^v") == 11

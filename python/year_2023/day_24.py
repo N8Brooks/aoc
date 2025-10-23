@@ -1,3 +1,4 @@
+from pathlib import Path
 from itertools import combinations
 from typing import Iterable
 
@@ -65,13 +66,17 @@ def get_deltas(hailstones: list[tuple[int, ...]], i: int):
     return deltas
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_24.txt").read_text()
+
 def test_part_1_example_1():
     assert count_cross(EXAMPLE_1, 7, 27) == 2
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_24.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 20847
+    assert part_1(_read_input().rstrip()) == 20847
 
 
 # def test_part_2_example_1():
@@ -79,8 +84,7 @@ def test_part_1_input():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_24.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 908621716620524
+    assert part_2(_read_input().rstrip()) == 908621716620524
 
 
 EXAMPLE_1 = """19, 13, 30 @ -2,  1, -2

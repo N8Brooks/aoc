@@ -2,8 +2,9 @@
 https://adventofcode.com/2015/day/2
 """
 
-
 from pathlib import Path
+
+
 def process(text):
     return (sorted(map(int, line.split("x"))) for line in text.split())
 
@@ -23,17 +24,22 @@ def _read_input() -> str:
 def test_part_1_input():
     assert part_1(_read_input()) == 1606483
 
+
 def test_part_1_example_1():
-    assert part_1('2x3x4') == 58
+    assert part_1("2x3x4") == 58
+
 
 def test_part_1_example_2():
-    assert part_1('1x1x10') == 43
+    assert part_1("1x1x10") == 43
+
 
 def test_part_2_input():
     assert part_2(_read_input()) == 3842356
 
+
 def test_part_2_example_1():
-    assert part_2('2x3x4') == 34
+    assert part_2("2x3x4") == 34
+
 
 def test_part_2_example_2():
-    assert part_2('1x1x10') == 14
+    assert part_2("1x1x10") == 14

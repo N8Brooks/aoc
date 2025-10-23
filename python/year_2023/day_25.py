@@ -1,3 +1,4 @@
+from pathlib import Path
 from collections import defaultdict
 
 # https://www.reddit.com/r/adventofcode/comments/18qbsxs/comment/ketzp94/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
@@ -23,13 +24,17 @@ def part_1(input: str) -> int:
     return a * b
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_25.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 54
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_25.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 612945
+    assert part_1(_read_input().rstrip()) == 612945
 
 
 EXAMPLE_1 = """jqt: rhn xhk nvd

@@ -1,3 +1,4 @@
+from pathlib import Path
 from math import isqrt, prod
 
 
@@ -26,13 +27,17 @@ def ceil_div(a: int, b: int) -> int:
     return -(a // -b)
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_06.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 288
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_06.txt", "r") as f:
-        assert part_1(f.read()) == 625968
+    assert part_1(_read_input()) == 625968
 
 
 def test_part_2_example_1():
@@ -40,8 +45,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_06.txt", "r") as f:
-        assert part_2(f.read()) == 43663323
+    assert part_2(_read_input()) == 43663323
 
 
 EXAMPLE_1 = """Time:      7  15   30

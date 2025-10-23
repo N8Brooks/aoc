@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Iterable
 
 
@@ -60,13 +61,17 @@ def total_load(platform: tuple[str, ...]) -> int:
     return sum(i * row.count("O") for i, row in enumerate(platform, 1))
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_14.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 136
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_14.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 108857
+    assert part_1(_read_input().rstrip()) == 108857
 
 
 def test_part_2_example_1():
@@ -74,8 +79,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_14.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 95273
+    assert part_2(_read_input().rstrip()) == 95273
 
 
 EXAMPLE_1 = """O....#....

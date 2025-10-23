@@ -2,14 +2,14 @@
 https://adventofcode.com/2015/day/18
 """
 
-
-from pathlib import Path
 from functools import partial
 from operator import eq
+from pathlib import Path
 
-from iteration_utilities import applyfunc, nth
 import numpy as np
+from iteration_utilities import applyfunc, nth
 from scipy.signal import convolve2d
+
 
 def process(line):
     return tuple(map(partial(eq, "#"), line))
@@ -54,11 +54,14 @@ EXAMPLE = """.#.#.#
 def test_part_1_input():
     assert part_1(_read_input()) == 1061
 
+
 def test_part_1_example():
     assert part_1(EXAMPLE, 4) == 4
 
+
 def test_part_2_input():
     assert part_2(_read_input()) == 1006
+
 
 def test_part_2_example():
     assert part_2(EXAMPLE, 4) == 14

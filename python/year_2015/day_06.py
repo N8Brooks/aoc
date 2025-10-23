@@ -2,10 +2,11 @@
 https://adventofcode.com/2015/day/6
 """
 
-
-from pathlib import Path
-import numpy as np
 import re
+from pathlib import Path
+
+import numpy as np
+
 
 def process(text, instruction, grid):
     r = re.compile(r"(\D+) (\d+),(\d+) through (\d+),(\d+)")
@@ -56,20 +57,26 @@ def _read_input() -> str:
 def test_part_1_input():
     assert part_1(_read_input()) == 543903
 
+
 def test_part_1_example_1():
-    assert part_1('turn on 0,0 through 999,999') == 1000000
+    assert part_1("turn on 0,0 through 999,999") == 1000000
+
 
 def test_part_1_example_2():
-    assert part_1('toggle 0,0 through 999,0') == 1000
+    assert part_1("toggle 0,0 through 999,0") == 1000
+
 
 def test_part_1_example_3():
-    assert part_1('turn off 499,499 through 500,500') == 0
+    assert part_1("turn off 499,499 through 500,500") == 0
+
 
 def test_part_2_input():
     assert part_2(_read_input(), 1000) == 14687245
 
+
 def test_part_2_example_1():
-    assert part_2('turn on 0,0 through 0,0') == 1
+    assert part_2("turn on 0,0 through 0,0") == 1
+
 
 def test_part_2_example_2():
-    assert part_2('toggle 0,0 through 999,999') == 2000000
+    assert part_2("toggle 0,0 through 999,999") == 2000000

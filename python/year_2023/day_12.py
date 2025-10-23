@@ -1,3 +1,4 @@
+from pathlib import Path
 from functools import cache
 from itertools import repeat
 
@@ -35,13 +36,17 @@ def arrangements(line: str, r: int) -> int:
     return visit(0, 0)
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_12.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 21
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_12.txt", "r") as f:
-        assert part_1(f.read()) == 7490
+    assert part_1(_read_input()) == 7490
 
 
 def test_part_2_example_1():
@@ -49,8 +54,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_12.txt", "r") as f:
-        assert part_2(f.read()) == 65607131946466
+    assert part_2(_read_input()) == 65607131946466
 
 
 EXAMPLE_1 = """???.### 1,1,3

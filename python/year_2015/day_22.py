@@ -4,14 +4,14 @@ https://www.reddit.com/r/adventofcode/comments/3xspyl/day_22_solutions/cy927kk?
 utm_source=share&utm_medium=web2x&context=3
 """
 
-
-from pathlib import Path
-import pytest
+import re
 from collections import namedtuple
+from functools import reduce
 from heapq import heappop, heappush
 from itertools import count
-from functools import reduce
-import re
+from pathlib import Path
+
+import pytest
 
 SPELL = namedtuple("BaseSpell", "name cost effect turns dmg heal armor mana")
 
@@ -160,16 +160,19 @@ def _read_input() -> str:
     return (Path(__file__).with_name("test_data") / "day_22.txt").read_text()
 
 
-@pytest.mark.skip(reason='Takes too long')
+@pytest.mark.skip(reason="Takes too long")
 def test_part_1_input():
     assert part_1(_read_input()) == 1269
 
-def test_part_1_example():
-    assert part_1('13 8', 10, 250) == 226
 
-@pytest.mark.skip(reason='Takes too long')
+def test_part_1_example():
+    assert part_1("13 8", 10, 250) == 226
+
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_2_input():
     assert part_2(_read_input()) == 1309
 
+
 def test_part_2_mock():
-    assert part_2('10 8', 10, 250) == 246
+    assert part_2("10 8", 10, 250) == 246

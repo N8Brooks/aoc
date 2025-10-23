@@ -1,3 +1,4 @@
+from pathlib import Path
 from math import prod
 from operator import sub
 
@@ -93,13 +94,17 @@ def parse_rating(rating: str):
     )
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_19.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 19114
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_19.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 402185
+    assert part_1(_read_input().rstrip()) == 402185
 
 
 def test_part_2_example_1():
@@ -107,8 +112,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_19.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 130291480568730
+    assert part_2(_read_input().rstrip()) == 130291480568730
 
 
 EXAMPLE_1 = """px{a<2006:qkq,m>2090:A,rfg}

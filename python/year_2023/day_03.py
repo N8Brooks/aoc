@@ -1,3 +1,4 @@
+from pathlib import Path
 import re
 from itertools import chain, product, repeat
 
@@ -49,13 +50,17 @@ def part_2(input: str) -> int:
     return total
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_03.txt").read_text()
+
 def test_part_1_example():
     assert part_1(EXAMPLE_1) == 4361
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_03.txt", "r") as f:
-        assert part_1(f.read()) == 532331
+    assert part_1(_read_input()) == 532331
 
 
 def test_part_2_example():
@@ -63,8 +68,7 @@ def test_part_2_example():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_03.txt", "r") as f:
-        assert part_2(f.read()) == 82301120
+    assert part_2(_read_input()) == 82301120
 
 
 EXAMPLE_1 = """467..114..

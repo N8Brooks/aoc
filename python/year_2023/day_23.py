@@ -1,3 +1,4 @@
+from pathlib import Path
 from collections import defaultdict
 
 
@@ -115,13 +116,17 @@ def part_2(input: str) -> int:
     return best
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_23.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 94
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_23.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 2106
+    assert part_1(_read_input().rstrip()) == 2106
 
 
 def test_part_2_example_1():
@@ -129,8 +134,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_23.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 6350
+    assert part_2(_read_input().rstrip()) == 6350
 
 
 EXAMPLE_1 = """#.#####################

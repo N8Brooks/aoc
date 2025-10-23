@@ -1,3 +1,5 @@
+from pathlib import Path
+
 def part_1(input: str) -> int:
     return sum_distances_2d(input, 2)
 
@@ -34,18 +36,21 @@ def sum_distances_1d(counts: list[int], expansion: int) -> int:
     return total
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_11.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 374
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_11.txt", "r") as f:
-        assert part_1(f.read()) == 9370588
+    assert part_1(_read_input()) == 9370588
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_11.txt", "r") as f:
-        assert part_2(f.read()) == 746207878188
+    assert part_2(_read_input()) == 746207878188
 
 
 def test_sum_distance_2d_10():

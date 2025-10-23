@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "year-2020"
+version = "0.1.0"
+description = "Advent of Code 2020 solutions."
+requires-python = ">=3.10"
+dependencies = ["iteration-utilities"]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["year_2020"]

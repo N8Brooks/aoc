@@ -2,13 +2,13 @@
 https://adventofcode.com/2015/day/9
 """
 
-
-from pathlib import Path
+import re
 from collections import defaultdict
 from itertools import permutations
-import re
+from pathlib import Path
 
 from iteration_utilities import successive
+
 
 def process(text):
     def distance(path):
@@ -46,11 +46,14 @@ Dublin to Belfast = 141
 def test_part_1_input():
     assert part_1(_read_input()) == 117
 
+
 def test_part_1_example():
     assert part_1(EXAMPLE) == 605
 
+
 def test_part_2_input():
     assert part_2(_read_input()) == 909
+
 
 def test_part_2_example():
     assert part_2(EXAMPLE) == 982

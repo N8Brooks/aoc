@@ -2,18 +2,12 @@
 https://adventofcode.com/2015/day/11
 """
 
-
-from pathlib import Path
-import pytest
-from itertools import accumulate, starmap, repeat
+from itertools import accumulate, repeat, starmap
 from operator import eq
+from pathlib import Path
 
-from iteration_utilities import (
-    count_items,
-    starfilter,
-    successive,
-    unique_everseen,
-)
+import pytest
+from iteration_utilities import count_items, starfilter, successive, unique_everseen
 
 IOL = {8, 11, 14}
 
@@ -62,39 +56,48 @@ def _read_input() -> str:
     return (Path(__file__).with_name("test_data") / "day_11.txt").read_text()
 
 
-@pytest.mark.skip(reason='Takes too long')
+@pytest.mark.skip(reason="Takes too long")
 def test_part_1_input():
-    assert part_1(_read_input()) == 'hxbxxyzz'
+    assert part_1(_read_input()) == "hxbxxyzz"
 
-@pytest.mark.skip(reason='Takes too long')
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_1_example_1():
-    assert part_1('abcdefgh') == 'abcdffaa'
+    assert part_1("abcdefgh") == "abcdffaa"
 
-@pytest.mark.skip(reason='Takes too long')
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_1_example_2():
-    assert part_1('ghijklmn') == 'ghjaabcc'
+    assert part_1("ghijklmn") == "ghjaabcc"
+
 
 def test_part_1_mock_1():
-    assert part_1('bbccc') == 'bbcdd'
+    assert part_1("bbccc") == "bbcdd"
+
 
 def test_part_1_mock_2():
-    assert part_1('xxydf') == 'xxyzz'
+    assert part_1("xxydf") == "xxyzz"
 
-@pytest.mark.skip(reason='Takes too long')
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_2_input():
-    assert part_2(_read_input()) == 'hxcaabcc'
+    assert part_2(_read_input()) == "hxcaabcc"
 
-@pytest.mark.skip(reason='Takes too long')
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_2_example_1():
-    assert part_2('abcdefgh') == 'abcdffbb'
+    assert part_2("abcdefgh") == "abcdffbb"
 
-@pytest.mark.skip(reason='Takes too long')
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_2_example_2():
-    assert part_2('ghijklmn') == 'ghjbbcdd'
+    assert part_2("ghijklmn") == "ghjbbcdd"
+
 
 def test_part_2_mock_1():
-    assert part_2('aabcb') == 'bbcdd'
+    assert part_2("aabcb") == "bbcdd"
 
-@pytest.mark.skip(reason='Takes too long')
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_2_mock_2():
-    assert part_2('ddefe') == 'eefgg'
+    assert part_2("ddefe") == "eefgg"

@@ -2,13 +2,13 @@
 https://adventofcode.com/2015/day/23
 """
 
-
-from pathlib import Path
 from functools import partial
 from itertools import takewhile
 from operator import gt
+from pathlib import Path
 
 from iteration_utilities import applyfunc, consume
+
 
 def compute(text, a, b, target):
     def process(line):
@@ -68,17 +68,22 @@ inc a
 def test_part_1_input():
     assert part_1(_read_input()) == 307
 
+
 def test_part_1_example_a():
-    assert part_1(EXAMPLE, target='a') == 2
+    assert part_1(EXAMPLE, target="a") == 2
+
 
 def test_part_1_example_b():
-    assert part_1(EXAMPLE, target='b') == 0
+    assert part_1(EXAMPLE, target="b") == 0
+
 
 def test_part_2_input():
     assert part_2(_read_input()) == 160
 
+
 def test_part_2_example_a():
-    assert part_2(EXAMPLE, a=2, target='a') == 10
+    assert part_2(EXAMPLE, a=2, target="a") == 10
+
 
 def test_part_2_example_b():
-    assert part_2(EXAMPLE, target='b') == 0
+    assert part_2(EXAMPLE, target="b") == 0

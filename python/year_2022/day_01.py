@@ -1,5 +1,6 @@
-from typing import Iterable
 from heapq import nlargest
+from pathlib import Path
+from typing import Iterable
 
 
 def part_1(input: str) -> int:
@@ -36,13 +37,16 @@ EXAMPLE = """1000
 10000"""
 
 
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_01.txt").read_text()
+
+
 def test_part_1_example():
     assert part_1(EXAMPLE) == 24000
 
 
 def test_part_1_input():
-    with open("../test_data/year_2022/day_01.txt", "r") as f:
-        assert part_1(f.read()) == 68802
+    assert part_1(_read_input()) == 68802
 
 
 def test_part_2_example():
@@ -50,5 +54,4 @@ def test_part_2_example():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2022/day_01.txt", "r") as f:
-        assert part_2(f.read()) == 205370
+    assert part_2(_read_input()) == 205370

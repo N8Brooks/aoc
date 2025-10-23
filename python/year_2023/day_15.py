@@ -1,3 +1,4 @@
+from pathlib import Path
 from functools import reduce
 
 
@@ -31,13 +32,17 @@ def op(value: int, code: int) -> int:
     return (value + code) * 17
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_15.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 1320
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_15.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 517315
+    assert part_1(_read_input().rstrip()) == 517315
 
 
 def test_part_2_example_1():
@@ -45,8 +50,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_15.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 247763
+    assert part_2(_read_input().rstrip()) == 247763
 
 
 def test_hash():

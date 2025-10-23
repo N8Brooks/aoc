@@ -2,9 +2,9 @@
 https://adventofcode.com/2015/day/1
 """
 
-
-from pathlib import Path
 from itertools import accumulate
+from pathlib import Path
+
 
 def part_1(text):
     return text.count("(") - text.count(")")
@@ -26,38 +26,50 @@ def _read_input() -> str:
 def test_part_1_input():
     assert part_1(_read_input()) == 232
 
+
 def test_part_1_example_1():
-    assert part_1('(())') == 0
+    assert part_1("(())") == 0
+
 
 def test_part_1_example_2():
-    assert part_1('()()') == 0
+    assert part_1("()()") == 0
+
 
 def test_part_1_example_3():
-    assert part_1('(((') == 3
+    assert part_1("(((") == 3
+
 
 def test_part_1_example_4():
-    assert part_1('(()(()(') == 3
+    assert part_1("(()(()(") == 3
+
 
 def test_part_1_example_5():
-    assert part_1('))(((((') == 3
+    assert part_1("))(((((") == 3
+
 
 def test_part_1_example_6():
-    assert part_1('())') == -1
+    assert part_1("())") == -1
+
 
 def test_part_1_example_7():
-    assert part_1('))(') == -1
+    assert part_1("))(") == -1
+
 
 def test_part_1_example_8():
-    assert part_1(')))') == -3
+    assert part_1(")))") == -3
+
 
 def test_part_1_example_9():
-    assert part_1(')())())') == -3
+    assert part_1(")())())") == -3
+
 
 def test_part_2_input():
     assert part_2(_read_input()) == 1783
 
+
 def test_part_2_example_1():
-    assert part_2(')') == 1
+    assert part_2(")") == 1
+
 
 def test_part_2_example_2():
-    assert part_2('()())') == 5
+    assert part_2("()())") == 5

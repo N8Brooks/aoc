@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pathlib import Path
 
 import re
 from itertools import cycle
@@ -50,6 +51,11 @@ class Network:
 PATTERN = re.compile(r"(\w{3}) = \((\w{3}), (\w{3})\)")
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_08.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 2
 
@@ -59,8 +65,7 @@ def test_part_1_example_2():
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_08.txt", "r") as f:
-        assert part_1(f.read()) == 20221
+    assert part_1(_read_input()) == 20221
 
 
 def test_part_2_example_3():
@@ -68,8 +73,7 @@ def test_part_2_example_3():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_08.txt", "r") as f:
-        assert part_2(f.read()) == 14616363770447
+    assert part_2(_read_input()) == 14616363770447
 
 
 EXAMPLE_1 = """RL

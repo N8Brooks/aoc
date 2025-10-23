@@ -1,3 +1,4 @@
+from pathlib import Path
 from itertools import islice
 from typing import Iterable
 
@@ -53,13 +54,17 @@ def nth(iterable, n):
     return next(islice(iterable, n, None))
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_21.txt").read_text()
+
 def test_part_1_example_1():
     assert nth(iter_reachable_plots(EXAMPLE_1), 6) == 16
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_21.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 3585
+    assert part_1(_read_input().rstrip()) == 3585
 
 
 # def test_count_reachable_plots_2_6():
@@ -91,8 +96,7 @@ def test_part_1_input():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_21.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 597102953699891
+    assert part_2(_read_input().rstrip()) == 597102953699891
 
 
 EXAMPLE_1 = """...........

@@ -1,3 +1,4 @@
+from pathlib import Path
 from collections import Counter
 from math import prod
 
@@ -31,13 +32,17 @@ def min_cube_set(line: str):
     return counts
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_02.txt").read_text()
+
 def test_part_1_example():
     assert part_1(EXAMPLE_1) == 8
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_02.txt", "r") as f:
-        assert part_1(f.read()) == 2101
+    assert part_1(_read_input()) == 2101
 
 
 def test_part_2_example():
@@ -45,8 +50,7 @@ def test_part_2_example():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_02.txt", "r") as f:
-        assert part_2(f.read()) == 58269
+    assert part_2(_read_input()) == 58269
 
 
 EXAMPLE_1 = """Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green

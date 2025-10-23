@@ -1,6 +1,11 @@
 [tool.uv.workspace]
 members = [
   "year_2015",
+  "year_2016",
+  "year_2017",
+  "year_2018",
+  "year_2019",
+  "year_2020",
   "year_2022",
   "year_2023",
 ]

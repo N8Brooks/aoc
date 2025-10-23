@@ -1,3 +1,4 @@
+from pathlib import Path
 from abc import ABC, abstractmethod
 from collections import deque
 from itertools import count, repeat
@@ -123,6 +124,11 @@ class Broadcast(Module):
         return zip(self.outputs, repeat(signal))
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_20.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 32000000
 
@@ -132,8 +138,7 @@ def test_part_1_example_2():
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_20.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 788848550
+    assert part_1(_read_input().rstrip()) == 788848550
 
 
 # def test_part_2_example_2():
@@ -141,8 +146,7 @@ def test_part_1_input():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_20.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 228300182686739
+    assert part_2(_read_input().rstrip()) == 228300182686739
 
 
 EXAMPLE_1 = """broadcaster -> a, b, c

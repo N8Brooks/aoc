@@ -2,9 +2,8 @@
 https://adventofcode.com/2015/day/7
 """
 
-
-from pathlib import Path
 from collections import deque
+from pathlib import Path
 
 from iteration_utilities import is_None
 
@@ -99,29 +98,38 @@ NOT y -> i
 def test_part_1_input():
     assert part_1(_read_input()) == 16076
 
+
 def test_part_1_example_d():
-    assert part_1(EXAMPLE, 'd') == 72
+    assert part_1(EXAMPLE, "d") == 72
+
 
 def test_part_1_example_e():
-    assert part_1(EXAMPLE, 'e') == 507
+    assert part_1(EXAMPLE, "e") == 507
+
 
 def test_part_1_example_f():
-    assert part_1(EXAMPLE, 'f') == 492
+    assert part_1(EXAMPLE, "f") == 492
+
 
 def test_part_1_example_g():
-    assert part_1(EXAMPLE, 'g') == 114
+    assert part_1(EXAMPLE, "g") == 114
+
 
 def test_part_1_example_h():
-    assert part_1(EXAMPLE, 'h') == 65412
+    assert part_1(EXAMPLE, "h") == 65412
+
 
 def test_part_1_example_i():
-    assert part_1(EXAMPLE, 'i') == 65079
+    assert part_1(EXAMPLE, "i") == 65079
+
 
 def test_part_1_example_x():
-    assert part_1(EXAMPLE, 'x') == 123
+    assert part_1(EXAMPLE, "x") == 123
+
 
 def test_part_1_example_y():
-    assert part_1(EXAMPLE, 'y') == 456
+    assert part_1(EXAMPLE, "y") == 456
+
 
 def test_part_2_input():
     assert part_2(_read_input()) == 2797

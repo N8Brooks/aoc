@@ -2,9 +2,8 @@
 https://adventofcode.com/2015/day/16
 """
 
-
-from pathlib import Path
 import re
+from pathlib import Path
 
 TARGET = {
     "children": "3",
@@ -58,6 +57,7 @@ def _read_input() -> str:
 
 def test_part_1_input():
     assert part_1(_read_input()) == 213
+
 
 def test_part_2_input():
     assert part_2(_read_input()) == 323

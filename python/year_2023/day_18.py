@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Iterable
 
 
@@ -51,13 +52,17 @@ def parse_instruction_2(line: str) -> tuple[int, int, int]:
     return dx, dy, int(color[2:7], 16)
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_18.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 62
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_18.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 40131
+    assert part_1(_read_input().rstrip()) == 40131
 
 
 def test_part_2_example_1():
@@ -65,8 +70,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_18.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 104454050898331
+    assert part_2(_read_input().rstrip()) == 104454050898331
 
 
 EXAMPLE_1 = """R 6 (#70c710)

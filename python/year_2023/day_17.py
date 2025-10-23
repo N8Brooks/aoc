@@ -1,3 +1,4 @@
+from pathlib import Path
 from heapq import heappop, heappush
 from itertools import accumulate, islice, repeat, takewhile
 from math import inf
@@ -106,13 +107,17 @@ def get_fscores(grid: list[list[int]]) -> list[list[int]]:
 DIRECTIONS = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_17.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 102
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_17.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 758
+    assert part_1(_read_input().rstrip()) == 758
 
 
 def test_part_2_example_1():
@@ -120,8 +125,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_17.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 892
+    assert part_2(_read_input().rstrip()) == 892
 
 
 EXAMPLE_1 = """2413432311323

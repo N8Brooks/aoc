@@ -2,11 +2,10 @@
 https://adventofcode.com/2015/day/21
 """
 
-
-from pathlib import Path
+import re
 from itertools import combinations, filterfalse, product
 from math import ceil, inf
-import re
+from pathlib import Path
 
 from iteration_utilities import packed
 
@@ -67,11 +66,14 @@ def _read_input() -> str:
 def test_part_1_input():
     assert part_1(_read_input()) == 111
 
+
 def test_part_1_example():
-    assert part_1('12 7 2', 8) == 65
+    assert part_1("12 7 2", 8) == 65
+
 
 def test_part_2_input():
     assert part_2(_read_input()) == 188
 
+
 def test_part_2_mock():
-    assert part_2('6 7 2', 8) == 88
+    assert part_2("6 7 2", 8) == 88

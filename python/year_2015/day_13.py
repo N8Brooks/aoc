@@ -2,11 +2,11 @@
 https://adventofcode.com/2015/day/13
 """
 
-
-from pathlib import Path
+import re
 from collections import defaultdict
 from functools import cache
-import re
+from pathlib import Path
+
 
 def family(text, buffer=False):
     @cache
@@ -79,17 +79,22 @@ Aligator would loose 360 happiness units by sitting next to Irwin.
 def test_part_1_input():
     assert part_1(_read_input()) == 709
 
+
 def test_part_1_example():
     assert part_1(EXAMPLE) == 330
+
 
 def test_part_1_mock():
     assert part_1(MOCK) == 1682
 
+
 def test_part_2_input():
     assert part_2(_read_input()) == 668
 
+
 def test_part_2_example():
     assert part_2(EXAMPLE) == 286
+
 
 def test_part_2_mock():
     assert part_2(MOCK) == 1812

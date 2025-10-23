@@ -1,3 +1,4 @@
+from pathlib import Path
 from collections import defaultdict
 from itertools import product
 
@@ -75,13 +76,17 @@ def part_2(input: str) -> int:
     return sum(dfs(i) for i in range(len(parents)))
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_22.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 5
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_22.txt", "r") as f:
-        assert part_1(f.read().rstrip()) == 393
+    assert part_1(_read_input().rstrip()) == 393
 
 
 def test_part_2_example_1():
@@ -89,8 +94,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_22.txt", "r") as f:
-        assert part_2(f.read().rstrip()) == 58440
+    assert part_2(_read_input().rstrip()) == 58440
 
 
 EXAMPLE_1 = """1,0,1~1,2,1

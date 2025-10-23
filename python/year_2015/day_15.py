@@ -2,13 +2,12 @@
 https://adventofcode.com/2015/day/15
 """
 
-
-from pathlib import Path
-import pytest
-from itertools import repeat
 import re
+from itertools import repeat
+from pathlib import Path
 
 import numpy as np
+import pytest
 
 R = re.compile(
     (
@@ -72,23 +71,28 @@ Butter: capacity 1, durability 3, flavor 3, texture 3, calories 9
 """
 
 
-@pytest.mark.skip(reason='Takes too long')
+@pytest.mark.skip(reason="Takes too long")
 def test_part_1_input():
     assert part_1(_read_input()) == 18965440
+
 
 def test_part_1_example():
     assert part_1(EXAMPLE) == 62842880
 
-@pytest.mark.skip(reason='Takes too long')
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_1_mock():
     assert part_1(MOCK) == 2766555000
 
-@pytest.mark.skip(reason='Takes too long')
+
+@pytest.mark.skip(reason="Takes too long")
 def test_part_2_input():
     assert part_2(_read_input()) == 2766555000
 
+
 def test_part_2_example():
     assert part_2(EXAMPLE) == 57600000
+
 
 def test_part_2_mock():
     assert part_2(MOCK) == 1884745728

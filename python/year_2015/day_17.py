@@ -2,13 +2,13 @@
 https://adventofcode.com/2015/day/17
 """
 
-
-from pathlib import Path
 from collections import Counter
 from functools import reduce
 from itertools import combinations
+from pathlib import Path
 
 from iteration_utilities import count_items
+
 
 def part_1(text, target=150):
     def update(freq, b):
@@ -40,11 +40,14 @@ EXAMPLE = "20 15 10 5 5"
 def test_part_1_input():
     assert part_1(_read_input()) == 654
 
+
 def test_part_1_example():
     assert part_1(EXAMPLE, 25) == 4
 
+
 def test_part_2_input():
     assert part_2(_read_input()) == 57
+
 
 def test_part_2_example():
     assert part_2(EXAMPLE, 25) == 3

@@ -1,3 +1,4 @@
+from pathlib import Path
 from itertools import accumulate, count, pairwise, takewhile
 from functools import reduce
 
@@ -27,13 +28,17 @@ def get_deltas(line: str) -> list[list[int]]:
     return list(takewhile(any, deltas))
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_09.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 114
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_09.txt", "r") as f:
-        assert part_1(f.read()) == 1637452029
+    assert part_1(_read_input()) == 1637452029
 
 
 def test_part_2_example_3():
@@ -41,8 +46,7 @@ def test_part_2_example_3():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_09.txt", "r") as f:
-        assert part_2(f.read()) == 908
+    assert part_2(_read_input()) == 908
 
 
 EXAMPLE_1 = """0 3 6 9 12 15

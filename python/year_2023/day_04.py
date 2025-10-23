@@ -1,3 +1,4 @@
+from pathlib import Path
 from itertools import repeat
 from operator import add
 
@@ -25,13 +26,17 @@ def count_wins(line: str):
     return len(winners & numbers)
 
 
+
+
+def _read_input() -> str:
+    return (Path(__file__).with_name("test_data") / "day_04.txt").read_text()
+
 def test_part_1_example_1():
     assert part_1(EXAMPLE_1) == 13
 
 
 def test_part_1_input():
-    with open("../test_data/year_2023/day_04.txt", "r") as f:
-        assert part_1(f.read()) == 26218
+    assert part_1(_read_input()) == 26218
 
 
 def test_part_2_example_1():
@@ -39,8 +44,7 @@ def test_part_2_example_1():
 
 
 def test_part_2_input():
-    with open("../test_data/year_2023/day_04.txt", "r") as f:
-        assert part_2(f.read()) == 9997537
+    assert part_2(_read_input()) == 9997537
 
 
 EXAMPLE_1 = """Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
