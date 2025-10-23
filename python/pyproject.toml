@@ -1,10 +1,8 @@
-[project]
-name = "aoc-python"
-version = "0.1.0"
-description = "Advent of Code solutions implemented in Python."
-readme = "README.md"
-requires-python = ">=3.10"
-dependencies = []
+[tool.uv.workspace]
+members = [
+  "year_2022",
+  "year_2023",
+]
 
 [dependency-groups]
 dev = ["pytest"]
