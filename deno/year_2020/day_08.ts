@@ -35,7 +35,7 @@ abstract class Instruction {
   }
 
   /** Maybe this could be an interface... */
-   change(): void {
+  change(): void {
     throw new Error("This instruction is not changeable");
   }
 }
