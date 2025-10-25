@@ -1,7 +1,6 @@
-use std::hint;
+use std::{hint, iter::once};
 
 use hashbrown::HashMap;
-use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     let recipes = parse_recipes(input);
@@ -24,40 +23,48 @@ pub fn part_2(input: &str) -> usize {
 }
 
 fn parse_recipes(input: &str) -> Vec<(Vec<(usize, usize)>, usize)> {
-    let mut counts: HashMap<_, usize> = HashMap::new();
-    let recipes: HashMap<_, _> = input
+    let names: Vec<_> = input
+        .lines()
+        .map(|line| {
+            let (_, output) = line.split_once(" => ").unwrap();
+            let (_, out_name) = output.split_once(' ').unwrap();
+            out_name
+        })
+        .chain(once("ORE"))
+        .collect();
+    let get_id = |name: &str| names.iter().position(|&n| n == name).unwrap();
+
+    let mut counts = vec![0; names.len()];
+    let recipes: Vec<_> = input
         .lines()
         .map(|line| {
             let (inputs, output) = line.split_once(" => ").unwrap();
-            let inputs = inputs
+            let inputs: Vec<_> = inputs
                 .split(", ")
                 .map(|s| {
-                    let (qty, name) = s.split_once(' ').unwrap();
-                    let qty = qty.parse().unwrap();
-                    *counts.entry(name).or_insert(0) += 1;
-                    (name, qty)
+                    let (in_qty, in_name) = s.split_once(' ').unwrap();
+                    let in_id = get_id(in_name);
+                    let in_qty = in_qty.parse().unwrap();
+                    counts[in_id] += 1;
+                    (in_id, in_qty)
                 })
-                .collect_vec();
-            let (out_qty, out_name) = output.split_once(' ').unwrap();
+                .collect();
+            let (out_qty, _) = output.split_once(' ').unwrap();
             let out_qty: usize = out_qty.parse().unwrap();
-            (out_name, (out_qty, inputs))
+            (inputs, out_qty)
         })
         .collect();
 
-    let mut stack = vec![&"FUEL"]; // fuel has no dependencies
+    let mut stack = vec![get_id("FUEL")];
 
-    // let mut ids = HashMap::with_capacity(recipes.len());
     let mut ordered = Vec::with_capacity(recipes.len());
-    while let Some(out_name) = stack.pop() {
-        // let id = ids.len();
-        // ids.insert(out_name, id);
-        ordered.push(out_name);
-        if let Some(inputs) = recipes.get(out_name) {
-            for (in_name, _) in &inputs.1 {
-                let count = counts.get_mut(in_name).unwrap();
-                *count -= 1;
-                if *count == 0 {
-                    stack.push(in_name);
+    while let Some(out_id) = stack.pop() {
+        ordered.push(out_id);
+        if let Some((inputs, _)) = recipes.get(out_id) {
+            for &(in_id, _) in inputs {
+                counts[in_id] -= 1;
+                if counts[in_id] == 0 {
+                    stack.push(in_id);
                 }
             }
         }
@@ -69,11 +76,11 @@ fn parse_recipes(input: &str) -> Vec<(Vec<(usize, usize)>, usize)> {
         .map(|(i, &name)| (name, i))
         .collect();
 
-    assert_eq!(ordered.pop(), Some(&"ORE"), "ORE should be last");
+    assert_eq!(ordered.pop(), Some(names.len() - 1), "ORE should be last");
     ordered
         .into_iter()
         .map(|name| {
-            let (out_qty, inputs) = &recipes[name];
+            let (inputs, out_qty) = &recipes[name];
             let inputs = inputs
                 .iter()
                 .map(|(in_name, in_qty)| (ids[in_name], *in_qty))
@@ -81,18 +88,6 @@ fn parse_recipes(input: &str) -> Vec<(Vec<(usize, usize)>, usize)> {
             (inputs, *out_qty)
         })
         .collect()
-
-    // recipes
-    //     .iter()
-    //     .sorted_unstable_by_key(|(name, _)| ids[name])
-    //     .map(|(_, (out_qty, inputs))| {
-    //         let inputs = inputs
-    //             .iter()
-    //             .map(|(in_name, in_qty)| (ids[in_name], *in_qty))
-    //             .collect();
-    //         (inputs, *out_qty)
-    //     })
-    //     .collect()
 }
 
 fn ore_required(recipes: &[(Vec<(usize, usize)>, usize)], amount: usize) -> usize {
