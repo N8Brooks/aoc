@@ -23,10 +23,9 @@ pub fn part_2(input: &str) -> usize {
     base
 }
 
-type Inputs<'a> = Vec<(&'a str, usize)>;
-
-fn parse_recipes(input: &str) -> HashMap<&str, (usize, Inputs<'_>)> {
-    input
+fn parse_recipes(input: &str) -> Vec<(Vec<(usize, usize)>, usize)> {
+    let mut counts: HashMap<_, usize> = HashMap::new();
+    let recipes: HashMap<_, _> = input
         .lines()
         .map(|line| {
             let (inputs, output) = line.split_once(" => ").unwrap();
@@ -34,7 +33,8 @@ fn parse_recipes(input: &str) -> HashMap<&str, (usize, Inputs<'_>)> {
                 .split(", ")
                 .map(|s| {
                     let (qty, name) = s.split_once(' ').unwrap();
-                    let qty: usize = qty.parse().unwrap();
+                    let qty = qty.parse().unwrap();
+                    *counts.entry(name).or_insert(0) += 1;
                     (name, qty)
                 })
                 .collect_vec();
@@ -42,36 +42,77 @@ fn parse_recipes(input: &str) -> HashMap<&str, (usize, Inputs<'_>)> {
             let out_qty: usize = out_qty.parse().unwrap();
             (out_name, (out_qty, inputs))
         })
+        .collect();
+
+    let mut stack = vec![&"FUEL"]; // fuel has no dependencies
+
+    // let mut ids = HashMap::with_capacity(recipes.len());
+    let mut ordered = Vec::with_capacity(recipes.len());
+    while let Some(out_name) = stack.pop() {
+        // let id = ids.len();
+        // ids.insert(out_name, id);
+        ordered.push(out_name);
+        if let Some(inputs) = recipes.get(out_name) {
+            for (in_name, _) in &inputs.1 {
+                let count = counts.get_mut(in_name).unwrap();
+                *count -= 1;
+                if *count == 0 {
+                    stack.push(in_name);
+                }
+            }
+        }
+    }
+
+    let ids: HashMap<_, _> = ordered
+        .iter()
+        .enumerate()
+        .map(|(i, &name)| (name, i))
+        .collect();
+
+    assert_eq!(ordered.pop(), Some(&"ORE"), "ORE should be last");
+    ordered
+        .into_iter()
+        .map(|name| {
+            let (out_qty, inputs) = &recipes[name];
+            let inputs = inputs
+                .iter()
+                .map(|(in_name, in_qty)| (ids[in_name], *in_qty))
+                .collect();
+            (inputs, *out_qty)
+        })
         .collect()
+
+    // recipes
+    //     .iter()
+    //     .sorted_unstable_by_key(|(name, _)| ids[name])
+    //     .map(|(_, (out_qty, inputs))| {
+    //         let inputs = inputs
+    //             .iter()
+    //             .map(|(in_name, in_qty)| (ids[in_name], *in_qty))
+    //             .collect();
+    //         (inputs, *out_qty)
+    //     })
+    //     .collect()
 }
 
-fn ore_required(recipes: &HashMap<&str, (usize, Inputs)>, amount: usize) -> usize {
-    let mut spares: HashMap<_, usize> = HashMap::new();
-    let mut stack = vec![("FUEL", amount)];
-    let mut ore_needed = 0;
-    while let Some((name, mut qty)) = stack.pop() {
-        if name == "ORE" {
-            ore_needed += qty;
+fn ore_required(recipes: &[(Vec<(usize, usize)>, usize)], amount: usize) -> usize {
+    const FUEL_INDEX: usize = 0;
+    let ore_index = recipes.len(); // sentinel for ORE
+    let mut required = vec![0; ore_index + 1];
+    required[FUEL_INDEX] = amount;
+
+    for (i, (inputs, out_qty)) in recipes.iter().enumerate() {
+        let need = required[i];
+        if need == 0 {
             continue;
         }
-
-        let spare = spares.entry(name).or_default();
-        if *spare >= qty {
-            *spare -= qty;
-            continue;
+        let batches = need.div_ceil(*out_qty);
+        for &(name, in_qty) in inputs {
+            required[name] += in_qty * batches;
         }
-        qty -= *spare;
-
-        let (out_qty, inputs) = &recipes[name];
-        let batches = qty.div_ceil(*out_qty);
-        *spare = out_qty * batches - qty;
-
-        let update = inputs
-            .iter()
-            .map(|(in_name, in_qty)| (*in_name, *in_qty * batches));
-        stack.extend(update);
     }
-    ore_needed
+
+    required[ore_index]
 }
 
 #[cfg(test)]
