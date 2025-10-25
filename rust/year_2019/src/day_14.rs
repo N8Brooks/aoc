@@ -1,29 +1,77 @@
+use std::hint;
+
 use hashbrown::HashMap;
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
-    let recipes = HashMap::new();
-    for line in input.lines() {
-        let (input, output) = line.split_once(" => ").unwrap();
-        let input = input
-            .split(", ")
-            .map(|s| {
-                let (qty, name) = s.split_once(' ').unwrap();
-                let gty: usize = qty.parse().unwrap();
-                (name, qty.parse::<usize>().unwrap())
-            })
-            .collect_vec();
-        let output = output.split(", ").map(|s| {
-            let (qty, name) = s.split_once(' ').unwrap();
-            let gty: usize = qty.parse().unwrap();
-            (name, gty)
-        });
-    }
-    0
+    let recipes = parse_recipes(input);
+    ore_required(&recipes, 1)
 }
 
-pub fn part_2(input: &str) -> isize {
-    0
+pub fn part_2(input: &str) -> usize {
+    const ORE_AVAILABLE: usize = 1_000_000_000_000;
+    let recipes = parse_recipes(input);
+    let mut size = ORE_AVAILABLE; // assume up to a 1:1 ratio
+    let mut base = 0;
+    while size > 1 {
+        let half = size / 2;
+        let mid = base + half;
+        let ore = ore_required(&recipes, mid);
+        base = hint::select_unpredictable(ore > 1_000_000_000_000, base, mid);
+        size -= half;
+    }
+    base
+}
+
+type Inputs<'a> = Vec<(&'a str, usize)>;
+
+fn parse_recipes(input: &str) -> HashMap<&str, (usize, Inputs<'_>)> {
+    input
+        .lines()
+        .map(|line| {
+            let (inputs, output) = line.split_once(" => ").unwrap();
+            let inputs = inputs
+                .split(", ")
+                .map(|s| {
+                    let (qty, name) = s.split_once(' ').unwrap();
+                    let qty: usize = qty.parse().unwrap();
+                    (name, qty)
+                })
+                .collect_vec();
+            let (out_qty, out_name) = output.split_once(' ').unwrap();
+            let out_qty: usize = out_qty.parse().unwrap();
+            (out_name, (out_qty, inputs))
+        })
+        .collect()
+}
+
+fn ore_required(recipes: &HashMap<&str, (usize, Inputs)>, amount: usize) -> usize {
+    let mut spares: HashMap<_, usize> = HashMap::new();
+    let mut stack = vec![("FUEL", amount)];
+    let mut ore_needed = 0;
+    while let Some((name, mut qty)) = stack.pop() {
+        if name == "ORE" {
+            ore_needed += qty;
+            continue;
+        }
+
+        let spare = spares.entry(name).or_default();
+        if *spare >= qty {
+            *spare -= qty;
+            continue;
+        }
+        qty -= *spare;
+
+        let (out_qty, inputs) = &recipes[name];
+        let batches = qty.div_ceil(*out_qty);
+        *spare = out_qty * batches - qty;
+
+        let update = inputs
+            .iter()
+            .map(|(in_name, in_qty)| (*in_name, *in_qty * batches));
+        stack.extend(update);
+    }
+    ore_needed
 }
 
 #[cfg(test)]
@@ -98,13 +146,16 @@ mod test {
     #[test_case(EXAMPLE_3, 13312)]
     #[test_case(EXAMPLE_4, 180697)]
     #[test_case(EXAMPLE_5, 2210736)]
-    #[test_case(INPUT, 0)]
+    #[test_case(INPUT, 97422)]
     fn part_1(input: &str, expected: usize) {
         assert_eq!(super::part_1(input), expected);
     }
 
-    #[test_case(INPUT, 0)]
-    fn part_2(input: &str, expected: isize) {
+    #[test_case(EXAMPLE_3, 82892753)]
+    #[test_case(EXAMPLE_4, 5586022)]
+    #[test_case(EXAMPLE_5, 460664)]
+    #[test_case(INPUT, 13108426)]
+    fn part_2(input: &str, expected: usize) {
         assert_eq!(super::part_2(input), expected);
     }
 }
