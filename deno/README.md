@@ -8,10 +8,9 @@ Advent of Code solutions written in TypeScript for Deno.
   [BDD](https://deno.land/std@0.147.0/testing#behavior-driven-development) from
   the Deno standard library.
 - Testing the MD5 hashing problems takes a while so it's best to ignore them.
-- Tests are run in the github actions.
 
 ```bash
-deno test --allow-read --ignore="year_2015/day_04_test.ts,year_2016/day_05_test.ts,year_2016/day_14_test.ts"
+deno test --allow-import --allow-read --parallel --ignore="year_2015/day_04_test.ts,year_2016/day_05_test.ts,year_2016/day_14_test.ts"
 ```
 
 ## Benchmarking
@@ -20,7 +19,7 @@ deno test --allow-read --ignore="year_2015/day_04_test.ts,year_2016/day_05_test.
 - Like with testing, it's best to ignore the MD5 hash based problems.
 
 ```bash
-deno bench --allow-read --unstable --ignore="year_2015/day_04_bench.ts,year_2016/day_05_bench.ts,year_2016/day_14_bench.ts"
+deno bench --allow-read --ignore="year_2015/day_04_bench.ts,year_2016/day_05_bench.ts,year_2016/day_14_bench.ts"
 ```
 
 ## Linting
