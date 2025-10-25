@@ -7,7 +7,7 @@ Damage: 8`;
 const EXAMPLE_2 = `Hit Points: 14
 Damage: 8`;
 
-const input = await Deno.readTextFile("year_2015/testdata/day_22.txt");
+const input = await Deno.readTextFile("year_2015/test_data/day_22.txt");
 
 describe("day_22", () => {
   describe("part1", () => {

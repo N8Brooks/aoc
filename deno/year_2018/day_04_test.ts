@@ -19,7 +19,7 @@ const EXAMPLE = `[1518-11-01 00:00] Guard #10 begins shift
 [1518-11-05 00:45] falls asleep
 [1518-11-05 00:55] wakes up`;
 
-const input = await Deno.readTextFile("year_2018/testdata/day_04.txt");
+const input = await Deno.readTextFile("year_2018/test_data/day_04.txt");
 
 describe("day 4", () => {
   describe("part 1", () => {

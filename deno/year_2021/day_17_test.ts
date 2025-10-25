@@ -3,7 +3,7 @@ import { part1, part2 } from "./day_17.ts";
 
 const EXAMPLE = `target area: x=20..30, y=-10..-5`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_17.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_17.txt");
 
 describe("day 17", () => {
   describe("part 1", () => {

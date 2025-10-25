@@ -11,7 +11,7 @@ acc +1
 jmp -4
 acc +6`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_08.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_08.txt");
 
 describe("day 8", () => {
   describe("part 1", () => {

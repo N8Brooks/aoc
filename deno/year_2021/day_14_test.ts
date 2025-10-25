@@ -20,7 +20,7 @@ BC -> B
 CC -> N
 CN -> C`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_14.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_14.txt");
 
 describe("day 14", () => {
   describe("part 1", () => {

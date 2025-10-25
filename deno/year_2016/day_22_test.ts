@@ -13,7 +13,7 @@ Filesystem            Size  Used  Avail  Use%
 /dev/grid/node-x2-y1    9T    8T     1T   88%
 /dev/grid/node-x2-y2    9T    6T     3T   66%`;
 
-const input = await Deno.readTextFile("year_2016/testdata/day_22.txt");
+const input = await Deno.readTextFile("year_2016/test_data/day_22.txt");
 
 describe("day 22", () => {
   describe("part 1", () => {

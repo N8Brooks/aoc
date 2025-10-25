@@ -15,7 +15,7 @@ Player 2:
 7
 10`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_22.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_22.txt");
 
 describe("day 22", () => {
   describe("part 1", () => {

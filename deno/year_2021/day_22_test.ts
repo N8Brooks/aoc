@@ -90,7 +90,7 @@ off x=-70369..-16548,y=22648..78696,z=-1892..86821
 on x=-53470..21291,y=-120233..-33476,z=-44150..38147
 off x=-93533..-4276,y=-16170..68771,z=-104985..-24507`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_22.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_22.txt");
 
 describe("day 22", () => {
   describe("part 1", () => {

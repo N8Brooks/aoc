@@ -67,12 +67,12 @@ class JmpInstruction extends Instruction {
   }
 
   /** `"nop"` to a `"jmp"` instructions are changeable */
-  isChangeable() {
+  override isChangeable() {
     return true;
   }
 
   /** Swap this from a `"nop"` to a `"jmp"` or vice versa */
-  change(): void {
+  override change(): void {
     this.#nop = !this.#nop;
   }
 }

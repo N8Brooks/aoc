@@ -12,7 +12,7 @@ LLLLLLLLLL
 L.LLLLLL.L
 L.LLLLL.LL`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_11.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_11.txt");
 
 describe("day 11", () => {
   describe("part 1", () => {

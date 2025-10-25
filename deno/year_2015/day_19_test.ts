@@ -29,7 +29,7 @@ O => HH
 
 HOHOHO`;
 
-const input = await Deno.readTextFile("year_2015/testdata/day_19.txt");
+const input = await Deno.readTextFile("year_2015/test_data/day_19.txt");
 
 describe("day 19", () => {
   describe("part 1", () => {

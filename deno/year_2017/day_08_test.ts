@@ -1,7 +1,7 @@
 import { describe, expect, it } from "../test_deps.ts";
 import { part1, part2 } from "./day_08.ts";
 
-const input = await Deno.readTextFile("year_2017/testdata/day_08.txt");
+const input = await Deno.readTextFile("year_2017/test_data/day_08.txt");
 
 const EXAMPLE = `b inc 5 if a > 1
 a inc 1 if b < 5

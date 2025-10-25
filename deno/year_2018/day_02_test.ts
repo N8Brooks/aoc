@@ -17,7 +17,7 @@ fguij
 axcye
 wvxyz`;
 
-const input = await Deno.readTextFile("year_2018/testdata/day_02.txt");
+const input = await Deno.readTextFile("year_2018/test_data/day_02.txt");
 
 describe("day 2", () => {
   describe("part 1", () => {

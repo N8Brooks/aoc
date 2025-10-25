@@ -8,7 +8,7 @@ bot 1 gives low to output 1 and high to bot 0
 bot 0 gives low to output 2 and high to output 0
 value 2 goes to bot 2`;
 
-const input = await Deno.readTextFile("year_2016/testdata/day_10.txt");
+const input = await Deno.readTextFile("year_2016/test_data/day_10.txt");
 
 describe("day 10", () => {
   describe("part 1", () => {

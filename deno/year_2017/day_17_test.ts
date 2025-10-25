@@ -3,7 +3,7 @@ import { part1, part2 } from "./day_17.ts";
 
 const EXAMPLE = "3";
 
-const input = await Deno.readTextFile("year_2017/testdata/day_17.txt");
+const input = await Deno.readTextFile("year_2017/test_data/day_17.txt");
 
 describe("day 17", () => {
   describe("part 1", () => {

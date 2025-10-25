@@ -138,7 +138,7 @@ const EXAMPLE = `--- scanner 0 ---
 -652,-548,-490
 30,-46,-14`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_19.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_19.txt");
 
 describe("day 19", () => {
   describe("part 1", () => {

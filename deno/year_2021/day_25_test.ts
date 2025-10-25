@@ -11,7 +11,7 @@ v>v.vv.v..
 v.v..>>v.v
 ....v..v.>`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_25.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_25.txt");
 
 describe("day 25", () => {
   describe("part 1", () => {

@@ -24,7 +24,7 @@ const PART_2_NAUGHTY = [
   "ieodomkazucvgmuy",
 ];
 
-const input = await Deno.readTextFile("year_2015/testdata/day_05.txt");
+const input = await Deno.readTextFile("year_2015/test_data/day_05.txt");
 
 describe("day 5", () => {
   describe("part 1", () => {

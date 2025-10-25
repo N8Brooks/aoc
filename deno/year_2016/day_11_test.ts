@@ -7,7 +7,7 @@ The second floor contains a hydrogen generator.
 The third floor contains a lithium generator.
 The fourth floor contains nothing relevant.`;
 
-const input = await Deno.readTextFile("year_2016/testdata/day_11.txt");
+const input = await Deno.readTextFile("year_2016/test_data/day_11.txt");
 
 describe("day 11", () => {
   describe("part 1", () => {

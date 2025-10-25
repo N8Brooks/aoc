@@ -12,7 +12,7 @@ const EXAMPLE = `[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
 [[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
 [[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_18.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_18.txt");
 
 describe("day 18", () => {
   describe("part 1", () => {

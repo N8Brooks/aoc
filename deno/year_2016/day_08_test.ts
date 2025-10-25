@@ -6,7 +6,7 @@ rotate column x=1 by 1
 rotate row y=0 by 4
 rotate column x=1 by 1`;
 
-const input = await Deno.readTextFile("year_2016/testdata/day_08.txt");
+const input = await Deno.readTextFile("year_2016/test_data/day_08.txt");
 
 describe("day 8", () => {
   describe("part 1", () => {

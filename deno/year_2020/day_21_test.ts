@@ -6,7 +6,7 @@ trh fvjkl sbzzf mxmxvkd (contains dairy)
 sqjhc fvjkl (contains soy)
 sqjhc mxmxvkd sbzzf (contains fish)`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_21.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_21.txt");
 
 describe("day 21", () => {
   describe("part 1", () => {

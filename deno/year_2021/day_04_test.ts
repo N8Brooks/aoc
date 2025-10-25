@@ -22,7 +22,7 @@ const EXAMPLE =
 22 11 13  6  5
  2  0 12  3  7`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_04.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_04.txt");
 
 describe("day 4", () => {
   describe("part 1", () => {

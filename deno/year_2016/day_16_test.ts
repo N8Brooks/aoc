@@ -7,7 +7,7 @@ import {
   part2,
 } from "./day_16.ts";
 
-const input = await Deno.readTextFile("year_2016/testdata/day_16.txt");
+const input = await Deno.readTextFile("year_2016/test_data/day_16.txt");
 
 describe("day 16", () => {
   describe("dragon curve", () => {

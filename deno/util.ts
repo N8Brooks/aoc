@@ -5,7 +5,7 @@ const BYTE_TO_HEX = Array.from(
 );
 
 /** Returns a hex string from a hash buffer */
-export const decode = (hashBuffer: ArrayBuffer): string => {
+export const decode = (hashBuffer: Uint8Array | ArrayBuffer): string => {
   const hashArray = new Uint8Array(hashBuffer);
   const hexOctets = new Array(hashArray.length);
   for (let i = 0; i < hashArray.length; i++) {

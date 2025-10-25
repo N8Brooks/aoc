@@ -11,7 +11,7 @@ mem[42] = 100
 mask = 00000000000000000000000000000000X0XX
 mem[26] = 1`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_14.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_14.txt");
 
 describe("day 14", () => {
   describe("part 1", () => {

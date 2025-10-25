@@ -8,7 +8,7 @@ const EXAMPLE = `1721
 675
 1456`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_01.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_01.txt");
 
 describe("day 1", () => {
   describe("part 1", () => {

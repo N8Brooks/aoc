@@ -22,7 +22,7 @@ eneswnwswnwsenenwnwnwwseeswneewsenese
 neswnwewnwnwseenwseesewsenwsweewe
 wseweeenwnesenwwwswnew`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_24.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_24.txt");
 
 describe("day 24", () => {
   describe("part 1", () => {

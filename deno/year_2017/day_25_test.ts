@@ -1,7 +1,7 @@
 import { describe, expect, it } from "../test_deps.ts";
 import { part1 } from "./day_25.ts";
 
-const input = await Deno.readTextFile("year_2017/testdata/day_25.txt");
+const input = await Deno.readTextFile("year_2017/test_data/day_25.txt");
 
 const EXAMPLE = `Begin in state A.
 Perform a diagnostic checksum after 6 steps.

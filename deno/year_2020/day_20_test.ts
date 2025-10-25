@@ -109,7 +109,7 @@ Tile 3079:
 ..#.......
 ..#.###...`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_20.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_20.txt");
 
 describe("day 20", () => {
   describe("part 1", () => {

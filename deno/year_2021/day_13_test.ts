@@ -23,7 +23,7 @@ const EXAMPLE = `6,10
 fold along y=7
 fold along x=5`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_13.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_13.txt");
 
 describe("day 13", () => {
   describe("part 1", () => {

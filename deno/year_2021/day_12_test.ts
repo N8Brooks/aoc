@@ -39,7 +39,7 @@ zg-he
 pj-fs
 start-RW`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_12.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_12.txt");
 
 describe("day 12", () => {
   describe("part 1", () => {

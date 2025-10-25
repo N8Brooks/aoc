@@ -10,7 +10,7 @@ move position 3 to position 0
 rotate based on position of letter b
 rotate based on position of letter d`;
 
-const input = await Deno.readTextFile("year_2016/testdata/day_21.txt");
+const input = await Deno.readTextFile("year_2016/test_data/day_21.txt");
 
 describe("day 21", () => {
   describe("evaluate", () => {

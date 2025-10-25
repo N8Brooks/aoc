@@ -9,7 +9,7 @@ Step B must be finished before step E can begin.
 Step D must be finished before step E can begin.
 Step F must be finished before step E can begin.`;
 
-const input = await Deno.readTextFile("year_2018/testdata/day_07.txt");
+const input = await Deno.readTextFile("year_2018/test_data/day_07.txt");
 
 describe("day 7", () => {
   describe("part 1", () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "../test_deps.ts";
 import { part1, part2 } from "./day_15.ts";
 
-const input = await Deno.readTextFile("year_2017/testdata/day_15.txt");
+const input = await Deno.readTextFile("year_2017/test_data/day_15.txt");
 
 const EXAMPLE = `Generator A starts with 65
 Generator B starts with 8921`;

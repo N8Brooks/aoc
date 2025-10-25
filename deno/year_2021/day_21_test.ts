@@ -4,7 +4,7 @@ import { part1, part2 } from "./day_21.ts";
 const EXAMPLE = `Player 1 starting position: 4
 Player 2 starting position: 8`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_21.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_21.txt");
 
 describe("day 21", () => {
   describe("part 1", () => {

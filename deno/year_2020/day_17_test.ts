@@ -5,7 +5,7 @@ const EXAMPLE = `.#.
 ..#
 ###`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_17.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_17.txt");
 
 describe("day 17", () => {
   describe("part 1", () => {

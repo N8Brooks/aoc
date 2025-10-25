@@ -5,7 +5,7 @@ const EXAMPLE = `#1 @ 1,3: 4x4
 #2 @ 3,1: 4x4
 #3 @ 5,5: 2x2`;
 
-const input = await Deno.readTextFile("year_2018/testdata/day_03.txt");
+const input = await Deno.readTextFile("year_2018/test_data/day_03.txt");
 
 describe("day 3", () => {
   describe("part 1", () => {

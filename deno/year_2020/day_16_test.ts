@@ -26,7 +26,7 @@ nearby tickets:
 15,1,5
 5,14,9`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_16.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_16.txt");
 
 describe("day 16", () => {
   describe("part 1", () => {

@@ -12,7 +12,7 @@ const EXAMPLE = `[({(<(())[]>[[{[]{<()<>>
 <{([([[(<>()){}]>(<<{{
 <{([{{}}[<[[[<>{}]]]>[]]`;
 
-const input = await Deno.readTextFile("year_2021/testdata/day_10.txt");
+const input = await Deno.readTextFile("year_2021/test_data/day_10.txt");
 
 describe("day 10", () => {
   describe("part 1", () => {

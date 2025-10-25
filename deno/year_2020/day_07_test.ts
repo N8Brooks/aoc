@@ -20,7 +20,7 @@ dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags.`;
 
-const input = await Deno.readTextFile("year_2020/testdata/day_07.txt");
+const input = await Deno.readTextFile("year_2020/test_data/day_07.txt");
 
 describe("day 7", () => {
   describe("part 1", () => {

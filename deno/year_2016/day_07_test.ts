@@ -11,7 +11,7 @@ xyx[xyx]xyx
 aaa[kek]eke
 zazbz[bzb]cdb`;
 
-const input = await Deno.readTextFile("year_2016/testdata/day_07.txt");
+const input = await Deno.readTextFile("year_2016/test_data/day_07.txt");
 
 describe("day 7", () => {
   describe("part 1", () => {

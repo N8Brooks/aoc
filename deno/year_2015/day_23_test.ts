@@ -6,7 +6,7 @@ jio a, +2
 tpl a
 inc a`;
 
-const input = await Deno.readTextFile("year_2015/testdata/day_23.txt");
+const input = await Deno.readTextFile("year_2015/test_data/day_23.txt");
 
 describe("day 23", () => {
   describe("part 1", () => {

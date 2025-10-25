@@ -1,6 +1,6 @@
 import { part1, part2 } from "./day_06.ts";
 
-const input = await Deno.readTextFile("year_2018/testdata/day_06.txt");
+const input = await Deno.readTextFile("year_2018/test_data/day_06.txt");
 
 Deno.bench("part 1", () => {
   part1(input);
