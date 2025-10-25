@@ -1,7 +1,5 @@
 use std::{hint, iter::once};
 
-use hashbrown::HashMap;
-
 pub fn part_1(input: &str) -> usize {
     let recipes = parse_recipes(input);
     ore_required(&recipes, 1)
@@ -16,83 +14,86 @@ pub fn part_2(input: &str) -> usize {
         let half = size / 2;
         let mid = base + half;
         let ore = ore_required(&recipes, mid);
-        base = hint::select_unpredictable(ore > 1_000_000_000_000, base, mid);
+        base = hint::select_unpredictable(ore > ORE_AVAILABLE, base, mid);
         size -= half;
     }
     base
 }
 
+/// Parses the input into a list of recipes in topological order.
 fn parse_recipes(input: &str) -> Vec<(Vec<(usize, usize)>, usize)> {
-    let names: Vec<_> = input
+    let chems: Vec<_> = input
         .lines()
-        .map(|line| {
-            let (_, output) = line.split_once(" => ").unwrap();
-            let (_, out_name) = output.split_once(' ').unwrap();
-            out_name
-        })
+        .map(|line| line.rsplit_once(' ').unwrap().1)
         .chain(once("ORE"))
         .collect();
-    let get_id = |name: &str| names.iter().position(|&n| n == name).unwrap();
+    let n_chems = chems.len();
 
-    let mut counts = vec![0; names.len()];
-    let recipes: Vec<_> = input
-        .lines()
-        .map(|line| {
-            let (inputs, output) = line.split_once(" => ").unwrap();
-            let inputs: Vec<_> = inputs
-                .split(", ")
-                .map(|s| {
-                    let (in_qty, in_name) = s.split_once(' ').unwrap();
-                    let in_id = get_id(in_name);
-                    let in_qty = in_qty.parse().unwrap();
-                    counts[in_id] += 1;
-                    (in_id, in_qty)
-                })
-                .collect();
-            let (out_qty, _) = output.split_once(' ').unwrap();
-            let out_qty: usize = out_qty.parse().unwrap();
-            (inputs, out_qty)
-        })
-        .collect();
+    let n_recipes = n_chems - 1; // ore does not have a recipe
+    let mut recipes = Vec::with_capacity(n_recipes);
+    let mut indegree = vec![0; n_chems];
+    for line in input.lines() {
+        let (inputs, output) = line.split_once(" => ").unwrap();
+        let inputs: Vec<_> = inputs
+            .split(", ")
+            .map(|s| {
+                let (in_qty, in_name) = s.split_once(' ').unwrap();
+                let in_i = chems.iter().position(|&c| c == in_name).unwrap();
+                let in_qty: usize = in_qty.parse().unwrap();
+                indegree[in_i] += 1;
+                (in_i, in_qty)
+            })
+            .collect();
+        let (out_qty, _) = output.split_once(' ').unwrap();
+        let out_qty = out_qty.parse().unwrap();
+        recipes.push((inputs, out_qty));
+    }
 
-    let mut stack = vec![get_id("FUEL")];
-
-    let mut ordered = Vec::with_capacity(recipes.len());
-    while let Some(out_id) = stack.pop() {
-        ordered.push(out_id);
-        if let Some((inputs, _)) = recipes.get(out_id) {
-            for &(in_id, _) in inputs {
-                counts[in_id] -= 1;
-                if counts[in_id] == 0 {
-                    stack.push(in_id);
+    // Topological sort
+    let fuel_i = chems.iter().position(|&c| c == "FUEL").unwrap();
+    let mut stack = vec![fuel_i];
+    let mut order = vec![0; n_chems];
+    let mut i2 = 0;
+    while let Some(out_i) = stack.pop() {
+        order[out_i] = i2;
+        i2 += 1;
+        if let Some((inputs, _)) = recipes.get(out_i) {
+            for &(in_i, _) in inputs {
+                indegree[in_i] -= 1;
+                if indegree[in_i] == 0 {
+                    stack.push(in_i);
                 }
             }
         }
     }
 
-    let ids: HashMap<_, _> = ordered
-        .iter()
-        .enumerate()
-        .map(|(i, &name)| (name, i))
-        .collect();
+    let ore_i = n_chems - 1;
+    assert_eq!(order[fuel_i], 0, "fuel should be first");
+    assert_eq!(order[ore_i], ore_i, "ore should be last");
 
-    assert_eq!(ordered.pop(), Some(names.len() - 1), "ORE should be last");
-    ordered
-        .into_iter()
-        .map(|name| {
-            let (inputs, out_qty) = &recipes[name];
-            let inputs = inputs
-                .iter()
-                .map(|(in_name, in_qty)| (ids[in_name], *in_qty))
-                .collect();
-            (inputs, *out_qty)
-        })
-        .collect()
+    // Map inputs to topological order
+    for (inputs, _) in &mut recipes {
+        for (i1, _) in inputs {
+            *i1 = order[*i1];
+        }
+    }
+
+    // Map recipes to topological order
+    for i1 in 0..ore_i {
+        let mut i2 = order[i1];
+        while i1 != i2 {
+            recipes.swap(i1, i2);
+            order.swap(i1, i2);
+            i2 = order[i1];
+        }
+    }
+
+    recipes
 }
 
 fn ore_required(recipes: &[(Vec<(usize, usize)>, usize)], amount: usize) -> usize {
     const FUEL_INDEX: usize = 0;
-    let ore_index = recipes.len(); // sentinel for ORE
+    let ore_index = recipes.len();
     let mut required = vec![0; ore_index + 1];
     required[FUEL_INDEX] = amount;
 
