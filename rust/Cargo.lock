@@ -715,3 +715,10 @@ dependencies = [
  "regex",
  "test-case",
 ]
+
+[[package]]
+name = "year_2025"
+version = "0.1.0"
+dependencies = [
+ "test-case",
+]
