@@ -4,7 +4,9 @@ pub fn part_1(input: &str) -> usize {
     parse_input(input)
         .filter(|&id| {
             let digits = rdigits(id);
-            digits.len() & 1 == 0 && digits[..digits.len() / 2] == digits[digits.len() / 2..]
+            let n = digits.len();
+            let (left, right) = digits.split_at(n / 2);
+            n & 1 == 0 && left == right
         })
         .sum()
 }
@@ -14,11 +16,25 @@ pub fn part_2(input: &str) -> usize {
         .filter(|&id| {
             let digits = rdigits(id);
             let n = digits.len();
-            debug_assert!(n <= 10, "ID {} has more than 10 digits", id);
-            n >= 2 && digits.iter().all_equal()
-                || n >= 4 && n & 1 == 0 && digits[..digits.len() / 2] == digits[digits.len() / 2..]
-                || n >= 6 && n & 1 == 0 && digits.as_chunks::<2>().0.iter().all_equal()
-                || n == 9 && digits[0..3] == digits[3..6] && digits[0..3] == digits[6..9]
+            debug_assert!(n <= 10, "ID {id} has more than 10 digits");
+
+            // id / n
+            if n >= 2 && digits.iter().all_equal() {
+                return true;
+            }
+
+            // 4 / 2, 6 / 2, 8 / 2, 10 / 2
+            if n >= 4 && n & 1 == 0 && digits[..n / 2] == digits[n / 2..] {
+                return true;
+            }
+
+            // 6 / 3, 8 / 4, 10 / 5
+            if n >= 6 && n & 1 == 0 && digits.as_chunks::<2>().0.iter().all_equal() {
+                return true;
+            }
+
+            // 9 / 3
+            n == 9 && digits[0..3] == digits[3..6] && digits[0..3] == digits[6..9]
         })
         .sum()
 }
