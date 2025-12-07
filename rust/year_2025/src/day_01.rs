@@ -9,7 +9,7 @@ pub fn part_1(input: &str) -> usize {
         .count()
 }
 
-pub fn part_2(input: &str) -> isize {
+pub fn part_2(input: &str) -> usize {
     let mut p1 = 50;
     parse_input(input)
         .map(|diff| {
@@ -17,13 +17,9 @@ pub fn part_2(input: &str) -> isize {
             p1 += diff;
             (p0.min(p1), p0.max(p1))
         })
-        .map(|(start, end)| {
+        .filter_map(|(start, end)| {
             let first = start + (100 - start.rem_euclid(100)) % 100;
-            if first > end {
-                0
-            } else {
-                (end - first) / 100 + 1
-            }
+            (first <= end).then(|| end.abs_diff(first) / 100 + 1)
         })
         .sum()
 }
