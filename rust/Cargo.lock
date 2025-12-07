@@ -721,5 +721,6 @@ name = "year_2025"
 version = "0.1.0"
 dependencies = [
  "itertools",
+ "num",
  "test-case",
 ]
