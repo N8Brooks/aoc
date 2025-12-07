@@ -53,15 +53,15 @@ L99
 R14
 L82";
 
-    #[test_case(EXAMPLE, 3)]
-    #[test_case(INPUT, 1195)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 3)]
+    #[test_case(INPUT => 1195)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 6)]
-    #[test_case(INPUT, 6770)]
-    fn part_2(input: &str, expected: isize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 6)]
+    #[test_case(INPUT => 6770)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }
