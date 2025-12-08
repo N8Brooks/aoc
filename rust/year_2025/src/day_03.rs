@@ -1,7 +1,3 @@
-use std::iter::once;
-
-use itertools::Itertools as _;
-
 pub fn part_1(input: &str) -> usize {
     sum_max_joltage::<2>(input)
 }
@@ -10,26 +6,25 @@ pub fn part_2(input: &str) -> usize {
     sum_max_joltage::<12>(input)
 }
 
-fn sum_max_joltage<const N: usize>(input: &str) -> usize {
+fn sum_max_joltage<const N: usize>(input: &str) -> usize
+where
+    [(); N + 1]:,
+{
     input
         .lines()
         .map(|line| {
-            let (window, rest) = line.as_bytes().split_at(N);
-            let mut window: [_; N] = window.try_into().unwrap();
+            let (init, rest) = line.as_bytes().split_at(N);
+            let mut window = [b'0'; N + 1];
+            window[..N].copy_from_slice(init);
             for &b in rest {
-                if let Some(i) = window
-                    .into_iter()
-                    .chain(once(b))
-                    .tuple_windows()
-                    .position(|(a, c)| c > a)
-                {
+                window[N] = b;
+                if let Some(i) = window.array_windows().position(|[a, c]| c > a) {
                     window[i..].rotate_left(1);
-                    window[N - 1] = b;
                 }
             }
-            window
-                .into_iter()
-                .fold(0, |acc, b| 10 * acc + (b - b'0') as usize)
+            window[..N]
+                .iter()
+                .fold(0, |acc, b| 10 * acc + usize::from(b - b'0'))
         })
         .sum()
 }
