@@ -18,8 +18,8 @@ where
             window[..N].copy_from_slice(init);
             for &b in rest {
                 window[N] = b;
-                if let Some(i) = window.array_windows().position(|[a, c]| c > a) {
-                    window[i..].rotate_left(1);
+                if let Some(i) = window.array_windows().position(|[a, b]| a < b) {
+                    window.copy_within(i + 1.., i);
                 }
             }
             window[..N]
