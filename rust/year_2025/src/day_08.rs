@@ -1,4 +1,4 @@
-use std::{cmp::Reverse, collections::BinaryHeap};
+use std::{cmp::Reverse, collections::BinaryHeap, mem};
 
 use itertools::Itertools as _;
 
@@ -88,7 +88,7 @@ impl UnionFind {
         }
 
         if self.size[ra] < self.size[rb] {
-            std::mem::swap(&mut ra, &mut rb);
+            mem::swap(&mut ra, &mut rb);
         }
 
         self.parent[rb] = ra;
@@ -99,13 +99,10 @@ impl UnionFind {
     /// Sizes of all distinct components.
     fn component_sizes(&mut self) -> impl Iterator<Item = usize> {
         let n = self.parent.len();
-        let mut not_seen = vec![true; n];
-        (0..n).filter_map(move |i| {
-            let r = self.find(i);
-            not_seen[r].then(|| {
-                not_seen[r] = false; // to avoid duplicates
-                self.size[r]
-            })
+        let mut new = vec![true; n];
+        (0..n).filter_map(move |r| {
+            let r = self.find(r);
+            mem::replace(&mut new[r], false).then(|| self.size[r])
         })
     }
 }
