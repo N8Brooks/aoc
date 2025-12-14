@@ -1,11 +1,12 @@
 pub fn part_1(input: &str) -> usize {
-    let line0 = input.lines().next().unwrap().as_bytes();
+    let mut lines = input.lines();
+    let line0 = lines.next().unwrap().as_bytes();
     let m = line0.len();
     let start = line0.iter().position(|&b| b == b'S').unwrap();
     let mut beams = vec![false; m];
     beams[start] = true;
     let mut count = 0;
-    for line in input.lines().skip(1) {
+    for line in lines {
         for (i, b) in line.bytes().enumerate() {
             if b == b'^' && beams[i] {
                 beams[i - 1] = true;
@@ -19,12 +20,13 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> usize {
-    let line0 = input.lines().next().unwrap().as_bytes();
+    let mut lines = input.lines();
+    let line0 = lines.next().unwrap().as_bytes();
     let m = line0.len();
     let start = line0.iter().position(|&b| b == b'S').unwrap();
     let mut timelines = vec![0; m];
     timelines[start] = 1;
-    for line in input.lines().skip(1) {
+    for line in lines {
         for (i, b) in line.bytes().enumerate() {
             if b == b'^' && timelines[i] > 0 {
                 timelines[i - 1] += timelines[i];
