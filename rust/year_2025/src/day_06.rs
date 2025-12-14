@@ -3,26 +3,19 @@ use std::iter;
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
-    let n = input.lines().count() - 1;
-    let mut rows: Vec<_> = input
+    let (operands, operators) = input.rsplit_once('\n').unwrap();
+    let mut rows: Vec<_> = operands
         .lines()
-        .take(n)
         .map(|line| line.split_ascii_whitespace().map(|s| s.parse().unwrap()))
         .collect();
-    let lists = iter::from_fn(move || -> Option<Vec<usize>> {
-        rows.iter_mut().map(|row| row.next()).collect()
-    })
-    .map(|list| list.into_iter());
-    input
-        .lines()
-        .last()
-        .unwrap()
+    let lists = transpose::<usize>(&mut rows);
+    operators
         .split_ascii_whitespace()
         .zip_eq(lists)
         .map(move |(op, list)| -> usize {
             match op {
-                "*" => list.product(),
-                "+" => list.sum(),
+                "*" => list.into_iter().product(),
+                "+" => list.into_iter().sum(),
                 _ => panic!("unknown op {op}"),
             }
         })
@@ -30,41 +23,36 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> usize {
-    let n = input.lines().count() - 1;
-    let mut rows: Vec<_> = input
+    let (operands, operators) = input.rsplit_once('\n').unwrap();
+    let mut rows: Vec<_> = operands
         .lines()
-        .take(n)
-        .map(|line| {
-            line.bytes()
-                .map(|b| (b != b' ').then(|| (b - b'0') as usize))
-        })
+        .map(|line| line.bytes().map(|b| b.checked_sub(b'0').map(usize::from)))
         .collect();
-    let cols =
-        iter::from_fn(|| -> Option<Vec<_>> { rows.iter_mut().map(|row| row.next()).collect() });
-    let nums: Vec<_> = cols
-        .map(|col| {
-            col.into_iter()
-                .flatten()
-                .reduce(|num, digit| num * 10 + digit)
-        })
-        .collect();
-    let lists = nums
-        .split(|num| num.is_none())
-        .map(|nums| nums.iter().map(|num| num.unwrap()));
-    input
-        .lines()
-        .last()
-        .unwrap()
+    let lists = iter::from_fn(|| {
+        let list: Vec<_> = transpose(&mut rows)
+            .map_while(|col| {
+                col.into_iter()
+                    .flatten()
+                    .reduce(|num, digit| num * 10 + digit)
+            })
+            .collect();
+        (!list.is_empty()).then_some(list)
+    });
+    operators
         .split_ascii_whitespace()
         .zip_eq(lists)
         .map(move |(op, list)| -> usize {
             match op {
-                "*" => list.product(),
-                "+" => list.sum(),
+                "*" => list.into_iter().product(),
+                "+" => list.into_iter().sum(),
                 _ => panic!("unknown op {op}"),
             }
         })
         .sum()
+}
+
+fn transpose<T>(rows: &mut [impl Iterator<Item = T>]) -> impl Iterator<Item = Vec<T>> {
+    iter::from_fn(move || rows.iter_mut().map(|row| row.next()).collect())
 }
 
 #[cfg(test)]
