@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 itertools = "0.14.0"
 num = "0.4.3"
-hashbrown = "0.16.0"
+hashbrown = "0.16.1"
 regex = { version = "1.12.2", features = ["unicode-perl"] }
 
 [dev-dependencies]

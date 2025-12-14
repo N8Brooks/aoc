@@ -1,68 +1,83 @@
-use std::iter::{repeat_n, successors};
+use std::{iter::repeat_n, ops::Rem as _};
 
-pub fn part_1(input: &str) -> String {
-    "".to_string()
+pub fn part_1(input: &str) -> usize {
+    let signal: Vec<_> = input.bytes().map(|b| b - b'0').collect();
+    (0..100)
+        .fold(signal, |signal, _| {
+            const BASE_PATTERN: [isize; 4] = [0, 1, 0, -1];
+            (1..=signal.len())
+                .map(|count| {
+                    let pattern = BASE_PATTERN
+                        .into_iter()
+                        .cycle()
+                        .flat_map(|p| repeat_n(p, count))
+                        .skip(1);
+                    signal
+                        .iter()
+                        .map(|&s| s as isize)
+                        .zip(pattern)
+                        .map(|(s, p)| s * p)
+                        .sum::<isize>()
+                        .abs()
+                        .rem(10) as u8
+                })
+                .collect()
+        })
+        .into_iter()
+        .take(8)
+        .fold(0, |acc, d| acc * 10 + d as usize)
 }
 
 pub fn part_2(input: &str) -> usize {
-    0
-}
-
-fn fft_phases(input: &str, n: usize) -> String {
-    const BASE_PATTERN: [i8; 4] = [0, 1, 0, -1];
     let signal: Vec<_> = input.bytes().map(|b| b - b'0').collect();
-
-    let signal = repeat_n((), n).fold(signal, |signal, _| {
-        (1..=signal.len())
-            .map(|count| {
-                let pattern = BASE_PATTERN
-                    .into_iter()
-                    .cycle()
-                    .flat_map(|p| repeat_n(p, count))
-                    .skip(1);
-                pattern
-                    .zip(&signal)
-                    .map(|(p, &s)| p * (s as i8))
-                    .sum::<i8>()
-                    .unsigned_abs()
-                    % 10
-            })
-            .collect()
-    });
-
-    signal.into_iter().map(|d| (d + b'0') as char).collect()
+    let offset = input[..7].parse().unwrap();
+    let total_len = signal.len() * 10_000;
+    let mut signal: Vec<_> = signal
+        .into_iter()
+        .cycle()
+        .take(total_len)
+        .skip(offset)
+        .collect();
+    for _ in 0..100 {
+        let mut suffix_sum = 0;
+        for v in signal.iter_mut().rev() {
+            suffix_sum = (suffix_sum + *v) % 10;
+            *v = suffix_sum;
+        }
+    }
+    signal
+        .into_iter()
+        .take(8)
+        .fold(0, |acc, d| acc * 10 + d as usize)
 }
 
 #[cfg(test)]
 mod test {
     use test_case::test_case;
 
-    #[test_case("12345678", 4, "01029498")]
-    fn fft_phases(input: &str, n: usize, expected: &str) {
-        assert_eq!(super::fft_phases(input, n), expected);
-    }
-
     const INPUT: &str = include_str!("../test_data/day_16.txt");
 
     const EXAMPLE_1: &str = "80871224585914546619083218645595";
-
     const EXAMPLE_2: &str = "19617804207202209144916044189917";
-
     const EXAMPLE_3: &str = "69317163492948606335995924319873";
 
-    #[test_case(EXAMPLE_1, "24176176")]
-    #[test_case(EXAMPLE_2, "73745418")]
-    #[test_case(EXAMPLE_3, "52432133")]
-    #[test_case(INPUT, "")]
-    fn part_1(input: &str, expected: &str) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 24176176)]
+    #[test_case(EXAMPLE_2 => 73745418)]
+    #[test_case(EXAMPLE_3 => 52432133)]
+    #[test_case(INPUT => 74369033)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    // #[test_case(EXAMPLE_3, 82892753)]
-    // #[test_case(EXAMPLE_4, 5586022)]
-    // #[test_case(EXAMPLE_5, 460664)]
-    #[test_case(INPUT, 0)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    const EXAMPLE_4: &str = "03036732577212944063491565474664";
+    const EXAMPLE_5: &str = "02935109699940807407585447034323";
+    const EXAMPLE_6: &str = "03081770884921959731165446850517";
+
+    #[test_case(EXAMPLE_4 => 84462026)]
+    #[test_case(EXAMPLE_5 => 78725270)]
+    #[test_case(EXAMPLE_6 => 53553731)]
+    #[test_case(INPUT => 19903864)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }
