@@ -1,14 +1,7 @@
 use hashbrown::HashMap;
 
 pub fn part_1(input: &str) -> usize {
-    let graph: HashMap<_, _> = input
-        .lines()
-        .map(|line| {
-            let (input, outputs) = line.split_once(": ").unwrap();
-            let outputs: Vec<_> = outputs.split(' ').collect();
-            (input, outputs)
-        })
-        .collect();
+    let graph = parse_graph(input);
     let mut stack = vec![("you", 1)];
     let mut total = 0;
     while let Some((u, count)) = stack.pop() {
@@ -23,14 +16,7 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> usize {
-    let graph: HashMap<_, _> = input
-        .lines()
-        .map(|line| {
-            let (input, outputs) = line.split_once(": ").unwrap();
-            let outputs: Vec<_> = outputs.split(' ').collect();
-            (input, outputs)
-        })
-        .collect();
+    let graph = parse_graph(input);
 
     let mut indegree = HashMap::with_capacity(graph.len());
     for outputs in graph.values() {
@@ -75,6 +61,17 @@ pub fn part_2(input: &str) -> usize {
         stack.extend(update);
     }
     panic!("no output found");
+}
+
+fn parse_graph(input: &str) -> HashMap<&str, Vec<&str>> {
+    input
+        .lines()
+        .map(|line| {
+            let (input, outputs) = line.split_once(": ").unwrap();
+            let outputs = outputs.split(' ').collect();
+            (input, outputs)
+        })
+        .collect()
 }
 
 #[cfg(test)]
