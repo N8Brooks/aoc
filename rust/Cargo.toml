@@ -7,6 +7,6 @@ members = [
   "year_2022",
   "year_2023",
   "year_2024",
-  "util", "year_2019",
+  "util", "year_2019", "year_2025",
 ]
 resolver = "2"
