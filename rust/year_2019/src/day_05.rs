@@ -105,13 +105,13 @@ mod test {
 
     const INPUT: &str = include_str!("../test_data/day_05.txt");
 
-    #[test_case(INPUT, 9006673)]
-    fn part_1(input: &str, expected: isize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(INPUT => 9006673)]
+    fn part_1(input: &str) -> isize {
+        super::part_1(input)
     }
 
-    #[test_case(INPUT, 3629692)]
-    fn part_2(input: &str, expected: isize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(INPUT => 3629692)]
+    fn part_2(input: &str) -> isize {
+        super::part_2(input)
     }
 }

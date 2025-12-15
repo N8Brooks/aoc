@@ -122,17 +122,17 @@ mod test {
 
     const INPUT: &str = include_str!("../test_data/day_12.txt");
 
-    #[test_case(EXAMPLE_1, 179, 10)]
-    #[test_case(EXAMPLE_2, 1940, 100)]
-    #[test_case(INPUT, 7928, 1000)]
-    fn part_1(input: &str, expected: usize, steps: usize) {
-        assert_eq!(super::part_1(input, steps), expected);
+    #[test_case(EXAMPLE_1, 10 => 179)]
+    #[test_case(EXAMPLE_2, 100 => 1940)]
+    #[test_case(INPUT, 1000 => 7928)]
+    fn part_1(input: &str, steps: usize) -> usize {
+        super::part_1(input, steps)
     }
 
-    #[test_case(EXAMPLE_1, 2772)]
-    #[test_case(EXAMPLE_2, 4686774924)]
-    #[test_case(INPUT, 518311327635164)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_1 => 2772)]
+    #[test_case(EXAMPLE_2 => 4686774924)]
+    #[test_case(INPUT => 518311327635164)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

@@ -65,10 +65,10 @@ K)L";
 
     const INPUT: &str = include_str!("../test_data/day_06.txt");
 
-    #[test_case(EXAMPLE_1, 42)]
-    #[test_case(INPUT, 186597)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 42)]
+    #[test_case(INPUT => 186597)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
     const EXAMPLE_2: &str = "\
@@ -86,9 +86,9 @@ K)L
 K)YOU
 I)SAN";
 
-    #[test_case(EXAMPLE_2, 4)]
-    #[test_case(INPUT, 412)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_2 => 4)]
+    #[test_case(INPUT => 412)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

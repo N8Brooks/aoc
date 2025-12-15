@@ -178,21 +178,21 @@ mod test {
 7 XCVML => 6 RJRHP
 5 BHXH, 4 VRPVC => 5 LTCX";
 
-    #[test_case(EXAMPLE_1, 31)]
-    #[test_case(EXAMPLE_2, 165)]
-    #[test_case(EXAMPLE_3, 13312)]
-    #[test_case(EXAMPLE_4, 180697)]
-    #[test_case(EXAMPLE_5, 2210736)]
-    #[test_case(INPUT, 97422)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 31)]
+    #[test_case(EXAMPLE_2 => 165)]
+    #[test_case(EXAMPLE_3 => 13312)]
+    #[test_case(EXAMPLE_4 => 180697)]
+    #[test_case(EXAMPLE_5 => 2210736)]
+    #[test_case(INPUT => 97422)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE_3, 82892753)]
-    #[test_case(EXAMPLE_4, 5586022)]
-    #[test_case(EXAMPLE_5, 460664)]
-    #[test_case(INPUT, 13108426)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_3 => 82892753)]
+    #[test_case(EXAMPLE_4 => 5586022)]
+    #[test_case(EXAMPLE_5 => 460664)]
+    #[test_case(INPUT => 13108426)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

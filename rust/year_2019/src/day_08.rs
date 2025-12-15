@@ -44,10 +44,10 @@ mod test {
 
     const INPUT: &str = include_str!("../test_data/day_08.txt");
 
-    #[test_case(EXAMPLE_1, 1, 2, 3)]
-    #[test_case(INPUT, 1920, 6, 25)]
-    fn part_1(input: &str, expected: usize, m: usize, n: usize) {
-        assert_eq!(super::part_1(input, m, n), expected);
+    #[test_case(EXAMPLE_1, 2, 3 => 1)]
+    #[test_case(INPUT, 6, 25 => 1920)]
+    fn part_1(input: &str, m: usize, n: usize) -> usize {
+        super::part_1(input, m, n)
     }
 
     const EXAMPLE_2: &str = "0222112222120000";
@@ -60,9 +60,9 @@ mod test {
 #    #  # #  # #    #  # 
 #     ##   ##  #### #  # ";
 
-    #[test_case(EXAMPLE_2, " #\n# ", 2, 2)]
-    #[test_case(INPUT, EXPECTED_2, 6, 25)]
-    fn part_2(input: &str, expected: &str, m: usize, n: usize) {
-        assert_eq!(super::part_2(input, m, n), expected.to_string());
+    #[test_case(EXAMPLE_2, 2, 2 => " #\n# ".to_string())]
+    #[test_case(INPUT, 6, 25 => EXPECTED_2.to_string())]
+    fn part_2(input: &str, m: usize, n: usize) -> String {
+        super::part_2(input, m, n)
     }
 }

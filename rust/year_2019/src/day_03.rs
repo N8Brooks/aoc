@@ -66,19 +66,19 @@ U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
 
     const INPUT: &str = include_str!("../test_data/day_03.txt");
 
-    #[test_case(EXAMPLE_1, 6)]
-    #[test_case(EXAMPLE_2, 159)]
-    #[test_case(EXAMPLE_3, 135)]
-    #[test_case(INPUT, 1674)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 6)]
+    #[test_case(EXAMPLE_2 => 159)]
+    #[test_case(EXAMPLE_3 => 135)]
+    #[test_case(INPUT => 1674)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE_1, 30)]
-    #[test_case(EXAMPLE_2, 610)]
-    #[test_case(EXAMPLE_3, 410)]
-    #[test_case(INPUT, 14012)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_1 => 30)]
+    #[test_case(EXAMPLE_2 => 610)]
+    #[test_case(EXAMPLE_3 => 410)]
+    #[test_case(INPUT => 14012)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

@@ -143,15 +143,15 @@ mod test {
 
     const INPUT: &str = include_str!("../test_data/day_09.txt");
 
-    #[test_case(EXAMPLE_2, 1219070632396864)]
-    #[test_case(EXAMPLE_3, 1125899906842624)]
-    #[test_case(INPUT, 2171728567)]
-    fn part_1(input: &str, expected: isize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_2 => 1219070632396864)]
+    #[test_case(EXAMPLE_3 => 1125899906842624)]
+    #[test_case(INPUT => 2171728567)]
+    fn part_1(input: &str) -> isize {
+        super::part_1(input)
     }
 
-    #[test_case(INPUT, 49815)]
-    fn part_2(input: &str, expected: isize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(INPUT => 49815)]
+    fn part_2(input: &str) -> isize {
+        super::part_2(input)
     }
 }

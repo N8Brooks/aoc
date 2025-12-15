@@ -174,9 +174,9 @@ mod test {
 
     const INPUT: &str = include_str!("../test_data/day_11.txt");
 
-    #[test_case(INPUT, 2415)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(INPUT => 2415)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
     const EXPECTED_2: &str = " \
@@ -187,8 +187,8 @@ mod test {
  #  # #    #    #  # #    #  # #    #  #   
  ###  #    #     ##  ####  ##  #     ##    ";
 
-    #[test_case(INPUT, EXPECTED_2)]
-    fn part_2(input: &str, expected: &str) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(INPUT => EXPECTED_2)]
+    fn part_2(input: &str) -> String {
+        super::part_2(input)
     }
 }

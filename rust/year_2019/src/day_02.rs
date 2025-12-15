@@ -75,26 +75,26 @@ impl Intcode {
 mod test {
     use test_case::test_case;
 
-    #[test_case("1,9,10,3,2,3,11,0,99,30,40,50", &[3500,9,10,70,2,3,11,0,99,30,40,50])]
-    #[test_case("1,0,0,0,99", &[2,0,0,0,99])]
-    #[test_case("2,3,0,3,99", &[2,3,0,6,99])]
-    #[test_case("2,4,4,5,99,0", &[2,4,4,5,99,9801])]
-    #[test_case("1,1,1,4,99,5,6,0,99", &[30,1,1,4,2,5,6,0,99])]
-    fn intcode(input: &str, expected: &[usize]) {
+    #[test_case("1,9,10,3,2,3,11,0,99,30,40,50" => vec![3500,9,10,70,2,3,11,0,99,30,40,50])]
+    #[test_case("1,0,0,0,99" => vec![2,0,0,0,99])]
+    #[test_case("2,3,0,3,99" => vec![2,3,0,6,99])]
+    #[test_case("2,4,4,5,99,0" => vec![2,4,4,5,99,9801])]
+    #[test_case("1,1,1,4,99,5,6,0,99" => vec![30,1,1,4,2,5,6,0,99])]
+    fn intcode(input: &str) -> Vec<usize> {
         let mut intcode = super::Intcode::new(input);
         intcode.run();
-        assert_eq!(&intcode.memory, expected);
+        intcode.memory
     }
 
     const INPUT: &str = include_str!("../test_data/day_02.txt");
 
-    #[test_case(INPUT, 3760627)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(INPUT => 3760627)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(INPUT, 7195)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(INPUT => 7195)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }
