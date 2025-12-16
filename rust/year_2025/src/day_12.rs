@@ -41,7 +41,7 @@ fn parse_input(input: &str) -> ([usize; 6], Vec<(usize, [usize; 6])>) {
         })
         .collect_array()
         .unwrap();
-    let regions: Vec<_> = regions
+    let regions = regions
         .lines()
         .map(|line| {
             let (dims, counts) = line.split_once(": ").unwrap();
