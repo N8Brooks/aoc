@@ -2,15 +2,14 @@ use hashbrown::HashMap;
 
 pub fn part_1(input: &str) -> usize {
     let graph = parse_graph(input);
-    let mut stack = vec![("you", 1)];
+    let mut stack = vec!["you"];
     let mut total = 0;
-    while let Some((u, count)) = stack.pop() {
+    while let Some(u) = stack.pop() {
         if u == "out" {
-            total += count;
+            total += 1;
             continue;
         }
-        let update = graph[u].iter().map(|&v| (v, count));
-        stack.extend(update);
+        stack.extend_from_slice(&graph[u]);
     }
     total
 }

@@ -1,5 +1,6 @@
 #![feature(generic_const_exprs)]
 #![feature(strip_circumfix)]
+#![feature(array_windows)]
 #![allow(incomplete_features)]
 pub mod day_01;
 pub mod day_02;
