@@ -1,6 +1,6 @@
 use std::iter::{self, empty, once};
 
-use itertools::{Itertools as _, intersperse, multizip};
+use itertools::{Itertools as _, multizip};
 use num::{Complex, Integer as _};
 
 pub fn part_1(input: &str) -> usize {
@@ -36,7 +36,7 @@ pub fn part_2(input: &str) -> usize {
     let at = |p: Complex<isize>| -> Option<u8> {
         let r: usize = p.re.try_into().ok()?;
         let c: usize = p.im.try_into().ok()?;
-        map.get(r).and_then(|row| row.get(c)).copied()
+        map.get(r)?.get(c).copied()
     };
 
     let mut pos = map
@@ -49,7 +49,7 @@ pub fn part_2(input: &str) -> usize {
         })
         .unwrap();
     let mut dir = Complex::new(-1, 0);
-    let path = iter::from_fn(|| {
+    let path: Vec<_> = iter::from_fn(|| {
         const R: Complex<isize> = Complex::new(0, -1);
         const L: Complex<isize> = Complex::new(0, 1);
 
@@ -61,32 +61,21 @@ pub fn part_2(input: &str) -> usize {
                 pos += dir;
                 steps += 1;
             }
-            (steps > 0).then(|| format!("{turn},{steps}"))
+            (steps > 0).then_some((turn, steps))
         })
-    });
-    let path: Vec<_> = path.collect();
+    })
+    .collect();
 
-    let (pattern, a, b, c) = compress(&path).unwrap();
-    let pattern = pattern.into_iter().intersperse(',').chain(once('\n'));
-    let a = a
-        .into_iter()
-        .intersperse(",".into())
-        .chain(once("\n".into()));
-    let b = b
-        .into_iter()
-        .intersperse(",".into())
-        .chain(once("\n".into()));
-    let c = c
-        .into_iter()
-        .intersperse(",".into())
-        .chain(once("\n".into()));
-    let inputs = once(pattern.collect::<String>())
-        .chain(a)
-        .chain(b)
-        .chain(c)
-        .chain(once("n\n".into()))
-        .collect::<String>();
-    let inputs = inputs.bytes().map(|b| b as isize);
+    let (main, functions) = compress(&path).unwrap();
+    let main = main.into_iter().intersperse(b',').chain(once(b'\n'));
+    let functions = functions.into_iter().flat_map(|f| {
+        f.iter()
+            .map(|&(turn, steps)| format!("{turn},{steps}"))
+            .intersperse(",".to_string())
+            .flat_map(|s| s.into_bytes())
+            .chain(once(b'\n'))
+    });
+    let inputs = main.chain(functions).chain(*b"n\n").map(|b| b as isize);
 
     program[0] = 2; // wake up robot
     Intcode::new(program, inputs)
@@ -96,52 +85,45 @@ pub fn part_2(input: &str) -> usize {
         .unwrap()
 }
 
-fn compress(tokens: &[String]) -> Option<(Vec<char>, Vec<String>, Vec<String>, Vec<String>)> {
-    let mut pattern = Vec::new();
+fn compress<T: Copy + Eq + PartialEq>(tokens: &[T]) -> Option<(Vec<u8>, [&[T]; 3])> {
+    let mut main = Vec::new();
     for a_len in 1..=5 {
+        main.clear();
         let mut tokens = tokens;
-        pattern.clear();
         let a = &tokens[..a_len];
-        while tokens.starts_with(a) {
-            pattern.push('A');
-            tokens = &tokens[a_len..];
+        while let Some(t) = tokens.strip_prefix(a) {
+            main.push(b'A');
+            tokens = t;
         }
+        let i = main.len();
         for b_len in 1..=5 {
+            main.truncate(i);
             let mut tokens = tokens;
             let b = &tokens[..b_len];
-            let mut pattern = pattern.clone();
-            while tokens.starts_with(a) || tokens.starts_with(b) {
-                if tokens.starts_with(a) {
-                    pattern.push('A');
-                    tokens = &tokens[a_len..];
-                } else {
-                    pattern.push('B');
-                    tokens = &tokens[b_len..];
-                }
+            while let Some((f, t)) = tokens
+                .strip_prefix(b)
+                .map(|t| (b'B', t))
+                .or_else(|| tokens.strip_prefix(a).map(|t| (b'A', t)))
+            {
+                main.push(f);
+                tokens = t;
             }
+            let j = main.len();
             for c_len in 1..=5 {
+                main.truncate(j);
                 let mut tokens = tokens;
                 let c = &tokens[..c_len];
-                let mut pattern = pattern.clone();
-                while tokens.starts_with(a) || tokens.starts_with(b) || tokens.starts_with(c) {
-                    if tokens.starts_with(a) {
-                        pattern.push('A');
-                        tokens = &tokens[a_len..];
-                    } else if tokens.starts_with(b) {
-                        pattern.push('B');
-                        tokens = &tokens[b_len..];
-                    } else {
-                        pattern.push('C');
-                        tokens = &tokens[c_len..];
-                    }
-                }
-                if tokens.is_empty()
-                    && pattern.len() <= 20
-                    && a.len() <= 20
-                    && b.len() <= 20
-                    && c.len() <= 20
+                while let Some((f, t)) = tokens
+                    .strip_prefix(c)
+                    .map(|t| (b'C', t))
+                    .or_else(|| tokens.strip_prefix(b).map(|t| (b'B', t)))
+                    .or_else(|| tokens.strip_prefix(a).map(|t| (b'A', t)))
                 {
-                    return Some((pattern.to_vec(), a.to_vec(), b.to_vec(), c.to_vec()));
+                    main.push(f);
+                    tokens = t;
+                }
+                if tokens.is_empty() {
+                    return Some((main, [a, b, c]));
                 }
             }
         }
