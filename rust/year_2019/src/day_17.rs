@@ -32,7 +32,7 @@ pub fn part_2(input: &str) -> usize {
         .map(|x| x as u8)
         .collect();
     let view = String::from_utf8(view).unwrap();
-    let map = view.lines().map(|line| line.as_bytes()).collect::<Vec<_>>();
+    let map: Vec<_> = view.lines().map(|line| line.as_bytes()).collect();
     let at = |p: Complex<isize>| -> Option<u8> {
         let r: usize = p.re.try_into().ok()?;
         let c: usize = p.im.try_into().ok()?;
@@ -87,7 +87,7 @@ pub fn part_2(input: &str) -> usize {
 
 fn compress<T: Copy + Eq + PartialEq>(tokens: &[T]) -> Option<(Vec<u8>, [&[T]; 3])> {
     let mut main = Vec::new();
-    for a_len in 1..=5 {
+    for a_len in 1..=tokens.len().min(5) {
         main.clear();
         let mut tokens = tokens;
         let a = &tokens[..a_len];
@@ -96,7 +96,7 @@ fn compress<T: Copy + Eq + PartialEq>(tokens: &[T]) -> Option<(Vec<u8>, [&[T]; 3
             tokens = t;
         }
         let i = main.len();
-        for b_len in 1..=5 {
+        for b_len in 1..=tokens.len().min(5) {
             main.truncate(i);
             let mut tokens = tokens;
             let b = &tokens[..b_len];
@@ -109,7 +109,7 @@ fn compress<T: Copy + Eq + PartialEq>(tokens: &[T]) -> Option<(Vec<u8>, [&[T]; 3
                 tokens = t;
             }
             let j = main.len();
-            for c_len in 1..=5 {
+            for c_len in 1..=tokens.len().min(5) {
                 main.truncate(j);
                 let mut tokens = tokens;
                 let c = &tokens[..c_len];
