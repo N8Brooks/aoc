@@ -1,5 +1,5 @@
 #![feature(trim_prefix_suffix)]
-#[allow(unstable_name_collisions)] // iter_intersperse
+#![allow(unstable_name_collisions)] // iter_intersperse
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;
