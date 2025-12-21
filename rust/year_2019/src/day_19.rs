@@ -4,11 +4,7 @@ pub fn part_1(input: &str) -> usize {
     let program = parse_program(input);
     (0..50)
         .flat_map(|y| (0..50).map(move |x| [x, y]))
-        .map(|inputs| {
-            Intcode::new(program.clone(), inputs.into_iter())
-                .next()
-                .unwrap()
-        })
+        .map(|inputs| Intcode::new(program.clone(), inputs).next().unwrap())
         .filter(|&output| output == 1)
         .count()
 }
@@ -18,7 +14,7 @@ pub fn part_2(input: &str) -> usize {
     let mut y = 0;
     (99..)
         .map(|x| {
-            while Intcode::new(program.clone(), [x, y].into_iter())
+            while Intcode::new(program.clone(), [x, y].try_map(isize::try_from).unwrap())
                 .next()
                 .unwrap()
                 .is_zero()
@@ -27,15 +23,15 @@ pub fn part_2(input: &str) -> usize {
             }
             [x, y]
         })
-        .find_map(|[x, y]| {
-            Intcode::new(program.clone(), [x - 99, y + 99].into_iter())
+        .find_map(|[x2, y1]| {
+            let x1 = x2 - 99;
+            let y2 = y1 + 99;
+            Intcode::new(program.clone(), [x1, y2].try_map(isize::try_from).unwrap())
                 .next()
                 .unwrap()
                 .is_one()
-                .then(|| (x - 99) * 10_000 + y)
+                .then(|| x1 * 10_000 + y1)
         })
-        .unwrap()
-        .try_into()
         .unwrap()
 }
 
@@ -43,7 +39,7 @@ fn parse_program(input: &str) -> Vec<isize> {
     input.split(',').map(|num| num.parse().unwrap()).collect()
 }
 
-struct Intcode<I: Iterator<Item = isize>> {
+struct Intcode<I: IntoIterator<Item = isize>> {
     /// Computer's memory
     memory: Vec<isize>,
     /// Instruction pointer
@@ -51,10 +47,10 @@ struct Intcode<I: Iterator<Item = isize>> {
     /// Relative base
     rb: isize,
     /// Input iterator
-    inputs: I,
+    inputs: I::IntoIter,
 }
 
-impl<I: Iterator<Item = isize>> Iterator for Intcode<I> {
+impl<I: IntoIterator<Item = isize>> Iterator for Intcode<I> {
     type Item = isize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -62,13 +58,13 @@ impl<I: Iterator<Item = isize>> Iterator for Intcode<I> {
     }
 }
 
-impl<I: Iterator<Item = isize>> Intcode<I> {
+impl<I: IntoIterator<Item = isize>> Intcode<I> {
     fn new(memory: Vec<isize>, inputs: I) -> Self {
         Self {
             memory,
             ip: 0,
             rb: 0,
-            inputs,
+            inputs: inputs.into_iter(),
         }
     }
 
