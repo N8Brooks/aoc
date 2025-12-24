@@ -10,7 +10,7 @@ pub fn part_2(input: &str) -> String {
     let painted = paint_panels(input, true);
     let (min_j, max_j) = painted.keys().map(|p| p.re).minmax().into_option().unwrap();
     let (min_i, max_i) = painted.keys().map(|p| p.im).minmax().into_option().unwrap();
-    let res = (min_i..=max_i)
+    (min_i..=max_i)
         .rev()
         .map(|y| {
             (min_j..=max_j)
@@ -24,9 +24,7 @@ pub fn part_2(input: &str) -> String {
                 })
                 .collect::<String>()
         })
-        .join("\n");
-    println!("{}", res);
-    res
+        .join("\n")
 }
 
 fn paint_panels(input: &str, init: bool) -> HashMap<Complex<i32>, bool> {
