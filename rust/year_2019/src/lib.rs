@@ -1,6 +1,6 @@
 #![feature(trim_prefix_suffix)]
 #![feature(array_try_map)]
-#![allow(unstable_name_collisions)] // iter_intersperse
+// #![allow(unstable_name_collisions)] // iter_intersperse
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;
@@ -20,3 +20,4 @@ pub mod day_16;
 pub mod day_17;
 pub mod day_18;
 pub mod day_19;
+pub mod day_20;
