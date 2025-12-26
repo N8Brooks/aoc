@@ -10,7 +10,8 @@ use itertools::Itertools as _;
 type Point = (usize, usize);
 
 pub fn part_1(input: &str) -> usize {
-    let (map, aa, zz, portals) = parse_input(input);
+    let map = parse_map(input);
+    let (aa, zz, portals) = parse_portals(&map);
     let mut new = vec![vec![true; map[0].len()]; map.len()];
     successors(Some(vec![aa]), |frontier| {
         let frontier: Vec<_> = frontier
@@ -82,9 +83,10 @@ pub fn part_2(input: &str) -> usize {
 }
 
 fn parse_graph(input: &str) -> (Point, HashMap<Point, Vec<Edge>>) {
-    let (map, aa, zz, portals) = parse_input(input);
+    let map = parse_map(input);
+    let (aa, zz, portals) = parse_portals(&map);
     let is_outer = |(i, j)| i == 2 || j == 2 || i == map.len() - 3 || j == map[0].len() - 3;
-    let graph: HashMap<_, _> = once(aa)
+    let graph = once(aa)
         .chain(portals.keys().copied())
         .map(|u| {
             let mut stack = vec![(u, u, 0)];
@@ -121,8 +123,7 @@ fn parse_graph(input: &str) -> (Point, HashMap<Point, Vec<Edge>>) {
     (aa, graph)
 }
 
-fn parse_input(input: &str) -> (Vec<&[u8]>, Point, Point, HashMap<Point, Point>) {
-    let map: Vec<_> = input.lines().map(|line| line.as_bytes()).collect();
+fn parse_portals(map: &[&[u8]]) -> (Point, Point, HashMap<Point, Point>) {
     let mut portals = map
         .iter()
         .enumerate()
@@ -148,14 +149,18 @@ fn parse_input(input: &str) -> (Vec<&[u8]>, Point, Point, HashMap<Point, Point>)
             .exactly_one()
             .unwrap()
     });
-    let portals: HashMap<_, _> = portals
+    let portals = portals
         .into_values()
         .flat_map(|positions| {
             let [p1, p2] = positions.try_into().unwrap();
             [(p1, p2), (p2, p1)]
         })
         .collect();
-    (map, aa, zz, portals)
+    (aa, zz, portals)
+}
+
+fn parse_map(input: &str) -> Vec<&[u8]> {
+    input.lines().map(|line| line.as_bytes()).collect()
 }
 
 #[cfg(test)]
