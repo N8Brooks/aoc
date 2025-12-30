@@ -1,20 +1,20 @@
 use std::iter::{self, empty, once};
 
 use itertools::{Itertools as _, multizip};
-use num::{Complex, Integer as _};
+use num::Complex;
+
+use crate::intcode::{IntcodeExt as _, parse_program};
 
 pub fn part_1(input: &str) -> usize {
     let program = parse_program(input);
-    let view: Vec<_> = Intcode::new(program, empty()).map(|x| x as u8).collect();
-    parse_view(&String::from_utf8(view).unwrap())
+    let view = parse_view(program);
+    alignment_sum(&view)
 }
 
-fn parse_view(s: &str) -> usize {
-    s.lines()
-        .map(|line| line.as_bytes())
-        .tuple_windows()
+fn alignment_sum(map: &[Vec<u8>]) -> usize {
+    map.array_windows()
         .enumerate()
-        .flat_map(|(i, (a, b, c))| {
+        .flat_map(|(i, [a, b, c])| {
             multizip((a.array_windows(), b.array_windows(), c.array_windows()))
                 .enumerate()
                 .filter(|(_, ([_, n, _], [w, c, e], [_, s, _]))| {
@@ -28,18 +28,14 @@ fn parse_view(s: &str) -> usize {
 pub fn part_2(input: &str) -> usize {
     let mut program = parse_program(input);
 
-    let view: Vec<_> = Intcode::new(program.clone(), empty())
-        .map(|x| x as u8)
-        .collect();
-    let view = String::from_utf8(view).unwrap();
-    let map: Vec<_> = view.lines().map(|line| line.as_bytes()).collect();
+    let view: Vec<_> = parse_view(program.clone());
     let at = |p: Complex<isize>| -> Option<u8> {
         let r: usize = p.re.try_into().ok()?;
         let c: usize = p.im.try_into().ok()?;
-        map.get(r)?.get(c).copied()
+        view.get(r)?.get(c).copied()
     };
 
-    let mut pos = map
+    let mut pos = view
         .iter()
         .enumerate()
         .find_map(|(i, row)| {
@@ -53,36 +49,60 @@ pub fn part_2(input: &str) -> usize {
         const R: Complex<isize> = Complex::new(0, -1);
         const L: Complex<isize> = Complex::new(0, 1);
 
-        [('R', R), ('L', L)].into_iter().find_map(|(turn, delta)| {
-            let dir2 = dir * delta;
-            let mut steps = 0;
-            while at(pos + dir2) == Some(b'#') {
-                dir = dir2;
-                pos += dir;
-                steps += 1;
-            }
-            (steps > 0).then_some((turn, steps))
-        })
+        [(b'R', R), (b'L', L)]
+            .into_iter()
+            .find_map(|(turn, delta)| {
+                let dir2 = dir * delta;
+                let mut steps: u8 = 0;
+                while at(pos + dir2) == Some(b'#') {
+                    dir = dir2;
+                    pos += dir;
+                    steps += 1;
+                }
+                (steps > 0).then_some((turn, steps))
+            })
     })
     .collect();
+
+    program[0] = 2; // wake up robot
 
     let (main, functions) = compress(&path).unwrap();
     let main = main.into_iter().intersperse(b',').chain(once(b'\n'));
     let functions = functions.into_iter().flat_map(|f| {
         f.iter()
-            .map(|&(turn, steps)| format!("{turn},{steps}"))
-            .intersperse(",".to_string())
-            .flat_map(|s| s.into_bytes())
+            .enumerate()
+            .flat_map(|(i, &(turn, steps))| {
+                let steps = [steps / 10 + b'0', steps % 10 + b'0']
+                    .into_iter()
+                    .skip_while(|&b| b == b'0');
+                (i > 0)
+                    .then_some(b',')
+                    .into_iter()
+                    .chain(once(turn))
+                    .chain(once(b','))
+                    .chain(steps)
+            })
             .chain(once(b'\n'))
     });
-    let inputs = main.chain(functions).chain(*b"n\n").map(|b| b as isize);
 
-    program[0] = 2; // wake up robot
-    Intcode::new(program, inputs)
+    main.chain(functions)
+        .chain(*b"n\n")
+        .map(isize::from)
+        .intcode(program)
         .last()
         .unwrap()
         .try_into()
         .unwrap()
+}
+
+fn parse_view(program: Vec<isize>) -> Vec<Vec<u8>> {
+    let view: Vec<_> = empty()
+        .intcode(program)
+        .map(|x| x.try_into().unwrap())
+        .collect();
+    view.split(|&b| b == b'\n')
+        .map(|line| line.to_vec())
+        .collect()
 }
 
 fn compress<T: Copy + Eq + PartialEq>(tokens: &[T]) -> Option<(Vec<u8>, [&[T]; 3])> {
@@ -131,128 +151,6 @@ fn compress<T: Copy + Eq + PartialEq>(tokens: &[T]) -> Option<(Vec<u8>, [&[T]; 3
     None
 }
 
-struct Intcode<I: Iterator<Item = isize>> {
-    /// Computer's memory
-    memory: Vec<isize>,
-    /// Instruction pointer
-    ip: usize,
-    /// Relative base
-    rb: isize,
-    /// Input iterator
-    inputs: I,
-}
-
-fn parse_program(input: &str) -> Vec<isize> {
-    input.split(',').map(|num| num.parse().unwrap()).collect()
-}
-
-impl<I: Iterator<Item = isize>> Iterator for Intcode<I> {
-    type Item = isize;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next()
-    }
-}
-
-impl<I: Iterator<Item = isize>> Intcode<I> {
-    fn new(memory: Vec<isize>, inputs: I) -> Self {
-        Self {
-            memory,
-            ip: 0,
-            rb: 0,
-            inputs,
-        }
-    }
-
-    fn next(&mut self) -> Option<isize> {
-        loop {
-            let instruction = self.fetch();
-            let (modes, opcode) = instruction.div_rem(&100);
-            let (modes, mode_1) = modes.div_rem(&10);
-            let (mode_3, mode_2) = modes.div_rem(&10);
-            match opcode {
-                1 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    self.write(param_1 + param_2, mode_3);
-                }
-                2 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    self.write(param_1 * param_2, mode_3);
-                }
-                3 => {
-                    let input = self.inputs.next().unwrap();
-                    self.write(input, mode_1);
-                }
-                4 => return Some(self.read(mode_1)),
-                5 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    if param_1 != 0 {
-                        self.ip = param_2.try_into().unwrap();
-                    }
-                }
-                6 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    if param_1 == 0 {
-                        self.ip = param_2.try_into().unwrap();
-                    }
-                }
-                7 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    self.write((param_1 < param_2).into(), mode_3);
-                }
-                8 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    self.write((param_1 == param_2).into(), mode_3);
-                }
-                9 => {
-                    let param_1 = self.read(mode_1);
-                    self.rb += param_1;
-                }
-                99 => return None,
-                _ => panic!("unexpected opcode {opcode}"),
-            }
-        }
-    }
-
-    fn read(&mut self, mode: isize) -> isize {
-        let word = self.fetch();
-        let i = match mode {
-            0 => word,
-            1 => return word,
-            2 => self.rb + word,
-            _ => panic!("unexpected mode {mode}"),
-        };
-        let u: usize = i.try_into().unwrap();
-        self.memory.get(u).copied().unwrap_or(0)
-    }
-
-    fn write(&mut self, value: isize, mode: isize) {
-        let word = self.fetch();
-        let i = match mode {
-            0 => word,
-            2 => self.rb + word,
-            _ => panic!("unexpected mode {mode}"),
-        };
-        let u: usize = i.try_into().unwrap();
-        if u >= self.memory.len() {
-            self.memory.resize(u + 1, 0);
-        }
-        self.memory[u] = value;
-    }
-
-    fn fetch(&mut self) -> isize {
-        let word = self.memory[self.ip];
-        self.ip += 1;
-        word
-    }
-}
-
 #[cfg(test)]
 mod test {
     use test_case::test_case;
@@ -266,8 +164,9 @@ mod test {
 ..#####...^..";
 
     #[test_case(EXAMPLE => 76)]
-    fn parse_view(input: &str) -> usize {
-        super::parse_view(input)
+    fn alignment_sum(input: &str) -> usize {
+        let view: Vec<_> = input.lines().map(|line| line.as_bytes().to_vec()).collect();
+        super::alignment_sum(&view)
     }
 
     const INPUT: &str = include_str!("../test_data/day_17.txt");

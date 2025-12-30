@@ -4,7 +4,8 @@ pub(crate) fn parse_program(input: &str) -> Vec<isize> {
     input.split(',').map(|num| num.parse().unwrap()).collect()
 }
 
-pub(crate) struct Intcode<I: IntoIterator<Item = isize>> {
+#[derive(Debug)]
+pub(crate) struct Intcode<I: Iterator<Item = isize>> {
     /// Computer's memory
     pub(crate) memory: Vec<isize>,
     /// Instruction pointer
@@ -12,28 +13,38 @@ pub(crate) struct Intcode<I: IntoIterator<Item = isize>> {
     /// Relative base
     pub(crate) rb: isize,
     /// Input iterator
-    pub(crate) inputs: I::IntoIter,
+    pub(crate) inputs: I,
 }
 
-impl<I: IntoIterator<Item = isize>> Iterator for Intcode<I> {
-    type Item = isize;
+pub(crate) trait IntcodeExt: Iterator<Item = isize> + Sized {
+    fn intcode(self, program: Vec<isize>) -> Intcode<Self>;
+}
 
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next()
+impl<I: Iterator<Item = isize>> IntcodeExt for I {
+    fn intcode(self, program: Vec<isize>) -> Intcode<I> {
+        Intcode::new(program, self)
     }
 }
 
-impl<I: IntoIterator<Item = isize>> Intcode<I> {
+impl<I: Iterator<Item = isize>> Iterator for Intcode<I> {
+    type Item = isize;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.step()
+    }
+}
+
+impl<I: Iterator<Item = isize>> Intcode<I> {
     pub(crate) fn new(memory: Vec<isize>, inputs: I) -> Self {
         Self {
             memory,
             ip: 0,
             rb: 0,
-            inputs: inputs.into_iter(),
+            inputs,
         }
     }
 
-    pub(crate) fn next(&mut self) -> Option<isize> {
+    pub(crate) fn step(&mut self) -> Option<isize> {
         loop {
             let instruction = self.fetch();
             let (modes, opcode) = instruction.div_rem(&100);

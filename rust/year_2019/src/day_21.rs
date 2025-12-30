@@ -1,4 +1,4 @@
-use crate::intcode::{Intcode, parse_program};
+use crate::intcode::{IntcodeExt as _, parse_program};
 
 pub fn part_1(input: &str) -> usize {
     const CODE: &[u8] = b"NOT A T
@@ -30,8 +30,9 @@ RUN
 
 fn hull_damage(input: &str, code: &[u8]) -> usize {
     let program = parse_program(input);
-    let inputs = code.iter().map(|&b| b.into());
-    Intcode::new(program, inputs)
+    code.iter()
+        .map(|&b| b.into())
+        .intcode(program)
         .last()
         .unwrap()
         .try_into()

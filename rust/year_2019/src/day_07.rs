@@ -1,7 +1,13 @@
-use std::iter::successors;
+use std::{
+    cell::RefCell,
+    collections::VecDeque,
+    iter::{repeat_with, successors},
+    rc::Rc,
+};
 
 use itertools::Itertools as _;
-use num::Integer as _;
+
+use crate::intcode::{IntcodeExt, parse_program};
 
 pub fn part_1(input: &str) -> isize {
     let program = parse_program(input);
@@ -9,7 +15,11 @@ pub fn part_1(input: &str) -> isize {
         .permutations(5)
         .map(|phases| {
             phases.into_iter().fold(0, |input, phase| {
-                Intcode::new(&program, phase).run(input).unwrap()
+                [phase, input]
+                    .into_iter()
+                    .intcode(program.clone())
+                    .next()
+                    .unwrap()
             })
         })
         .max()
@@ -21,117 +31,31 @@ pub fn part_2(input: &str) -> isize {
     (5..=9)
         .permutations(5)
         .map(|phases| {
-            let mut amps = phases
+            let mut pairs: [_; 5] = phases
                 .into_iter()
-                .map(|phase| Intcode::new(&program, phase))
-                .collect_array::<5>()
+                .map(|phase| {
+                    let queue = VecDeque::from([phase]);
+                    let queue = Rc::new(RefCell::new(queue));
+                    let inputs = repeat_with({
+                        let queue = Rc::clone(&queue);
+                        move || queue.borrow_mut().pop_front().unwrap()
+                    });
+                    let amp = inputs.intcode(program.clone());
+                    (queue, amp)
+                })
+                .next_chunk()
                 .unwrap();
             successors(Some(0), |&input| {
-                amps.iter_mut().try_fold(input, |input, amp| amp.run(input))
+                pairs.iter_mut().try_fold(input, |input, (queue, amp)| {
+                    queue.borrow_mut().push_back(input);
+                    amp.next()
+                })
             })
             .last()
             .unwrap()
         })
         .max()
         .unwrap()
-}
-
-fn parse_program(input: &str) -> Vec<isize> {
-    input.split(',').map(|num| num.parse().unwrap()).collect()
-}
-
-struct Intcode {
-    /// Computer's memory
-    memory: Vec<isize>,
-    /// Instruction pointer
-    ip: usize,
-    /// Initial phase setting (consumed on first input)
-    input_0: Option<isize>,
-}
-
-impl Intcode {
-    fn new(program: &[isize], phase: isize) -> Self {
-        Self {
-            memory: program.to_vec(),
-            ip: 0,
-            input_0: Some(phase),
-        }
-    }
-
-    /// Continues runing the program until it produces an output or halts.
-    fn run(&mut self, input: isize) -> Option<isize> {
-        loop {
-            let instruction = self.next();
-            let (modes, opcode) = instruction.div_rem(&100);
-            let (mode_2, mode_1) = modes.div_rem(&10);
-            match opcode {
-                1 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    self.write(param_1 + param_2);
-                }
-                2 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    self.write(param_1 * param_2);
-                }
-                3 => {
-                    let input = self.input_0.take().unwrap_or(input);
-                    self.write(input);
-                }
-                4 => return Some(self.read(mode_1)),
-                5 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    if param_1 != 0 {
-                        self.ip = param_2.try_into().unwrap();
-                    }
-                }
-                6 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    if param_1 == 0 {
-                        self.ip = param_2.try_into().unwrap();
-                    }
-                }
-                7 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    self.write((param_1 < param_2).into());
-                }
-                8 => {
-                    let param_1 = self.read(mode_1);
-                    let param_2 = self.read(mode_2);
-                    self.write((param_1 == param_2).into());
-                }
-                99 => return None,
-                _ => panic!("unexpected opcode"),
-            }
-        }
-    }
-
-    fn read(&mut self, mode: isize) -> isize {
-        let param = self.next();
-        match mode {
-            0 => {
-                let i: usize = param.try_into().unwrap();
-                self.memory[i]
-            }
-            1 => param,
-            _ => panic!("unexpected mode {mode}"),
-        }
-    }
-
-    fn write(&mut self, value: isize) {
-        let i: usize = self.next().try_into().unwrap();
-        self.memory[i] = value;
-    }
-
-    fn next(&mut self) -> isize {
-        let word = self.memory[self.ip];
-        self.ip += 1;
-        word
-    }
 }
 
 #[cfg(test)]

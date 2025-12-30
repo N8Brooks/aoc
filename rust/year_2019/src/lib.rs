@@ -1,5 +1,6 @@
 #![feature(trim_prefix_suffix)]
 #![feature(array_try_map)]
+#![feature(iter_next_chunk)]
 #![allow(unstable_name_collisions)] // iter_intersperse
 pub mod day_01;
 pub mod day_02;
