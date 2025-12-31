@@ -1,6 +1,7 @@
 #![feature(trim_prefix_suffix)]
 #![feature(array_try_map)]
 #![feature(iter_next_chunk)]
+#![feature(iter_array_chunks)]
 #![allow(unstable_name_collisions)] // iter_intersperse
 pub mod day_01;
 pub mod day_02;
@@ -24,4 +25,5 @@ pub mod day_19;
 pub mod day_20;
 pub mod day_21;
 pub mod day_22;
+pub mod day_23;
 pub mod intcode;
