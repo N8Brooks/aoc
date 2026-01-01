@@ -2,6 +2,8 @@
 #![feature(array_try_map)]
 #![feature(iter_next_chunk)]
 #![feature(iter_array_chunks)]
+#![feature(generic_const_exprs)]
+#![allow(incomplete_features)] // generic_const_exprs
 #![allow(unstable_name_collisions)] // iter_intersperse
 pub mod day_01;
 pub mod day_02;
@@ -26,4 +28,5 @@ pub mod day_20;
 pub mod day_21;
 pub mod day_22;
 pub mod day_23;
+pub mod day_24;
 pub mod intcode;
