@@ -62,13 +62,11 @@ impl<I: Iterator<Item = isize>> Intcode<I> {
                     self.write(param_1 * param_2, mode_3);
                 }
                 3 => {
-                    if let Some(input) = self.inputs.next() {
-                        self.write(input, mode_1);
-                    } else {
-                        // This is specifically for Day 23
-                        self.write(-1, mode_1);
+                    let Some(input) = self.inputs.next() else {
+                        self.ip -= 1;
                         return None;
-                    }
+                    };
+                    self.write(input, mode_1);
                 }
                 4 => return Some(self.read(mode_1)),
                 5 => {

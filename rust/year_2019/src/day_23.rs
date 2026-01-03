@@ -44,7 +44,10 @@ fn iter_nats(input: &str) -> impl Iterator<Item = Option<[isize; 2]>> {
             queue.extend(inputs);
         }
         let mut nat = None;
-        while computers.iter_mut().any(|computer| {
+        while computers.iter_mut().enumerate().any(|(i, computer)| {
+            if queues[i].borrow().is_empty() {
+                queues[i].borrow_mut().push_back(-1);
+            }
             let Some(addr) = computer.next() else {
                 return false;
             };
