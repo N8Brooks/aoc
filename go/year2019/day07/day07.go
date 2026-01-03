@@ -109,11 +109,7 @@ func intcode(program []int, inputs chan int) chan int {
 			case 2:
 				write(read(mode1) * read(mode2))
 			case 3:
-				if input, ok := <-inputs; !ok {
-					return
-				} else {
-					write(input)
-				}
+				write(<-inputs)
 			case 4:
 				outputs <- read(mode1)
 			case 5:
