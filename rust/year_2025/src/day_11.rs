@@ -52,10 +52,10 @@ pub fn part_2(input: &str) -> usize {
                     Less => (),
                 }
             })
-            .filter_map(|&v| {
+            .filter(|&v| {
                 let deg = indegree.get_mut(v).unwrap();
                 *deg -= 1;
-                (*deg == 0).then_some(v)
+                *deg == 0
             });
         stack.extend(update);
     }
