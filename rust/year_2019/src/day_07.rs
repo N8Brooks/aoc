@@ -43,7 +43,7 @@ pub fn part_2(input: &str) -> isize {
                     let amp = inputs.intcode(program.clone());
                     (queue, amp)
                 })
-                .next_chunk()
+                .collect_array()
                 .unwrap();
             successors(Some(0), |&input| {
                 pairs.iter_mut().try_fold(input, |input, (queue, amp)| {

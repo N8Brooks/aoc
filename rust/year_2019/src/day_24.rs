@@ -3,11 +3,7 @@ use std::{array, iter::successors};
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
-    let grid0: [[_; 5]; 5] = input
-        .lines()
-        .map(|line| line.bytes().map(|b| b == b'#').next_chunk().unwrap())
-        .next_chunk()
-        .unwrap();
+    let grid0 = parse_grid(input);
     let last = successors(Some(grid0), |&grid| {
         Some(array::from_fn(|i| {
             array::from_fn(|j| {
@@ -40,19 +36,15 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> usize {
-    fun::<200>(input)
+    total_bugs::<200>(input)
 }
 
-fn fun<const N: usize>(input: &str) -> usize
+fn total_bugs<const N: usize>(input: &str) -> usize
 where
     [(); 2 * N + 1]:,
 {
     let mut grids0 = [[[false; 5]; 5]; 2 * N + 1];
-    grids0[N] = input
-        .lines()
-        .map(|line| line.bytes().map(|b| b == b'#').next_chunk().unwrap())
-        .next_chunk()
-        .unwrap();
+    grids0[N] = parse_grid(input);
     let last = (1..=N).fold(grids0, |grids, step| {
         array::from_fn(|k| {
             if k < N - step || k > N + step {
@@ -104,6 +96,14 @@ where
     last.into_iter().flatten().flatten().filter(|&b| b).count()
 }
 
+fn parse_grid(input: &str) -> [[bool; 5]; 5] {
+    input
+        .lines()
+        .map(|line| line.bytes().map(|b| b == b'#').collect_array().unwrap())
+        .collect_array()
+        .unwrap()
+}
+
 #[cfg(test)]
 mod test {
     use test_case::test_case;
@@ -124,8 +124,8 @@ mod test {
     }
 
     #[test_case(EXAMPLE => 99)]
-    fn fun(input: &str) -> usize {
-        super::fun::<10>(input)
+    fn total_bugs(input: &str) -> usize {
+        super::total_bugs::<10>(input)
     }
 
     #[test_case(INPUT => 2109)]

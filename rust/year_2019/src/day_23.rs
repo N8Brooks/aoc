@@ -36,7 +36,7 @@ fn iter_nats(input: &str) -> impl Iterator<Item = Option<[isize; 2]>> {
             let inputs = iter::from_fn(move || queue.borrow_mut().pop_front());
             inputs.intcode(program.clone())
         })
-        .next_chunk()
+        .collect_array()
         .unwrap();
     successors(Some(None), move |nat| {
         if let Some(inputs) = nat {

@@ -2,6 +2,7 @@
 #![feature(strip_circumfix)]
 #![feature(array_windows)]
 #![allow(incomplete_features)]
+#![allow(unstable_name_collisions)] // collect_array
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;
