@@ -1,12 +1,12 @@
 [package]
 name = "year_2018"
-version = "0.0.0"
-edition = "2021"
+version = "0.1.0"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hashbrown = "0.16.0"
+hashbrown = "0.16.1"
 chrono = "0.4.42"
 itertools = "0.14.0"
 lazy_static = "1.5.0"

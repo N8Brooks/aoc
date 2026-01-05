@@ -29,7 +29,7 @@ impl From<&str> for Claim {
 }
 
 impl Claim {
-    fn iter_locations(&self) -> impl Iterator<Item = (usize, usize)> {
+    fn iter_locations(&self) -> impl Iterator<Item = (usize, usize)> + use<> {
         (self.left..self.left + self.width).cartesian_product(self.top..self.top + self.height)
     }
 }
