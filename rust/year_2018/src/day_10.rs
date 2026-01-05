@@ -274,17 +274,17 @@ position=< 5,  9> velocity=< 1, -2>
 position=<14,  7> velocity=<-2,  0>
 position=<-3,  6> velocity=< 2, -1>";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2018/day_10.txt");
+    const INPUT: &str = include_str!("../test_data/day_10.txt");
 
-    #[test_case(EXAMPLE, "HI"; "example")]
-    #[test_case(INPUT, "ERKECKJJ"; "input")]
-    fn part_1(input: &str, expected: &str) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => "HI")]
+    #[test_case(INPUT => "ERKECKJJ")]
+    fn part_1(input: &str) -> String {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 3; "example")]
-    #[test_case(INPUT, 10645; "input")]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 3)]
+    #[test_case(INPUT => 10645)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

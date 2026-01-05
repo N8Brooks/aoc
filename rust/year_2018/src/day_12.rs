@@ -110,16 +110,16 @@ mod test {
 ###.# => #
 ####. => #";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2018/day_12.txt");
+    const INPUT: &str = include_str!("../test_data/day_12.txt");
 
-    #[test_case(EXAMPLE, 325; "example")]
-    #[test_case(INPUT, 3915; "input")]
-    fn part_1(input: &str, expected: isize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 325)]
+    #[test_case(INPUT => 3915)]
+    fn part_1(input: &str) -> isize {
+        super::part_1(input)
     }
 
-    #[test_case(INPUT, 4900000001793; "input")]
-    fn part_2(input: &str, expected: isize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(INPUT => 4900000001793)]
+    fn part_2(input: &str) -> isize {
+        super::part_2(input)
     }
 }

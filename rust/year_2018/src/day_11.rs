@@ -77,30 +77,27 @@ fn power_level((x, y): (usize, usize), grid_serial_number: i64) -> i64 {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../test_data/year_2018/day_11.txt");
+    const INPUT: &str = include_str!("../test_data/day_11.txt");
 
-    #[test_case("18", "33,45"; "example_1")]
-    #[test_case("42", "21,61"; "example_2")]
-    #[test_case(INPUT, "21,54"; "input")]
-    fn part_1(input: &str, expected: &str) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case("18" => "33,45")]
+    #[test_case("42" => "21,61")]
+    #[test_case(INPUT => "21,54")]
+    fn part_1(input: &str) -> String {
+        super::part_1(input)
     }
 
-    #[test_case("18", "90,269,16"; "example_1")]
-    #[test_case("42", "232,251,12"; "example_2")]
-    #[test_case(INPUT, "236,268,11"; "input")]
-    fn part_2(input: &str, expected: &str) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case("18" => "90,269,16")]
+    #[test_case("42" => "232,251,12")]
+    #[test_case(INPUT => "236,268,11")]
+    fn part_2(input: &str) -> String {
+        super::part_2(input)
     }
 
-    #[test_case((3, 5), 8, 4; "example_1")]
-    #[test_case((122, 79), 57, -5; "example_2")]
-    #[test_case((217, 196), 39, 0; "example_3")]
-    #[test_case((101, 153), 71, 4; "example_4")]
-    fn power_level(coordinates: (usize, usize), grid_serial_number: i64, expected: i64) {
-        assert_eq!(
-            super::power_level(coordinates, grid_serial_number),
-            expected
-        );
+    #[test_case((3, 5), 8 => 4)]
+    #[test_case((122, 79), 57 => -5)]
+    #[test_case((217, 196), 39 => 0)]
+    #[test_case((101, 153), 71 => 4)]
+    fn power_level(coordinates: (usize, usize), grid_serial_number: i64) -> i64 {
+        super::power_level(coordinates, grid_serial_number)
     }
 }

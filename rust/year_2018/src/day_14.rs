@@ -39,23 +39,23 @@ fn gen_recipes_while(mut predicate: impl FnMut(&[u8]) -> bool) -> Vec<u8> {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../test_data/year_2018/day_14.txt");
+    const INPUT: &str = include_str!("../test_data/day_14.txt");
 
-    #[test_case("9", "5158916779"; "example_1")]
-    #[test_case("5", "0124515891"; "example_2")]
-    #[test_case("18", "9251071085"; "example_3")]
-    #[test_case("2018", "5941429882"; "example_4")]
-    #[test_case(INPUT, "6289129761"; "input")]
-    fn part_1(input: &str, expected: &str) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case("9" => "5158916779")]
+    #[test_case("5" => "0124515891")]
+    #[test_case("18" => "9251071085")]
+    #[test_case("2018" => "5941429882")]
+    #[test_case(INPUT => "6289129761")]
+    fn part_1(input: &str) -> String {
+        super::part_1(input)
     }
 
-    #[test_case("51589", 9; "example_1")]
-    #[test_case("01245", 5; "example_2")]
-    #[test_case("92510", 18; "example_3")]
-    #[test_case("59414", 2018; "example_4")]
-    #[test_case(INPUT, 20207075; "input")]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case("51589" => 9)]
+    #[test_case("01245" => 5)]
+    #[test_case("92510" => 18)]
+    #[test_case("59414" => 2018)]
+    #[test_case(INPUT => 20207075)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

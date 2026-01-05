@@ -65,21 +65,21 @@ mod test {
 
     const EXAMPLE: &str = "dabAcCaCBAcCcaDA";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2018/day_05.txt");
+    const INPUT: &str = include_str!("../test_data/day_05.txt");
 
-    #[test_case("aA", 0; "reaction_example_1")]
-    #[test_case("abBA", 0; "reaction_example_2")]
-    #[test_case("abAB", 4; "reaction_example_3")]
-    #[test_case("aabAAB", 6; "reaction_example_4")]
-    #[test_case(EXAMPLE, 10; "example")]
-    #[test_case(INPUT, 10886; "input")]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case("aA" => 0)]
+    #[test_case("abBA" => 0)]
+    #[test_case("abAB" => 4)]
+    #[test_case("aabAAB" => 6)]
+    #[test_case(EXAMPLE => 10)]
+    #[test_case(INPUT => 10886)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 4; "example")]
-    #[test_case(INPUT, 4684; "input")]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 4)]
+    #[test_case(INPUT => 4684)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

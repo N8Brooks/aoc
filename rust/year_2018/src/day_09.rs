@@ -45,21 +45,21 @@ fn winning_score(n_players: usize, last_marble: usize) -> usize {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../test_data/year_2018/day_09.txt");
+    const INPUT: &str = include_str!("../test_data/day_09.txt");
 
-    #[test_case("9 players; last marble is worth 25 points", 32; "example_1")]
-    #[test_case("10 players; last marble is worth 1618 points", 8317; "example_2")]
-    #[test_case("13 players; last marble is worth 7999 points", 146373; "example_3")]
-    #[test_case("17 players; last marble is worth 1104 points", 2764; "example_4")]
-    #[test_case("21 players; last marble is worth 6111 points", 54718; "example_5")]
-    #[test_case("30 players; last marble is worth 5807 points", 37305; "example_6")]
-    #[test_case(INPUT, 398371; "input")]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case("9 players; last marble is worth 25 points" => 32)]
+    #[test_case("10 players; last marble is worth 1618 points" => 8317)]
+    #[test_case("13 players; last marble is worth 7999 points" => 146373)]
+    #[test_case("17 players; last marble is worth 1104 points" => 2764)]
+    #[test_case("21 players; last marble is worth 6111 points" => 54718)]
+    #[test_case("30 players; last marble is worth 5807 points" => 37305)]
+    #[test_case(INPUT => 398371)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(INPUT, 3212830280; "input")]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(INPUT => 3212830280)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

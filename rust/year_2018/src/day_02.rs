@@ -42,12 +42,12 @@ aabcdd
 abcdee
 ababab";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2018/day_02.txt");
+    const INPUT: &str = include_str!("../test_data/day_02.txt");
 
-    #[test_case(EXAMPLE_1, 12; "example_1")]
-    #[test_case(INPUT, 5681; "input")]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 12)]
+    #[test_case(INPUT => 5681)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
     const EXAMPLE_2: &str = "abcde
@@ -58,9 +58,9 @@ fguij
 axcye
 wvxyz";
 
-    #[test_case(EXAMPLE_2, "fgij"; "example_2")]
-    #[test_case(INPUT, "uqyoeizfvmbistpkgnocjtwld"; "input")]
-    fn part_2(input: &str, expected: &str) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_2 => "fgij")]
+    #[test_case(INPUT => "uqyoeizfvmbistpkgnocjtwld")]
+    fn part_2(input: &str) -> String {
+        super::part_2(input)
     }
 }

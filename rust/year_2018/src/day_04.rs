@@ -118,17 +118,17 @@ mod test {
 [1518-11-05 00:45] falls asleep
 [1518-11-05 00:55] wakes up";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2018/day_04.txt");
+    const INPUT: &str = include_str!("../test_data/day_04.txt");
 
-    #[test_case(EXAMPLE, 240; "example")]
-    #[test_case(INPUT, 94040; "input")]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 240)]
+    #[test_case(INPUT => 94040)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 4455; "example")]
-    #[test_case(INPUT, 39940; "input")]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 4455)]
+    #[test_case(INPUT => 39940)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }
