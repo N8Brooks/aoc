@@ -6,10 +6,10 @@ pub fn part_1(input: &str) -> usize {
     let (samples, _program) = parse_input(input);
 
     samples
-        .filter(|&(before, (_, a, b, c), after)| {
+        .filter(|&(before, (_, inputs), after)| {
             OPERATIONS
                 .into_iter()
-                .filter(|op| op(before, a, b, c) == after)
+                .filter(|op| op(before, inputs) == after)
                 .next_chunk::<3>()
                 .is_ok()
         })
@@ -17,16 +17,15 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> usize {
+    const N: usize = OPERATIONS.len();
     let (samples, program) = parse_input(input);
 
-    let mut operations: [Vec<_>; OPERATIONS.len()] =
-        array::from_fn(|_| (0..OPERATIONS.len()).collect());
-
-    for (before, (opcode, a, b, c), after) in samples {
-        operations[opcode].retain(|&op| OPERATIONS[op](before, a, b, c) == after);
+    let mut operations: [Vec<_>; N] = array::from_fn(|_| (0..N).collect());
+    for (before, (opcode, inputs), after) in samples {
+        operations[opcode].retain(|&op| OPERATIONS[op](before, inputs) == after);
     }
 
-    let mut graph: [_; OPERATIONS.len()] = array::from_fn(|_| Vec::with_capacity(OPERATIONS.len()));
+    let mut graph: [_; N] = array::from_fn(|_| Vec::with_capacity(N));
     for (opcode, ops) in operations.iter().enumerate() {
         for &op in ops {
             graph[op].push(opcode);
@@ -57,14 +56,14 @@ pub fn part_2(input: &str) -> usize {
         OPERATIONS[op]
     });
 
-    program.fold([0; 4], |regs, (opcode, a, b, c)| {
-        operations[opcode](regs, a, b, c)
+    program.fold([0; 4], |regs, (opcode, inputs)| {
+        operations[opcode](regs, inputs)
     })[0]
 }
 
 type Registers = [usize; 4];
 
-type Instruction = (usize, usize, usize, usize);
+type Instruction = (usize, [usize; 3]);
 
 fn parse_input(
     input: &str,
@@ -83,7 +82,7 @@ fn parse_input(
             .collect_array()
             .unwrap();
         let (opcode, a, b, c) = instruction
-            .split(" ")
+            .split(' ')
             .map(|n| n.parse().unwrap())
             .collect_tuple()
             .unwrap();
@@ -94,97 +93,100 @@ fn parse_input(
             .map(|n| n.parse().unwrap())
             .collect_array()
             .unwrap();
-        (before, (opcode, a, b, c), after)
+        (before, (opcode, [a, b, c]), after)
     });
     let program = program.lines().map(|line| {
-        line.split(" ")
+        line.split(' ')
             .map(|n| n.parse::<usize>().unwrap())
             .collect_tuple()
+            .map(|(opcode, a, b, c)| (opcode, [a, b, c]))
             .unwrap()
     });
     (samples, program)
 }
 
-const OPERATIONS: [fn([usize; 4], usize, usize, usize) -> [usize; 4]; 16] = [
+type Operation = fn(Registers, [usize; 3]) -> Registers;
+
+const OPERATIONS: [Operation; 16] = [
     addr, addi, mulr, muli, banr, bani, borr, bori, setr, seti, gtir, gtri, gtrr, eqir, eqri, eqrr,
 ];
 
-fn addr(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn addr(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a] + regs[b];
     regs
 }
 
-fn addi(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn addi(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a] + b;
     regs
 }
 
-fn mulr(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn mulr(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a] * regs[b];
     regs
 }
 
-fn muli(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn muli(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a] * b;
     regs
 }
 
-fn banr(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn banr(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a] & regs[b];
     regs
 }
 
-fn bani(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn bani(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a] & b;
     regs
 }
 
-fn borr(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn borr(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a] | regs[b];
     regs
 }
 
-fn bori(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn bori(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a] | b;
     regs
 }
 
-fn setr(mut regs: [usize; 4], a: usize, _b: usize, c: usize) -> [usize; 4] {
+fn setr(mut regs: [usize; 4], [a, _, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = regs[a];
     regs
 }
 
-fn seti(mut regs: [usize; 4], a: usize, _b: usize, c: usize) -> [usize; 4] {
+fn seti(mut regs: [usize; 4], [a, _, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = a;
     regs
 }
 
-fn gtir(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn gtir(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = if a > regs[b] { 1 } else { 0 };
     regs
 }
 
-fn gtri(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn gtri(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = if regs[a] > b { 1 } else { 0 };
     regs
 }
 
-fn gtrr(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn gtrr(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = if regs[a] > regs[b] { 1 } else { 0 };
     regs
 }
 
-fn eqir(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn eqir(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = if a == regs[b] { 1 } else { 0 };
     regs
 }
 
-fn eqri(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn eqri(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = if regs[a] == b { 1 } else { 0 };
     regs
 }
 
-fn eqrr(mut regs: [usize; 4], a: usize, b: usize, c: usize) -> [usize; 4] {
+fn eqrr(mut regs: [usize; 4], [a, b, c]: [usize; 3]) -> [usize; 4] {
     regs[c] = if regs[a] == regs[b] { 1 } else { 0 };
     regs
 }
