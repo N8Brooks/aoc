@@ -2,30 +2,62 @@ use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     let (idx, instructions) = parse_input(input);
-    let mut regs = [0; 6];
-    while let Some(instruction) = instructions.get(regs[idx]) {
-        regs = instruction.execute(regs);
-        regs[idx] += 1;
+    let mut device = Device::new(idx);
+    while let Some(instruction) = instructions.get(device.regs[idx]) {
+        device.execute(instruction);
     }
-    regs[0]
+    device.regs[0]
 }
 
 pub fn part_2(input: &str) -> usize {
     // Find target number, add divisors
     let (idx, instructions) = parse_input(input);
-    let mut regs = [0; 6];
-    regs[0] = 1;
+    let mut device = Device::new(idx);
+    device.regs[0] = 1;
     for _ in 0..17 {
-        let ip = regs[idx];
-        regs = instructions[ip].execute(regs);
-        regs[idx] += 1;
+        let ip = device.regs[idx];
+        let instruction = &instructions[ip];
+        device.execute(instruction);
     }
-    let target = regs.iter().max().unwrap();
-    let divisor = (2..).find(|n| target % n == 0).unwrap();
+    let target = device.regs.iter().max().unwrap();
+    let divisor = (2..).find(|&n| target.is_multiple_of(n)).unwrap();
     target + 1 + divisor + target / divisor
 }
 
-type Registers = [usize; 6];
+struct Device {
+    idx: usize,
+    regs: [usize; 6],
+}
+
+impl Device {
+    fn new(idx: usize) -> Self {
+        Self { idx, regs: [0; 6] }
+    }
+
+    fn execute(&mut self, Instruction { op, vars }: &Instruction) {
+        use Op::*;
+        let [a, b, c] = *vars;
+        self.regs[c] = match op {
+            Addr => self.regs[a] + self.regs[b],
+            Addi => self.regs[a] + b,
+            Mulr => self.regs[a] * self.regs[b],
+            Muli => self.regs[a] * b,
+            Banr => self.regs[a] & self.regs[b],
+            Bani => self.regs[a] & b,
+            Borr => self.regs[a] | self.regs[b],
+            Bori => self.regs[a] | b,
+            Setr => self.regs[a],
+            Seti => a,
+            Gtir => (a > self.regs[b]).into(),
+            Gtri => (self.regs[a] > b).into(),
+            Gtrr => (self.regs[a] > self.regs[b]).into(),
+            Eqir => (a == self.regs[b]).into(),
+            Eqri => (self.regs[a] == b).into(),
+            Eqrr => (self.regs[a] == self.regs[b]).into(),
+        };
+        self.regs[self.idx] += 1;
+    }
+}
 
 struct Instruction {
     op: Op,
@@ -51,34 +83,8 @@ enum Op {
     Eqrr,
 }
 
-use Op::*;
-
-impl Instruction {
-    fn execute(&self, mut regs: Registers) -> Registers {
-        let [a, b, c] = self.vars;
-        regs[c] = match self.op {
-            Addr => regs[a] + regs[b],
-            Addi => regs[a] + b,
-            Mulr => regs[a] * regs[b],
-            Muli => regs[a] * b,
-            Banr => regs[a] & regs[b],
-            Bani => regs[a] & b,
-            Borr => regs[a] | regs[b],
-            Bori => regs[a] | b,
-            Setr => regs[a],
-            Seti => a,
-            Gtir => (a > regs[b]).into(),
-            Gtri => (regs[a] > b).into(),
-            Gtrr => (regs[a] > regs[b]).into(),
-            Eqir => (a == regs[b]).into(),
-            Eqri => (regs[a] == b).into(),
-            Eqrr => (regs[a] == regs[b]).into(),
-        };
-        regs
-    }
-}
-
 fn parse_input(input: &str) -> (usize, Vec<Instruction>) {
+    use Op::*;
     let (idx, instructions) = input.split_once("\n").unwrap();
     let idx = idx.strip_prefix("#ip ").unwrap().parse().unwrap();
     let instructions = instructions
