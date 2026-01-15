@@ -1,77 +1,70 @@
-use hashbrown::HashSet;
 use itertools::Itertools;
-use lazy_static::lazy_static;
-use regex::Regex;
-
-#[derive(Debug)]
-struct Claim {
-    id: usize,
-    left: usize,
-    top: usize,
-    width: usize,
-    height: usize,
-}
-
-impl From<&str> for Claim {
-    fn from(line: &str) -> Self {
-        lazy_static! {
-            static ref RE: Regex = Regex::new(r"^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$").unwrap();
-        }
-        let caps = RE.captures(line).expect("line matches claim regex");
-        Claim {
-            id: caps[1].parse().unwrap(),
-            left: caps[2].parse().unwrap(),
-            top: caps[3].parse().unwrap(),
-            width: caps[4].parse().unwrap(),
-            height: caps[5].parse().unwrap(),
-        }
-    }
-}
-
-impl Claim {
-    fn iter_locations(&self) -> impl Iterator<Item = (usize, usize)> + use<> {
-        (self.left..self.left + self.width).cartesian_product(self.top..self.top + self.height)
-    }
-}
 
 pub fn part_1(input: &str) -> usize {
-    input
-        .lines()
-        .map(Claim::from)
-        .flat_map(|claim| claim.iter_locations())
-        .duplicates()
-        .unique()
+    let claims = parse_claims(input);
+    parse_counts(claims)
+        .into_iter()
+        .flatten()
+        .filter(|&count| count > 1)
         .count()
 }
 
 pub fn part_2(input: &str) -> usize {
-    let claims = input.lines().map(Claim::from).collect_vec();
-    let non_intact_locations: HashSet<_> = claims
-        .iter()
-        .flat_map(|claim| claim.iter_locations())
-        .duplicates()
-        .collect();
+    let claims: Vec<_> = parse_claims(input).collect();
+    let counts = parse_counts(claims.iter().copied());
     claims
-        .iter()
-        .filter(|claim| {
-            claim
-                .iter_locations()
-                .all(|location| !non_intact_locations.contains(&location))
+        .into_iter()
+        .enumerate()
+        .filter(|&(_, (j, i, m, n))| {
+            counts
+                .iter()
+                .skip(i)
+                .take(n)
+                .flat_map(|row| row.iter().skip(j).take(m))
+                .all(|&count| count == 1)
         })
         .exactly_one()
-        .expect("one instact claim")
-        .id
+        .unwrap()
+        .0
+        + 1
+}
+
+fn parse_claims(input: &str) -> impl Iterator<Item = (usize, usize, usize, usize)> {
+    input.lines().map(|line| {
+        let (_, line) = line.split_once(" @ ").unwrap();
+        let (pos, size) = line.split_once(": ").unwrap();
+        let (j, i) = pos.split_once(',').unwrap();
+        let (m, n) = size.split_once('x').unwrap();
+        (
+            j.parse().unwrap(),
+            i.parse().unwrap(),
+            m.parse().unwrap(),
+            n.parse().unwrap(),
+        )
+    })
+}
+
+fn parse_counts(claims: impl IntoIterator<Item = (usize, usize, usize, usize)>) -> Vec<Vec<i32>> {
+    let mut counts = vec![vec![0; 1000]; 1000];
+    for (j, i, m, n) in claims {
+        for row in counts.iter_mut().skip(i).take(n) {
+            for count in row.iter_mut().skip(j).take(m) {
+                *count += 1;
+            }
+        }
+    }
+    counts
 }
 
 #[cfg(test)]
 mod test {
     use test_case::test_case;
 
+    const INPUT: &str = include_str!("../test_data/day_03.txt");
+
     const EXAMPLE: &str = "#1 @ 1,3: 4x4
 #2 @ 3,1: 4x4
 #3 @ 5,5: 2x2";
-
-    const INPUT: &str = include_str!("../test_data/day_03.txt");
 
     #[test_case(EXAMPLE => 4)]
     #[test_case(INPUT => 121163)]
