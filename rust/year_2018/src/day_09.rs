@@ -1,8 +1,5 @@
 use std::collections::VecDeque;
 
-use lazy_static::lazy_static;
-use regex::Regex;
-
 pub fn part_1(input: &str) -> usize {
     let (n_players, last_marble) = parse_input(input);
     winning_score(n_players, last_marble)
@@ -14,14 +11,12 @@ pub fn part_2(input: &str) -> usize {
 }
 
 fn parse_input(input: &str) -> (usize, usize) {
-    lazy_static! {
-        static ref RE: Regex =
-            Regex::new(r"^(\d+) players; last marble is worth (\d+) points$").unwrap();
-    }
-    let caps = RE.captures(input).unwrap();
-    let n_players = caps[1].parse().unwrap();
-    let last_marble = caps[2].parse().unwrap();
-    (n_players, last_marble)
+    let (n_players, last_marble) = input.split_once("; ").unwrap();
+    let n_players = n_players.strip_suffix(" players").unwrap();
+    let last_marble = last_marble
+        .strip_circumfix("last marble is worth ", " points")
+        .unwrap();
+    (n_players.parse().unwrap(), last_marble.parse().unwrap())
 }
 
 fn winning_score(n_players: usize, last_marble: usize) -> usize {
@@ -38,7 +33,7 @@ fn winning_score(n_players: usize, last_marble: usize) -> usize {
             marbles.push_back(marble);
         }
     }
-    *player_scores.iter().max().unwrap()
+    player_scores.into_iter().max().unwrap()
 }
 
 #[cfg(test)]
