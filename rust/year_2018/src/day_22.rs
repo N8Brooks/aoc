@@ -1,4 +1,4 @@
-use std::{cmp::Reverse, collections::BinaryHeap, iter::successors, mem};
+use std::{cmp::Reverse, collections::BinaryHeap, iter::successors};
 
 type Region = usize;
 
@@ -16,15 +16,16 @@ pub fn part_2(input: &str) -> usize {
     let map = parse_map(depth, target, (n, m));
 
     let mut heap = BinaryHeap::from([(Reverse(0), (0, 0), TORCH)]);
-    let mut seen = vec![vec![[false; 3]; map[0].len()]; map.len()];
+    let mut seen = vec![vec![0; map[0].len()]; map.len()];
 
     while let Some((Reverse(dist), pos @ (i, j), gear)) = heap.pop() {
         if pos == target && gear == TORCH {
             return dist;
         }
-        if mem::replace(&mut seen[i][j][gear], true) {
+        if seen[i][j] & (1 << gear) != 0 {
             continue;
         }
+        seen[i][j] |= 1 << gear;
 
         [
             i.checked_sub(1).map(|i| (i, j)),
@@ -34,13 +35,13 @@ pub fn part_2(input: &str) -> usize {
         ]
         .into_iter()
         .flatten()
-        .filter(|&(i, j)| !seen[i][j][gear] && gear != map[i][j])
+        .filter(|&(i, j)| seen[i][j] & (1 << gear) == 0 && gear != map[i][j])
         .map(|pos| (Reverse(dist + 1), pos, gear))
         .collect_into(&mut heap);
 
         let region = map[i][j];
         let gear = 3 - region - gear;
-        if !seen[i][j][gear] {
+        if seen[i][j] & (1 << gear) == 0 {
             heap.push((Reverse(dist + 7), pos, gear));
         }
     }
@@ -76,7 +77,10 @@ fn parse_map(depth: usize, target: (usize, usize), (n, m): (usize, usize)) -> Ve
         Some(row)
     })
     .take(n + 1)
-    .map(|row| row.into_iter().map(|level| level % 3).collect::<Vec<_>>())
+    .map(|mut row| {
+        row.iter_mut().for_each(|cell| *cell %= 3);
+        row
+    })
     .collect()
 }
 
