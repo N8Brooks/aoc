@@ -8,8 +8,6 @@ use std::{
 
 use hashbrown::HashSet;
 use itertools::Itertools;
-use lazy_static::lazy_static;
-use regex::Regex;
 
 pub fn part_1(input: &str) -> String {
     iter_messages_sky_height_asc(input)
@@ -50,22 +48,18 @@ struct Point {
 
 impl From<&str> for Point {
     fn from(line: &str) -> Self {
-        lazy_static! {
-            static ref RE: Regex = Regex::new(
-                r"^position=< ?(\-?\d+),  ?(\-?\d+)> velocity=< ?(\-?\d+),  ?(\-?\d+)>$"
-            )
-            .unwrap();
-        }
-        let caps = RE.captures(line).unwrap();
-        let (position_x, position_y, velocity_x, velocity_y) = caps
-            .iter()
-            .skip(1)
-            .map(|cap| cap.unwrap().as_str().parse().unwrap())
-            .collect_tuple()
-            .unwrap();
+        let (pos, vel) = line.split_once(" velocity=").unwrap();
+        let pos = pos.strip_circumfix("position=<", ">").unwrap();
+        let vel = vel.strip_circumfix("<", ">").unwrap();
+        let (pos_x, pos_y) = pos.split_once(", ").unwrap();
+        let (vel_x, vel_y) = vel.split_once(", ").unwrap();
+        let pos_x = pos_x.trim_prefix(' ').parse().unwrap();
+        let pos_y = pos_y.trim_prefix(' ').parse().unwrap();
+        let vel_x = vel_x.trim_prefix(' ').parse().unwrap();
+        let vel_y = vel_y.trim_prefix(' ').parse().unwrap();
         Point {
-            position: [position_x, position_y],
-            velocity: [velocity_x, velocity_y],
+            position: [pos_x, pos_y],
+            velocity: [vel_x, vel_y],
         }
     }
 }

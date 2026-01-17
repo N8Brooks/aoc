@@ -2,6 +2,7 @@
 #![feature(iter_collect_into)]
 #![feature(strip_circumfix)]
 #![feature(generic_const_exprs)]
+#![feature(trim_prefix_suffix)]
 #![allow(incomplete_features)]
 pub mod day_01;
 pub mod day_02;

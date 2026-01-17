@@ -408,9 +408,7 @@ version = "0.1.0"
 dependencies = [
  "hashbrown",
  "itertools",
- "lazy_static",
  "num",
- "regex",
  "test-case",
 ]
 
