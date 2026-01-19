@@ -3,6 +3,7 @@
 #![feature(strip_circumfix)]
 #![feature(generic_const_exprs)]
 #![feature(trim_prefix_suffix)]
+#![feature(option_reference_flattening)]
 #![allow(incomplete_features)]
 pub mod day_01;
 pub mod day_02;
@@ -27,3 +28,4 @@ pub mod day_21;
 pub mod day_22;
 pub mod day_23;
 pub mod day_24;
+pub mod day_25;
