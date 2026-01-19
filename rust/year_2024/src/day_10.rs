@@ -10,7 +10,7 @@ pub fn part_1(input: &str) -> usize {
         .flat_map(|(i, l)| {
             l.iter()
                 .enumerate()
-                .filter(|(_, &c)| c == b'0')
+                .filter(|&(_, &c)| c == b'0')
                 .map(move |(j, _)| (i, j))
         })
         .map(|(i, j)| {
@@ -49,7 +49,7 @@ pub fn part_2(input: &str) -> usize {
         .flat_map(|(i, l)| {
             l.iter()
                 .enumerate()
-                .filter(|(_, &c)| c == b'0')
+                .filter(|&(_, &c)| c == b'0')
                 .map(move |(j, _)| (i, j))
         })
         .map(|(i, j)| {

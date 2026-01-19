@@ -1,10 +1,11 @@
 [package]
 name = "year_2021"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-
 itertools = "0.14"
 num = "0.4.3"
+
+[dev-dependencies]
 test-case = "3.3.1"

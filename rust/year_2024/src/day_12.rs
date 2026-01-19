@@ -12,7 +12,7 @@ pub fn part_1(input: &str) -> usize {
         .flat_map(|(i, l)| {
             l.iter()
                 .enumerate()
-                .filter(|(_, &c)| c != b'.')
+                .filter(|&(_, &c)| c != b'.')
                 .map(move |(j, &c)| (i, j, c))
         })
         .filter_map(|(i, j, c)| {
@@ -60,7 +60,7 @@ pub fn part_2(input: &str) -> usize {
         .flat_map(|(i, l)| {
             l.iter()
                 .enumerate()
-                .filter(|(_, &c)| c != b'.')
+                .filter(|&(_, &c)| c != b'.')
                 .map(move |(j, &c)| (i, j, c))
         })
         .for_each(|(i, j, c)| {
