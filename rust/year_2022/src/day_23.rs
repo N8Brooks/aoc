@@ -199,17 +199,17 @@ mod test {
 ##.#.##
 .#..#..";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_23.txt");
+    const INPUT: &str = include_str!("../test_data/day_23.txt");
 
-    #[test_case(EXAMPLE, 110)]
-    #[test_case(INPUT, 3684)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 110)]
+    #[test_case(INPUT => 3684)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 20)]
-    #[test_case(INPUT, 862)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 20)]
+    #[test_case(INPUT => 862)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

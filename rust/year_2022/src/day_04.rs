@@ -46,17 +46,17 @@ mod test {
 6-6,4-6
 2-6,4-8";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_04.txt");
+    const INPUT: &str = include_str!("../test_data/day_04.txt");
 
-    #[test_case(EXAMPLE, 2)]
-    #[test_case(INPUT, 540)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 2)]
+    #[test_case(INPUT => 540)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 4)]
-    #[test_case(INPUT, 872)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 4)]
+    #[test_case(INPUT => 872)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

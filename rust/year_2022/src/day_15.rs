@@ -149,17 +149,17 @@ Sensor at x=16, y=7: closest beacon is at x=15, y=3
 Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_15.txt");
+    const INPUT: &str = include_str!("../test_data/day_15.txt");
 
-    #[test_case(EXAMPLE, 10, 26)]
-    #[test_case(INPUT, 2_000_000, 4717631)]
-    fn part_1(input: &str, row_y: isize, expected: usize) {
-        assert_eq!(super::part_1(input, row_y), expected);
+    #[test_case(EXAMPLE, 10 => 26)]
+    #[test_case(INPUT, 2_000_000 => 4717631)]
+    fn part_1(input: &str, row_y: isize) -> usize {
+        super::part_1(input, row_y)
     }
 
-    #[test_case(EXAMPLE, 0..=20, 56000011)]
-    #[test_case(INPUT, 0..=4_000_000, 13197439355220)]
-    fn part_2(input: &str, max_var: RangeInclusive<isize>, expected: isize) {
-        assert_eq!(super::part_2(input, max_var), expected);
+    #[test_case(EXAMPLE, 0..=20 => 56000011)]
+    #[test_case(INPUT, 0..=4_000_000 => 13197439355220)]
+    fn part_2(input: &str, max_var: RangeInclusive<isize>) -> isize {
+        super::part_2(input, max_var)
     }
 }

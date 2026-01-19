@@ -219,17 +219,17 @@ lgvd: ljgn * ptdq
 drzm: hmdt - zczc
 hmdt: 32";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_21.txt");
+    const INPUT: &str = include_str!("../test_data/day_21.txt");
 
-    #[test_case(EXAMPLE, 152)]
-    #[test_case(INPUT, 93813115694560)]
-    fn part_1(input: &str, expected: i64) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 152)]
+    #[test_case(INPUT => 93813115694560)]
+    fn part_1(input: &str) -> i64 {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 301)]
-    #[test_case(INPUT, 3910938071092)]
-    fn part_2(input: &str, expected: i64) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 301)]
+    #[test_case(INPUT => 3910938071092)]
+    fn part_2(input: &str) -> i64 {
+        super::part_2(input)
     }
 }

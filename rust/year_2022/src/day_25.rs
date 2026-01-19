@@ -63,49 +63,49 @@ mod test {
 1=
 122";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_25.txt");
+    const INPUT: &str = include_str!("../test_data/day_25.txt");
 
-    #[test_case("1", 1)]
-    #[test_case("2", 2)]
-    #[test_case("1=", 3)]
-    #[test_case("1-", 4)]
-    #[test_case("10", 5)]
-    #[test_case("11", 6)]
-    #[test_case("12", 7)]
-    #[test_case("2=", 8)]
-    #[test_case("2-", 9)]
-    #[test_case("20", 10)]
-    #[test_case("1=0", 15)]
-    #[test_case("1-0", 20)]
-    #[test_case("1=11-2", 2022)]
-    #[test_case("1-0---0", 12345)]
-    #[test_case("1121-1110-1=0", 314159265)]
-    fn from_snafu(input: &str, expected: isize) {
-        assert_eq!(super::from_snafu(input), expected);
+    #[test_case("1" => 1)]
+    #[test_case("2" => 2)]
+    #[test_case("1=" => 3)]
+    #[test_case("1-" => 4)]
+    #[test_case("10" => 5)]
+    #[test_case("11" => 6)]
+    #[test_case("12" => 7)]
+    #[test_case("2=" => 8)]
+    #[test_case("2-" => 9)]
+    #[test_case("20" => 10)]
+    #[test_case("1=0" => 15)]
+    #[test_case("1-0" => 20)]
+    #[test_case("1=11-2" => 2022)]
+    #[test_case("1-0---0" => 12345)]
+    #[test_case("1121-1110-1=0" => 314159265)]
+    fn from_snafu(input: &str) -> isize {
+        super::from_snafu(input)
     }
 
-    #[test_case(1, "1")]
-    #[test_case(2, "2")]
-    #[test_case(3, "1=")]
-    #[test_case(4, "1-")]
-    #[test_case(5, "10")]
-    #[test_case(6, "11")]
-    #[test_case(7, "12")]
-    #[test_case(8, "2=")]
-    #[test_case(9, "2-")]
-    #[test_case(10, "20")]
-    #[test_case(15, "1=0")]
-    #[test_case(20, "1-0")]
-    #[test_case(2022, "1=11-2")]
-    #[test_case(12345, "1-0---0")]
-    #[test_case(314159265, "1121-1110-1=0")]
-    fn to_snafu(input: isize, expected: &str) {
-        assert_eq!(super::to_snafu(&input), expected);
+    #[test_case(1 => "1")]
+    #[test_case(2 => "2")]
+    #[test_case(3 => "1=")]
+    #[test_case(4 => "1-")]
+    #[test_case(5 => "10")]
+    #[test_case(6 => "11")]
+    #[test_case(7 => "12")]
+    #[test_case(8 => "2=")]
+    #[test_case(9 => "2-")]
+    #[test_case(10 => "20")]
+    #[test_case(15 => "1=0")]
+    #[test_case(20 => "1-0")]
+    #[test_case(2022 => "1=11-2")]
+    #[test_case(12345 => "1-0---0")]
+    #[test_case(314159265 => "1121-1110-1=0")]
+    fn to_snafu(input: isize) -> String {
+        super::to_snafu(&input)
     }
 
-    #[test_case(EXAMPLE, "2=-1=0")]
-    #[test_case(INPUT, "2=0=02-0----2-=02-10")]
-    fn part_1(input: &str, expected: &str) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => "2=-1=0")]
+    #[test_case(INPUT => "2=0=02-0----2-=02-10")]
+    fn part_1(input: &str) -> String {
+        super::part_1(input)
     }
 }

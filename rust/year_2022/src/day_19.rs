@@ -148,17 +148,17 @@ Each clay robot costs 3 ore. \
 Each obsidian robot costs 3 ore and 8 clay. \
 Each geode robot costs 3 ore and 12 obsidian.";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_19.txt");
+    const INPUT: &str = include_str!("../test_data/day_19.txt");
 
-    #[test_case(EXAMPLE, 33)]
-    #[test_case(INPUT, 1081)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 33)]
+    #[test_case(INPUT => 1081)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 3472)]
-    #[test_case(INPUT, 2415)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 3472)]
+    #[test_case(INPUT => 2415)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

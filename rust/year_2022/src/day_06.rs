@@ -24,24 +24,24 @@ pub fn part_2(input: &str) -> usize {
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_06.txt");
+    const INPUT: &str = include_str!("../test_data/day_06.txt");
 
-    #[test_case("bvwbjplbgvbhsrlpgdmjqwftvncz", 5)]
-    #[test_case("nppdvjthqldpwncqszvftbrmjlhg", 6)]
-    #[test_case("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 10)]
-    #[test_case("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 11)]
-    #[test_case(INPUT, 1929)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case("bvwbjplbgvbhsrlpgdmjqwftvncz" => 5)]
+    #[test_case("nppdvjthqldpwncqszvftbrmjlhg" => 6)]
+    #[test_case("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg" => 10)]
+    #[test_case("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw" => 11)]
+    #[test_case(INPUT => 1929)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 19)]
-    #[test_case("bvwbjplbgvbhsrlpgdmjqwftvncz", 23)]
-    #[test_case("nppdvjthqldpwncqszvftbrmjlhg", 23)]
-    #[test_case("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 29)]
-    #[test_case("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 26)]
-    #[test_case(INPUT, 3298)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case("mjqjpqmgbljsphdztnvjfqwrcgsmlb" => 19)]
+    #[test_case("bvwbjplbgvbhsrlpgdmjqwftvncz" => 23)]
+    #[test_case("nppdvjthqldpwncqszvftbrmjlhg" => 23)]
+    #[test_case("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg" => 29)]
+    #[test_case("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw" => 26)]
+    #[test_case(INPUT => 3298)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

@@ -127,7 +127,7 @@ Valve HH has flow rate=22; tunnel leads to valve GG
 Valve II has flow rate=0; tunnels lead to valves AA, JJ
 Valve JJ has flow rate=21; tunnel leads to valve II";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_16.txt");
+    const INPUT: &str = include_str!("../test_data/day_16.txt");
 
     #[test]
     fn volcano_node_from_line_singular() {
@@ -159,14 +159,14 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
         assert_eq!(node.flow_rate, 0);
     }
 
-    #[test_case(EXAMPLE, 1651)]
-    #[test_case(INPUT, 1376)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 1651)]
+    #[test_case(INPUT => 1376)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    // #[test_case(EXAMPLE, 0)]
-    // #[test_case(INPUT, 0)]
+    // #[test_case(EXAMPLE => 0)]
+    // #[test_case(INPUT => 0)]
     // fn part_2(input: &str, expected: usize) {
     //     assert_eq!(super::part_2(input), expected);
     // }

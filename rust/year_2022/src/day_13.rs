@@ -84,17 +84,17 @@ mod test {
 [1,[2,[3,[4,[5,6,7]]]],8,9]
 [1,[2,[3,[4,[5,6,0]]]],8,9]";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_13.txt");
+    const INPUT: &str = include_str!("../test_data/day_13.txt");
 
-    #[test_case(EXAMPLE, 13)]
-    #[test_case(INPUT, 5506)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 13)]
+    #[test_case(INPUT => 5506)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 140)]
-    #[test_case(INPUT, 21756)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 140)]
+    #[test_case(INPUT => 21756)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

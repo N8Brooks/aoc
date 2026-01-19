@@ -242,17 +242,17 @@ noop
 noop
 noop";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_10.txt");
+    const INPUT: &str = include_str!("../test_data/day_10.txt");
 
-    #[test_case(EXAMPLE, 13140)]
-    #[test_case(INPUT, 15120)]
-    fn part_1(input: &str, expected: i64) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 13140)]
+    #[test_case(INPUT => 15120)]
+    fn part_1(input: &str) -> i64 {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, "◣◂◄◈▿▽◅◇")]
-    #[test_case(INPUT, "RKPJBPLA")]
-    fn part_2(input: &str, expected: &str) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => "◣◂◄◈▿▽◅◇")]
+    #[test_case(INPUT => "RKPJBPLA")]
+    fn part_2(input: &str) -> String {
+        super::part_2(input)
     }
 }

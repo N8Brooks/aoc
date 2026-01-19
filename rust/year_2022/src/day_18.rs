@@ -111,17 +111,17 @@ mod test {
 2,1,5
 2,3,5";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_18.txt");
+    const INPUT: &str = include_str!("../test_data/day_18.txt");
 
-    #[test_case(EXAMPLE, 64)]
-    #[test_case(INPUT, 4418)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 64)]
+    #[test_case(INPUT => 4418)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 58)]
-    #[test_case(INPUT, 2486)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 58)]
+    #[test_case(INPUT => 2486)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

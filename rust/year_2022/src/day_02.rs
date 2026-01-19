@@ -103,26 +103,26 @@ mod test {
 B X
 C Z";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_02.txt");
+    const INPUT: &str = include_str!("../test_data/day_02.txt");
 
-    #[test_case("A X", 4)]
-    #[test_case("A Y", 8)]
-    #[test_case("A Z", 3)]
-    #[test_case("B X", 1)]
-    #[test_case("B Y", 5)]
-    #[test_case("B Z", 9)]
-    #[test_case("C X", 7)]
-    #[test_case("C Y", 2)]
-    #[test_case("C Z", 6)]
-    #[test_case(EXAMPLE, 15)]
-    #[test_case(INPUT, 12645)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case("A X" => 4)]
+    #[test_case("A Y" => 8)]
+    #[test_case("A Z" => 3)]
+    #[test_case("B X" => 1)]
+    #[test_case("B Y" => 5)]
+    #[test_case("B Z" => 9)]
+    #[test_case("C X" => 7)]
+    #[test_case("C Y" => 2)]
+    #[test_case("C Z" => 6)]
+    #[test_case(EXAMPLE => 15)]
+    #[test_case(INPUT => 12645)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 12)]
-    #[test_case(INPUT, 11756)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 12)]
+    #[test_case(INPUT => 11756)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

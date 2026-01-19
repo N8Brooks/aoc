@@ -60,12 +60,12 @@ D 1
 L 5
 R 2";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_09.txt");
+    const INPUT: &str = include_str!("../test_data/day_09.txt");
 
-    #[test_case(EXAMPLE_1, 13)]
-    #[test_case(INPUT, 6190)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 13)]
+    #[test_case(INPUT => 6190)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
     const EXAMPLE_2: &str = "R 5
@@ -77,10 +77,10 @@ D 10
 L 25
 U 20";
 
-    #[test_case(EXAMPLE_1, 1)]
-    #[test_case(EXAMPLE_2, 36)]
-    #[test_case(INPUT, 2516)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_1 => 1)]
+    #[test_case(EXAMPLE_2 => 36)]
+    #[test_case(INPUT => 2516)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

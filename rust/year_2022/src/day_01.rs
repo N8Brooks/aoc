@@ -42,17 +42,17 @@ mod tests {
 
 10000";
 
-    static INPUT: &str = include_str!("../../../test_data/year_2022/day_01.txt");
+    static INPUT: &str = include_str!("../test_data/day_01.txt");
 
-    #[test_case(EXAMPLE, 24000)]
-    #[test_case(INPUT, 68802)]
-    fn part_2(input: &str, actual: usize) {
-        assert_eq!(super::part_1(input), actual);
+    #[test_case(EXAMPLE => 24000)]
+    #[test_case(INPUT => 68802)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 45000)]
-    #[test_case(INPUT, 205370)]
-    fn part_1(input: &str, actual: usize) {
-        assert_eq!(super::part_2(input), actual);
+    #[test_case(EXAMPLE => 45000)]
+    #[test_case(INPUT => 205370)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

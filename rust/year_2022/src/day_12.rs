@@ -109,7 +109,7 @@ accszExk
 acctuvwj
 abdefghi";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_12.txt");
+    const INPUT: &str = include_str!("../test_data/day_12.txt");
 
     #[test]
     fn get_height_c() {
@@ -144,15 +144,15 @@ abdefghi";
         assert_eq!(get_byte_position(&bytes, b'E'), (2, 5));
     }
 
-    #[test_case(EXAMPLE, 31)]
-    #[test_case(INPUT, 462)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 31)]
+    #[test_case(INPUT => 462)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 29)]
-    #[test_case(INPUT, 451)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 29)]
+    #[test_case(INPUT => 451)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

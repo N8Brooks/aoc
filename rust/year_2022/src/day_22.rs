@@ -129,16 +129,16 @@ mod test {
 
 10R5L5R10L4R5L5";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_22.txt");
+    const INPUT: &str = include_str!("../test_data/day_22.txt");
 
-    #[test_case(EXAMPLE, 6032)]
-    #[test_case(INPUT, 97356)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 6032)]
+    #[test_case(INPUT => 97356)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    // #[test_case(EXAMPLE, 5031)]
-    // #[test_case(INPUT, 0)]
+    // #[test_case(EXAMPLE => 5031)]
+    // #[test_case(INPUT => 0)]
     // fn part_2(input: &str, expected: usize) {
     //     assert_eq!(super::part_2(input), expected);
     // }

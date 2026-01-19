@@ -39,17 +39,17 @@ mod test {
 0
 4";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_20.txt");
+    const INPUT: &str = include_str!("../test_data/day_20.txt");
 
-    #[test_case(EXAMPLE, 3)]
-    #[test_case(INPUT, 5904)]
-    fn part_1(input: &str, expected: i64) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 3)]
+    #[test_case(INPUT => 5904)]
+    fn part_1(input: &str) -> i64 {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 1623178306)]
-    #[test_case(INPUT, 8332585833851)]
-    fn part_2(input: &str, expected: i64) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 1623178306)]
+    #[test_case(INPUT => 8332585833851)]
+    fn part_2(input: &str) -> i64 {
+        super::part_2(input)
     }
 }

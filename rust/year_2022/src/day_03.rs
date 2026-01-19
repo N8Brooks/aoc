@@ -49,17 +49,17 @@ wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
 ttgJtRGJQctTZtZT
 CrZsJsPPZsGzwwsLwLmpwMDw";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2022/day_03.txt");
+    const INPUT: &str = include_str!("../test_data/day_03.txt");
 
-    #[test_case(EXAMPLE, 157)]
-    #[test_case(INPUT, 8515)]
-    fn part_1(input: &str, expected: u32) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 157)]
+    #[test_case(INPUT => 8515)]
+    fn part_1(input: &str) -> u32 {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 70)]
-    #[test_case(INPUT, 2434)]
-    fn part_2(input: &str, expected: u32) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 70)]
+    #[test_case(INPUT => 2434)]
+    fn part_2(input: &str) -> u32 {
+        super::part_2(input)
     }
 }
