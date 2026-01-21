@@ -1,68 +1,54 @@
-use std::{cell::LazyCell, iter::repeat};
+use std::{cell::LazyCell, iter::successors};
 
-use num::Complex;
 use regex::Regex;
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-struct IsOpen(bool);
-
 #[derive(Debug)]
-enum PathToken {
+enum Path {
     Left,
     Right,
     Distance(usize),
 }
 
+use Path::*;
+
 pub fn part_1(input: &str) -> usize {
-    let (board, path_tokens) = parse_input(input);
-    let n_rows = board.len() as isize;
-    let n_cols = board.iter().map(|row| row.len()).max().unwrap() as isize;
-    let mut direction: Complex<isize> = Complex::new(0, 1);
-    let mut location = Complex::new(
-        0,
-        board[0]
-            .iter()
-            .position(|tile| *tile == Some(IsOpen(true)))
-            .unwrap(),
-    );
-    for path_token in path_tokens {
-        match path_token {
-            PathToken::Left => direction *= &Complex::new(0, 1),
-            PathToken::Right => direction *= &Complex::new(0, -1),
-            PathToken::Distance(distance) => {
-                location = repeat(direction)
-                    // Introduces signed indexes to go beyond the board's bounds
-                    .scan(
-                        Complex::new(location.re as isize, location.im as isize),
-                        |location, direction| {
-                            *location += direction;
-                            Some(*location)
-                        },
-                    )
-                    // Translates the signed model back into the unsigned, wrapped board
-                    .map(|Complex { re: i, im: j }| Complex {
-                        re: i.rem_euclid(n_rows) as usize,
-                        im: j.rem_euclid(n_cols) as usize,
-                    })
-                    // Translates the board into a map of just tiles
-                    .filter_map(|location @ Complex { re: i, im: j }| {
-                        board[i]
-                            .get(j)
-                            .unwrap_or(&None)
-                            .map(|tile| (location, tile))
-                    })
-                    .take(distance)
-                    .take_while(|(_, tile)| *tile == IsOpen(true))
-                    .last()
-                    .map(|(location, _)| location)
-                    .unwrap_or(location);
+    let (board, path) = parse_input(input);
+    let n = board.len() as isize;
+    let m = board.iter().map(|row| row.len()).max().unwrap() as isize;
+    let (mut di, mut dj) = (0, 1);
+    let (mut i, mut j) = board
+        .iter()
+        .enumerate()
+        .find_map(|(i, row)| {
+            row.iter()
+                .enumerate()
+                .find(|&(_, &tile)| tile == Some(true))
+                .map(|(j, _)| (i, j))
+        })
+        .unwrap();
+    for p in path {
+        match p {
+            Left => (di, dj) = (-dj, di),
+            Right => (di, dj) = (dj, -di),
+            Distance(distance) => {
+                (i, j) = successors(Some((i, j)), |&(i, j)| {
+                    let i = (i as isize + di).rem_euclid(n) as usize;
+                    let j = (j as isize + dj).rem_euclid(m) as usize;
+                    Some((i, j))
+                })
+                .filter_map(|(i, j)| Some(((i, j), board[i].get(j).flatten_ref()?)))
+                .take(distance + 1)
+                .take_while(|&(_, &open)| open)
+                .last()
+                .unwrap()
+                .0;
             }
         }
     }
-    final_password(location, direction)
+    final_password((i, j), (di, dj))
 }
 
-fn parse_input(input: &str) -> (Vec<Vec<Option<IsOpen>>>, Vec<PathToken>) {
+fn parse_input(input: &str) -> (Vec<Vec<Option<bool>>>, Vec<Path>) {
     let re = LazyCell::new(|| Regex::new(r"(?:L|R|\d+)").unwrap());
     let (board, path) = input.split_once("\n\n").unwrap();
     let board = board
@@ -71,36 +57,34 @@ fn parse_input(input: &str) -> (Vec<Vec<Option<IsOpen>>>, Vec<PathToken>) {
             line.bytes()
                 .map(|byte| match byte {
                     b' ' => None,
-                    b'#' => Some(IsOpen(false)),
-                    b'.' => Some(IsOpen(true)),
+                    b'#' => Some(false),
+                    b'.' => Some(true),
                     _ => panic!("unsupported byte {byte}"),
                 })
-                .collect::<Vec<_>>()
+                .collect()
         })
-        .collect::<Vec<_>>();
+        .collect();
     let path = re
         .captures_iter(path)
         .map(|token| match &token[0] {
-            "L" => PathToken::Left,
-            "R" => PathToken::Right,
-            distance => PathToken::Distance(distance.parse().unwrap()),
+            "L" => Left,
+            "R" => Right,
+            distance => Distance(distance.parse().unwrap()),
         })
         .collect();
     (board, path)
 }
 
-fn final_password(location: Complex<usize>, direction: Complex<isize>) -> usize {
-    let Complex { re: i, im: j } = location;
-    let one_indexed_i = i + 1;
-    let one_indexed_j = j + 1;
-    let facing = match direction {
-        Complex { re: 0, im: 1 } => 0,
-        Complex { re: 1, im: 0 } => 1,
-        Complex { re: -1, im: 0 } => 2,
-        Complex { re: 0, im: -1 } => 3,
-        _ => panic!("unknown direction {direction}"),
+fn final_password((i, j): (usize, usize), dir: (isize, isize)) -> usize {
+    let (ip1, jp1) = (i + 1, j + 1);
+    let facing = match dir {
+        (0, 1) => 0,
+        (1, 0) => 1,
+        (-1, 0) => 2,
+        (0, -1) => 3,
+        (i, j) => panic!("unknown direction ({i}, {j})"),
     };
-    1000 * one_indexed_i + 4 * one_indexed_j + facing
+    1000 * ip1 + 4 * jp1 + facing
 }
 
 // pub fn part_2(input: &str) -> usize {
