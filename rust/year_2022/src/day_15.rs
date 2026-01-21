@@ -1,13 +1,8 @@
-use std::ops::RangeInclusive;
+use std::{cell::LazyCell, ops::RangeInclusive};
 
 use itertools::Itertools;
-use lazy_static::lazy_static;
 use num::Integer;
 use regex::Regex;
-
-lazy_static! {
-    static ref RE: Regex = Regex::new(r"\bSensor at x=(?P<scanner_x>\-?\w+), y=(?P<scanner_y>\-?\w+): closest beacon is at x=(?P<beacon_x>\-?\w+), y=(?P<beacon_y>\-?\w+)\b").unwrap();
-}
 
 struct ScannerBeaconPair {
     scanner_x: isize,
@@ -18,7 +13,10 @@ struct ScannerBeaconPair {
 
 impl ScannerBeaconPair {
     fn from(line: &str) -> ScannerBeaconPair {
-        let cap = RE.captures(line).unwrap();
+        let re = LazyCell::new(|| {
+            Regex::new(r"\bSensor at x=(?P<scanner_x>\-?\w+), y=(?P<scanner_y>\-?\w+): closest beacon is at x=(?P<beacon_x>\-?\w+), y=(?P<beacon_y>\-?\w+)\b").unwrap()
+        });
+        let cap = re.captures(line).unwrap();
         let scanner_x = cap["scanner_x"].parse().unwrap();
         let scanner_y = cap["scanner_y"].parse().unwrap();
         let beacon_x = cap["beacon_x"].parse().unwrap();

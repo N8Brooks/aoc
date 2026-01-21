@@ -1,11 +1,35 @@
-use lazy_static::lazy_static;
+use std::cell::LazyCell;
+
 use regex::Regex;
 
-lazy_static! {
-    static ref RE: Regex = Regex::new(r"move ([0-9]+) from ([0-9]+) to ([0-9]+)").unwrap();
+pub fn part_1(input: &str) -> String {
+    let (mut stacks, procedure) = parse_input(input);
+    for (count, i, j) in procedure {
+        for _ in 0..count {
+            let value = stacks[i].pop().unwrap();
+            stacks[j].push(value);
+        }
+    }
+    String::from_utf8(stacks.iter().map(|stack| *stack.last().unwrap()).collect()).unwrap()
 }
 
-fn parse_input(input: &str) -> (&str, Vec<Vec<u8>>) {
+pub fn part_2(input: &str) -> String {
+    let (mut stacks, procedure) = parse_input(input);
+    for (count, i, j) in procedure {
+        let r = stacks[i].len() - count..;
+        let crates: Vec<_> = stacks[i].drain(r).collect();
+        stacks[j].extend(crates);
+    }
+    String::from_utf8(stacks.iter().map(|stack| *stack.last().unwrap()).collect()).unwrap()
+}
+
+type Stack = Vec<u8>;
+type Stacks = Vec<Stack>;
+type Move = (usize, usize, usize);
+type Procedure = Vec<Move>;
+
+fn parse_input(input: &str) -> (Stacks, Procedure) {
+    let re = LazyCell::new(|| Regex::new(r"move ([0-9]+) from ([0-9]+) to ([0-9]+)").unwrap());
     let (stacks_input, procedure) = input.split_once("\n\n").unwrap();
     let line_len = input.find('\n').unwrap();
     let stacks_len = line_len / 4 + 1;
@@ -19,34 +43,16 @@ fn parse_input(input: &str) -> (&str, Vec<Vec<u8>>) {
             }
         }
     }
-    (procedure, stacks)
-}
-
-pub fn part_1(input: &str) -> String {
-    let (procedure, mut stacks) = parse_input(input);
-    for cap in RE.captures_iter(procedure) {
-        let count = cap[1].parse().unwrap();
-        let i = cap[2].parse::<usize>().unwrap() - 1;
-        let j = cap[3].parse::<usize>().unwrap() - 1;
-        for _ in 0..count {
-            let value = stacks[i].pop().unwrap();
-            stacks[j].push(value);
-        }
-    }
-    String::from_utf8(stacks.iter().map(|stack| *stack.last().unwrap()).collect()).unwrap()
-}
-
-pub fn part_2(input: &str) -> String {
-    let (procedure, mut stacks) = parse_input(input);
-    for cap in RE.captures_iter(procedure) {
-        let count: usize = cap[1].parse().unwrap();
-        let i = cap[2].parse::<usize>().unwrap() - 1;
-        let j = cap[3].parse::<usize>().unwrap() - 1;
-        let r = stacks[i].len() - count..;
-        let crates: Vec<_> = stacks[i].drain(r).collect();
-        stacks[j].extend(crates);
-    }
-    String::from_utf8(stacks.iter().map(|stack| *stack.last().unwrap()).collect()).unwrap()
+    let procedure = re
+        .captures_iter(procedure)
+        .map(|cap| {
+            let count = cap[1].parse().unwrap();
+            let i = cap[2].parse::<usize>().unwrap() - 1;
+            let j = cap[3].parse::<usize>().unwrap() - 1;
+            (count, i, j)
+        })
+        .collect();
+    (stacks, procedure)
 }
 
 #[cfg(test)]

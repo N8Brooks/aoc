@@ -1,6 +1,5 @@
-use lazy_static::lazy_static;
 use regex::Regex;
-use std::collections::VecDeque;
+use std::{cell::LazyCell, collections::VecDeque};
 
 #[derive(Debug)]
 struct Monkey {
@@ -16,18 +15,6 @@ struct Monkey {
     true_monkey_index: usize,
     /// Monkey when test is false
     false_monkey_index: usize,
-}
-
-lazy_static! {
-    static ref RE: Regex = Regex::new(
-        r"Monkey \d+:
-  Starting items: (?P<items>[\d, ]+)
-  Operation: new = (?P<left>old|\d+) (?P<op>\+|\*) (?P<right>old|\d+)
-  Test: divisible by (?P<divisor>\d+)
-    If true: throw to monkey (?P<is_true_monkey>\d+)
-    If false: throw to monkey (?P<is_false_monkey>\d+)"
-    )
-    .unwrap();
 }
 
 impl Monkey {
@@ -47,7 +34,18 @@ impl Monkey {
 
 impl From<&str> for Monkey {
     fn from(input: &str) -> Self {
-        let cap = RE.captures(input).unwrap();
+        let re = LazyCell::new(|| {
+            Regex::new(
+                r"Monkey \d+:
+  Starting items: (?P<items>[\d, ]+)
+  Operation: new = (?P<left>old|\d+) (?P<op>\+|\*) (?P<right>old|\d+)
+  Test: divisible by (?P<divisor>\d+)
+    If true: throw to monkey (?P<is_true_monkey>\d+)
+    If false: throw to monkey (?P<is_false_monkey>\d+)",
+            )
+            .unwrap()
+        });
+        let cap = re.captures(input).unwrap();
         Monkey {
             activity: 0,
             items: cap["items"]

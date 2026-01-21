@@ -1,6 +1,5 @@
-use std::iter::repeat;
+use std::{cell::LazyCell, iter::repeat};
 
-use lazy_static::lazy_static;
 use num::Complex;
 use regex::Regex;
 
@@ -64,9 +63,7 @@ pub fn part_1(input: &str) -> usize {
 }
 
 fn parse_input(input: &str) -> (Vec<Vec<Option<IsOpen>>>, Vec<PathToken>) {
-    lazy_static! {
-        static ref RE: Regex = Regex::new(r"(?:L|R|\d+)").unwrap();
-    }
+    let re = LazyCell::new(|| Regex::new(r"(?:L|R|\d+)").unwrap());
     let (board, path) = input.split_once("\n\n").unwrap();
     let board = board
         .lines()
@@ -81,7 +78,7 @@ fn parse_input(input: &str) -> (Vec<Vec<Option<IsOpen>>>, Vec<PathToken>) {
                 .collect::<Vec<_>>()
         })
         .collect::<Vec<_>>();
-    let path = RE
+    let path = re
         .captures_iter(path)
         .map(|token| match &token[0] {
             "L" => PathToken::Left,

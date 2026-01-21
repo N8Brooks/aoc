@@ -1,11 +1,6 @@
-use std::collections::HashMap;
+use std::{cell::LazyCell, collections::HashMap};
 
-use lazy_static::lazy_static;
 use regex::Regex;
-
-lazy_static! {
-    static ref RE: Regex = Regex::new(r"^Valve (?P<valve>[A-Z]+) has flow rate=(?P<flow_rate>\d+); tunnels? leads? to valves? (?P<leads>[A-Z]+(?:, [A-Z]+)*)$").unwrap();
-}
 
 struct VolcanoState<'a> {
     memo: HashMap<(usize, usize, usize), usize>,
@@ -82,7 +77,10 @@ struct VolcanoNode {
 
 impl VolcanoNode {
     fn parse_line<'a>(line: &'a str, valves: &mut HashMap<&'a str, usize>) -> (usize, VolcanoNode) {
-        let cap = RE.captures(line).unwrap();
+        let re = LazyCell::new(|| {
+            Regex::new(r"^Valve (?P<valve>[A-Z]+) has flow rate=(?P<flow_rate>\d+); tunnels? leads? to valves? (?P<leads>[A-Z]+(?:, [A-Z]+)*)$").unwrap()
+        });
+        let cap = re.captures(line).unwrap();
         let valve = &line[cap.name("valve").unwrap().range()];
         let new_index = valves.len();
         let index = *valves.entry(valve).or_insert(new_index);

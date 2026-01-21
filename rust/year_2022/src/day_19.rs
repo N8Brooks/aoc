@@ -1,15 +1,12 @@
+use std::cell::LazyCell;
+
 use hashbrown::HashSet;
 use itertools::Itertools;
-use lazy_static::lazy_static;
 use ndarray::Array1;
-use ndarray::{prelude::*, Zip};
+use ndarray::{Zip, prelude::*};
 use regex::Regex;
 
 // This is really slow
-
-lazy_static! {
-    static ref RE: Regex = Regex::new(r"^Blueprint \d+: Each ore robot costs (?P<ore_robot_ore_cost>\d+) ore. Each clay robot costs (?P<clay_robot_ore_cost>\d+) ore. Each obsidian robot costs (?P<obsidian_robot_ore_cost>\d+) ore and (?P<obsidian_robot_clay_cost>\d+) clay. Each geode robot costs (?P<geode_robot_ore_cost>\d+) ore and (?P<geode_robot_obsidian_cost>\d+) obsidian.$").unwrap();
-}
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 struct State {
@@ -31,7 +28,10 @@ struct StateSpace(Array2<usize>);
 
 impl From<&str> for StateSpace {
     fn from(line: &str) -> Self {
-        let cap = RE.captures(line).unwrap();
+        let re = LazyCell::new(|| {
+            Regex::new(r"^Blueprint \d+: Each ore robot costs (?P<ore_robot_ore_cost>\d+) ore. Each clay robot costs (?P<clay_robot_ore_cost>\d+) ore. Each obsidian robot costs (?P<obsidian_robot_ore_cost>\d+) ore and (?P<obsidian_robot_clay_cost>\d+) clay. Each geode robot costs (?P<geode_robot_ore_cost>\d+) ore and (?P<geode_robot_obsidian_cost>\d+) obsidian.$").unwrap()
+        });
+        let cap = re.captures(line).unwrap();
         StateSpace(array![
             [cap["ore_robot_ore_cost"].parse().unwrap(), 0, 0, 0,],
             [cap["clay_robot_ore_cost"].parse().unwrap(), 0, 0, 0],
