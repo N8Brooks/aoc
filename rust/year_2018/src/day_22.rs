@@ -1,7 +1,11 @@
 use std::{cmp::Reverse, collections::BinaryHeap, iter::successors};
 
+/// 0: rocky, 1: wet, 2: narrow
 type Region = usize;
 
+/// 0: neither, 1: torch, 2: climbing gear
+/// A `Gear` is valid for a `Region` if `gear != region`.
+/// If `gear` is valid for `region`, then `3 - gear - region` is the other valid gear.
 type Gear = usize;
 
 pub fn part_1(input: &str) -> usize {
@@ -12,8 +16,8 @@ pub fn part_1(input: &str) -> usize {
 pub fn part_2(input: &str) -> usize {
     const TORCH: Gear = 1;
     let (depth, target @ (i, j)) = parse_input(input);
-    let (n, m) = (i + 50, j + 50);
-    let map = parse_map(depth, target, (n, m));
+    let bounds @ (n, m) = (i + 50, j + 50);
+    let map = parse_map(depth, target, bounds);
 
     let mut heap = BinaryHeap::from([(Reverse(0), (0, 0), TORCH)]);
     let mut seen = vec![vec![0; map[0].len()]; map.len()];
@@ -29,18 +33,19 @@ pub fn part_2(input: &str) -> usize {
 
         [
             i.checked_sub(1).map(|i| (i, j)),
-            (i + 1 < n).then(|| (i + 1, j)),
+            (i < n).then_some((i + 1, j)),
             j.checked_sub(1).map(|j| (i, j)),
-            (j + 1 < m).then(|| (i, j + 1)),
+            (j < m).then_some((i, j + 1)),
         ]
         .into_iter()
         .flatten()
+        // only consider moves to positions where the current gear is valid
         .filter(|&(i, j)| seen[i][j] & (1 << gear) == 0 && gear != map[i][j])
         .map(|pos| (Reverse(dist + 1), pos, gear))
         .collect_into(&mut heap);
 
         let region = map[i][j];
-        let gear = 3 - region - gear;
+        let gear = 3 - region - gear; // flip to the other valid gear
         if seen[i][j] & (1 << gear) == 0 {
             heap.push((Reverse(dist + 7), pos, gear));
         }
@@ -72,7 +77,6 @@ fn parse_map(depth: usize, target: (usize, usize), (n, m): (usize, usize)) -> Ve
             let above = aboves.next()?;
             Some((left * above * ((i, j) != target) as usize + depth) % MOD)
         })
-        .take(m + 1)
         .collect();
         Some(row)
     })
