@@ -45,6 +45,7 @@ fn md5(
         0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1, 0xf7537e82, 0xbd3af235, 0x2ad7d2bb,
         0xeb86d391,
     ];
+    const SEEDS: [u32; 4] = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476];
     let digits = write_decimal(num, num_buf);
     let msg_len = prefix.len() + digits.len();
     debug_assert!(msg_len <= 55, "input too long for single-chunk MD5");
@@ -59,7 +60,7 @@ fn md5(
         *word = u32::from_le_bytes(*bytes);
     }
 
-    let (mut a, mut b, mut c, mut d) = (0x67452301u32, 0xefcdab89u32, 0x98badcfeu32, 0x10325476u32);
+    let [mut a, mut b, mut c, mut d] = SEEDS;
     for (i, (s, k)) in S.into_iter().zip(K).enumerate() {
         let (f, g) = if i < 16 {
             ((b & c) | (!b & d), i)
@@ -82,7 +83,7 @@ fn md5(
             c,
         );
     }
-    a.wrapping_add(0x67452301u32)
+    a.wrapping_add(SEEDS[0])
 }
 
 fn write_decimal(mut num: usize, buf: &mut [u8; 20]) -> &[u8] {
