@@ -39,10 +39,10 @@ mod test {
 
     const INPUT: &str = include_str!("../test_data/day_08.txt");
 
-    const EXAMPLE: &str = "\"\"
-\"abc\"
-\"aaa\\\"aaa\"
-\"\\x27\"";
+    const EXAMPLE: &str = r#"""
+"abc"
+"aaa\"aaa"
+"\x27""#;
 
     #[test_case(EXAMPLE => 12)]
     #[test_case(INPUT => 1333)]
