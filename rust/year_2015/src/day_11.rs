@@ -36,12 +36,11 @@ fn valid<const N: usize>(indexes: &[u8; N]) -> bool {
     indexes
         .array_windows()
         .any(|[a, b, c]| a + 1 == *b && b + 1 == *c)
-        && indexes
+        && !indexes
             .array_windows()
             .filter(|[a, b]| a == b)
             .map(|w| w[0])
-            .tuple_windows()
-            .any(|(a, b)| a != b)
+            .all_equal()
 }
 
 #[cfg(test)]
