@@ -8,6 +8,7 @@ itertools = "0.14.0"
 hashbrown = { version = "0.16.1", features = ["serde"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = { version = "1.0.149" }
+num = "0.4.3"
 
 [dev-dependencies]
 test-case = "3.3.1"
