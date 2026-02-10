@@ -1,19 +1,19 @@
-use Value::*;
+use Val::*;
 use hashbrown::HashMap;
 use itertools::Itertools as _;
 use serde::Deserialize;
 
 #[derive(Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
-pub enum Value<'a> {
-    Arr(Vec<Value<'a>>),
-    Obj(HashMap<&'a str, Value<'a>>),
+pub enum Val<'a> {
+    Arr(Vec<Val<'a>>),
+    Obj(HashMap<&'a str, Val<'a>>),
     Num(i32),
     Str(&'a str),
 }
 
 pub fn part_1(input: &str) -> i32 {
-    let json: Value = serde_json::from_str(input).unwrap();
+    let json: Val = serde_json::from_str(input).unwrap();
     let mut stack = vec![&json];
     let mut sum = 0;
     while let Some(value) = stack.pop() {
@@ -28,7 +28,7 @@ pub fn part_1(input: &str) -> i32 {
 }
 
 pub fn part_2(input: &str) -> i32 {
-    let json: Value = serde_json::from_str(input).unwrap();
+    let json: Val = serde_json::from_str(input).unwrap();
     let mut stack = vec![&json];
     let mut sum = 0;
     while let Some(value) = stack.pop() {
