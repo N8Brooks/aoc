@@ -22,7 +22,7 @@ pub fn part_2(input: &str) -> u32 {
 }
 
 fn max_distance_2(input: &str, n: u32) -> u32 {
-    let reindeers: Vec<(u32, u32, u32)> = parse_input(input).collect();
+    let reindeers: Vec<_> = parse_input(input).collect();
     (1..=n)
         .fold(vec![0; reindeers.len()], |mut points, t| {
             points
