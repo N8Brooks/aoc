@@ -49,9 +49,9 @@ pub fn part_2(input: &str) -> u32 {
 }
 
 fn allocations(r: u32, n: usize) -> impl Iterator<Item = [u32; 4]> {
-    debug_assert!(r > 0, "must allocate at least one unit");
-    debug_assert!(n > 1, "must allocate to at least two n");
-    debug_assert!(n <= 4, "hardcoded to support up to four n");
+    assert!(r > 0, "must allocate at least one unit");
+    assert!(n > 1, "must allocate to at least two n");
+    assert!(n <= 4, "hardcoded to support up to four n");
     let mut indexes = [0; 4];
     indexes[n - 1] = r;
     let mut i = n - 2;
@@ -66,7 +66,7 @@ fn allocations(r: u32, n: usize) -> impl Iterator<Item = [u32; 4]> {
             indexes[i..n - 1].fill(0);
             indexes[n - 1] -= 1;
             indexes[i - 1] += 1;
-            i = indexes.array_windows().rposition(|[a, b]| a != b).unwrap();
+            i = if indexes[n - 1] > 0 { n - 2 } else { i - 1 };
         }
         Some(indexes)
     })
