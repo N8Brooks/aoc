@@ -47,7 +47,7 @@ fn step<const N: usize>(grid: &mut [u128; N]) {
     let mut a = 0;
     for i in 0..grid.len() {
         let b = grid[i];
-        let c = grid.get(i + 1).map_or(0, |&row| row);
+        let c = grid.get(i + 1).copied().unwrap_or(0);
         grid[i] = next_row(a, b, c) & and_mask;
         a = b;
     }
@@ -59,30 +59,39 @@ pub fn next_row(a: u128, b: u128, c: u128) -> u128 {
     let (b_l, b_r) = (b << 1, b >> 1);
     let (c_l, c_c, c_r) = (c << 1, c, c >> 1);
 
-    let (s1, c1) = add3(a_l, a_c, a_r);
-    let (s2, c2) = add2(b_l, b_r);
-    let (s3, c3) = add3(c_l, c_c, c_r);
-    let (s4, ones) = add3(c1, c2, c3);
+    let [b1, b2, b3, b4] = cs8(a_l, a_c, a_r, b_l, b_r, c_l, c_c, c_r);
+    let eq2 = !b1 & b2 & !b3 & !b4;
+    let eq3 = b1 & b2 & !b3 & !b4;
 
-    let (f1, t1) = add3(s1, s2, s3);
-    let (f2, twos) = add2(t1, s4);
-    let (eights, fours) = add2(f1, f2);
-
-    let eq2 = !ones & twos & !fours & !eights;
-    let eq3 = ones & twos & !fours & !eights;
-
-    b & eq2 | eq3
+    eq3 | b & eq2
 }
 
-/// returns (sum_bit, carry_bit) for per-bit addition of three 1-bit operands
-#[inline(always)]
-fn add3(a: u128, b: u128, c: u128) -> (u128, u128) {
-    ((a & b) | (a & c) | (b & c), a ^ b ^ c)
+#[allow(clippy::too_many_arguments)]
+fn cs8(a: u128, b: u128, c: u128, d: u128, e: u128, f: u128, g: u128, h: u128) -> [u128; 4] {
+    let [o1, t1, f1] = cs4(a, b, c, d);
+    let [o2, t2, f2] = cs4(e, f, g, h);
+    let [b1, t3] = cs2(o1, o2);
+    let [b2, f3] = cs3(t1, t2, t3);
+    let [b3, b4] = cs3(f1, f2, f3);
+    [b1, b2, b3, b4]
 }
 
 #[inline(always)]
-fn add2(a: u128, b: u128) -> (u128, u128) {
-    (a & b, a ^ b)
+fn cs4(a: u128, b: u128, c: u128, d: u128) -> [u128; 3] {
+    let (ab, cd) = (a & b, c & d);
+    let (p0, p1) = (a ^ b, c ^ d);
+    [p0 ^ p1, ab ^ cd ^ p0 & p1, ab & cd]
+}
+
+#[inline(always)]
+fn cs3(a: u128, b: u128, c: u128) -> [u128; 2] {
+    let p = a ^ b;
+    [p ^ c, (a & b) | (c & p)]
+}
+
+#[inline(always)]
+fn cs2(a: u128, b: u128) -> [u128; 2] {
+    [a ^ b, a & b]
 }
 
 #[cfg(test)]
