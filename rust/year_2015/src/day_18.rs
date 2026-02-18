@@ -1,7 +1,5 @@
-use itertools::Itertools as _;
-
-pub fn part_1<const N: usize>(input: &str, steps: usize) -> u32 {
-    let grid_0: [_; N] = parse_grid(input);
+pub fn part_1(input: &str, steps: usize) -> u32 {
+    let grid_0 = parse_grid(input);
     (0..steps)
         .fold(grid_0, |mut grid, _| {
             step(&mut grid);
@@ -12,16 +10,17 @@ pub fn part_1<const N: usize>(input: &str, steps: usize) -> u32 {
         .sum()
 }
 
-pub fn part_2<const N: usize>(input: &str, steps: usize) -> u32 {
-    let or_mask = 1 | (1 << (N - 1));
-    let mut grid_0: [_; N] = parse_grid(input);
+pub fn part_2(input: &str, steps: usize) -> u32 {
+    let mut grid_0 = parse_grid(input);
+    let n = grid_0.len();
+    let or_mask = 1 | (1 << (n - 1));
     grid_0[0] |= or_mask;
-    grid_0[N - 1] |= or_mask;
+    grid_0[n - 1] |= or_mask;
     (0..steps)
         .fold(grid_0, |mut grid, _| {
             step(&mut grid);
             grid[0] |= or_mask;
-            grid[N - 1] |= or_mask;
+            grid[n - 1] |= or_mask;
             grid
         })
         .into_iter()
@@ -29,7 +28,7 @@ pub fn part_2<const N: usize>(input: &str, steps: usize) -> u32 {
         .sum()
 }
 
-fn parse_grid<const N: usize>(input: &str) -> [u128; N] {
+fn parse_grid(input: &str) -> Vec<u128> {
     input
         .lines()
         .map(|line| {
@@ -38,12 +37,11 @@ fn parse_grid<const N: usize>(input: &str) -> [u128; N] {
                 .reduce(|row, b| (row << 1) | b)
                 .unwrap()
         })
-        .collect_array()
-        .unwrap()
+        .collect()
 }
 
-fn step<const N: usize>(grid: &mut [u128; N]) {
-    let and_mask: u128 = (1 << N) - 1;
+fn step(grid: &mut [u128]) {
+    let and_mask: u128 = (1 << grid.len()) - 1;
     let mut a = 0;
     for i in 0..grid.len() {
         let b = grid[i];
@@ -56,7 +54,7 @@ fn step<const N: usize>(grid: &mut [u128; N]) {
 #[inline(always)]
 pub fn next_row(a: u128, b: u128, c: u128) -> u128 {
     let (a_l, a_c, a_r) = (a << 1, a, a >> 1);
-    let (b_l, b_r) = (b << 1, b >> 1);
+    let (b_l, _b_c, b_r) = (b << 1, (), b >> 1);
     let (c_l, c_c, c_r) = (c << 1, c, c >> 1);
 
     let [b1, b2, b3, b4] = cs8(a_l, a_c, a_r, b_l, b_r, c_l, c_c, c_r);
@@ -108,21 +106,14 @@ mod test {
 ####..";
 
     #[test_case(EXAMPLE, 5 => 4)]
-    fn part_1_example(input: &str, steps: usize) -> u32 {
-        super::part_1::<6>(input, steps)
-    }
     #[test_case(INPUT, 100 => 1061)]
     fn part_1(input: &str, steps: usize) -> u32 {
-        super::part_1::<100>(input, steps)
+        super::part_1(input, steps)
     }
 
     #[test_case(EXAMPLE, 5 => 17)]
-    fn part_2_example(input: &str, steps: usize) -> u32 {
-        super::part_2::<6>(input, steps)
-    }
-
     #[test_case(INPUT, 100 => 1006)]
     fn part_2(input: &str, steps: usize) -> u32 {
-        super::part_2::<100>(input, steps)
+        super::part_2(input, steps)
     }
 }
