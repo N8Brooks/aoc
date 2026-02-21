@@ -1,24 +1,33 @@
-use std::cmp::Ordering;
+use Val::*;
+use serde::Deserialize;
+use std::cmp::{Ord, Ordering};
 
-use serde_json::{
-    json,
-    Value::{self, Array, Number},
-};
+#[derive(Clone, Deserialize, Eq, PartialEq)]
+#[serde(untagged)]
+pub enum Val {
+    Arr(Vec<Val>),
+    Num(u32),
+}
 
-fn value_cmp(a: &Value, b: &Value) -> Ordering {
-    match (a, b) {
-        (Number(a), Number(b)) => a.as_u64().unwrap().cmp(&b.as_u64().unwrap()),
-        (a @ Number(_), b @ Array(_)) => value_cmp(&Array(vec![a.to_owned()]), b),
-        (a @ Array(_), b @ Number(_)) => value_cmp(a, &Array(vec![b.to_owned()])),
-        (Array(a), Array(b)) => a
-            .iter()
-            .zip(b)
-            .find_map(|(a, b)| match value_cmp(a, b) {
-                Ordering::Equal => None,
-                ordering => Some(ordering),
-            })
-            .unwrap_or_else(|| a.len().cmp(&b.len())),
-        _ => panic!("Unexpected comparison"),
+impl PartialOrd for Val {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Val {
+    fn cmp(&self, other: &Self) -> Ordering {
+        match (self, other) {
+            (Num(a), Num(b)) => a.cmp(b),
+            (&Num(a), b @ Arr(_)) => Arr(vec![Num(a)]).cmp(b),
+            (a @ Arr(_), &Num(b)) => a.cmp(&Arr(vec![Num(b)])),
+            (Arr(a), Arr(b)) => a
+                .iter()
+                .zip(b)
+                .map(|(a, b)| a.cmp(b))
+                .find(|&ord| ord != Ordering::Equal)
+                .unwrap_or_else(|| a.len().cmp(&b.len())),
+        }
     }
 }
 
@@ -28,9 +37,9 @@ pub fn part_1(input: &str) -> usize {
         .enumerate()
         .filter(|(_, pair)| {
             let (a, b) = pair.split_once('\n').unwrap();
-            let a = serde_json::from_str(a).unwrap();
-            let b = serde_json::from_str(b).unwrap();
-            value_cmp(&a, &b) != Ordering::Greater
+            let a: Val = serde_json::from_str(a).unwrap();
+            let b: Val = serde_json::from_str(b).unwrap();
+            a < b
         })
         .map(|(i, _)| i + 1)
         .sum()
@@ -40,19 +49,14 @@ pub fn part_2(input: &str) -> usize {
     let mut packets: Vec<_> = input
         .lines()
         .filter(|&line| !line.is_empty())
-        .map(|line| serde_json::from_str::<Value>(line).unwrap())
+        .map(|line| serde_json::from_str::<Val>(line).unwrap())
         .collect();
-    let divider_packets = [json!([[2]]), json!([[6]])];
+    let divider_packets = [Arr(vec![Arr(vec![Num(2)])]), Arr(vec![Arr(vec![Num(6)])])];
     packets.extend_from_slice(&divider_packets);
-    packets.sort_unstable_by(value_cmp);
+    packets.sort_unstable();
     divider_packets
         .iter()
-        .map(|divider_packet| {
-            packets
-                .binary_search_by(|seek| value_cmp(seek, divider_packet))
-                .unwrap()
-                + 1
-        })
+        .map(|divider_packet| packets.binary_search(divider_packet).unwrap() + 1)
         .product()
 }
 

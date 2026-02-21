@@ -459,6 +459,7 @@ dependencies = [
  "num",
  "phf",
  "regex",
+ "serde",
  "serde_json",
  "test-case",
 ]
