@@ -64,8 +64,8 @@ impl State {
             .hp_2
             .unwrap()
             .get()
-            .saturating_sub(self.poison.map_or(0, |_| 3));
-        let mana = self.mana + self.recharge.map_or(0, |_| 101);
+            .saturating_sub(if self.poison.is_some() { 3 } else { 0 });
+        let mana = self.mana + if self.recharge.is_some() { 101 } else { 0 };
         let shield_1 = decrement(self.shield);
         let poison_1 = decrement(self.poison);
         let recharge_1 = decrement(self.recharge);
@@ -84,7 +84,7 @@ impl State {
                 Some(State {
                     spent: Reverse(spent + cost),
                     turn: false,
-                    hp_1: (hp_1.get() + heal).try_into().unwrap(),
+                    hp_1: hp_1.checked_add(heal).unwrap(),
                     hp_2: hp_2.saturating_sub(damage).try_into().ok(),
                     mana: mana.checked_sub(cost)?,
                     shield: match (shield_1, shield_2) {
@@ -111,11 +111,11 @@ impl State {
             .hp_2
             .unwrap()
             .get()
-            .saturating_sub(self.poison.map_or(0, |_| 3))
+            .saturating_sub(if self.poison.is_some() { 3 } else { 0 })
             .try_into()
             .ok();
         let attack = if hp_2.is_some() {
-            let armor = self.shield.map_or(0, |_| 7);
+            let armor = if self.shield.is_some() { 7 } else { 0 };
             damage_2.saturating_sub(armor).max(1)
         } else {
             0
@@ -130,7 +130,7 @@ impl State {
                 .try_into()
                 .ok()?,
             hp_2,
-            mana: self.mana + self.recharge.map_or(0, |_| 101),
+            mana: self.mana + if self.recharge.is_some() { 101 } else { 0 },
             shield: decrement(self.shield),
             poison: decrement(self.poison),
             recharge: decrement(self.recharge),
@@ -138,7 +138,7 @@ impl State {
     }
 }
 
-#[inline(always)]
+#[inline]
 fn decrement(x: Option<NonZeroU32>) -> Option<NonZeroU32> {
     x.and_then(|x| x.get().checked_sub(1))
         .and_then(|x| x.try_into().ok())
