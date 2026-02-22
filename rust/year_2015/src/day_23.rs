@@ -10,7 +10,7 @@ pub fn part_2(input: &str) -> u32 {
 }
 
 fn run(input: &str, reg_a: u32) -> u32 {
-    let instructions = parse_instructions(input);
+    let instructions: Vec<_> = input.lines().map(Instruction::from).collect();
     let mut registers = [reg_a, 0];
     let mut pc: usize = 0;
     while let Some(instruction) = instructions.get(pc) {
@@ -63,35 +63,32 @@ enum Instruction {
     Jio(Register, isize),
 }
 
-fn parse_instructions(input: &str) -> Vec<Instruction> {
-    fn reg(reg: &str) -> Register {
-        match reg {
-            "a" => A,
-            "b" => B,
-            _ => panic!("invalid register: {reg}"),
+impl From<&str> for Instruction {
+    fn from(line: &str) -> Self {
+        fn reg(reg: &str) -> Register {
+            match reg {
+                "a" => A,
+                "b" => B,
+                _ => panic!("invalid register: {reg}"),
+            }
+        }
+        let (op, rest) = line.split_once(' ').unwrap();
+        match op {
+            "hlf" => Hlf(reg(rest)),
+            "tpl" => Tpl(reg(rest)),
+            "inc" => Inc(reg(rest)),
+            "jmp" => Jmp(rest.parse().unwrap()),
+            "jie" => {
+                let (r, offset) = rest.split_once(", ").unwrap();
+                Jie(reg(r), offset.parse().unwrap())
+            }
+            "jio" => {
+                let (r, offset) = rest.split_once(", ").unwrap();
+                Jio(reg(r), offset.parse().unwrap())
+            }
+            _ => panic!("invalid instruction: {line}"),
         }
     }
-    input
-        .lines()
-        .map(|line| {
-            let (op, rest) = line.split_once(' ').unwrap();
-            match op {
-                "hlf" => Hlf(reg(rest)),
-                "tpl" => Tpl(reg(rest)),
-                "inc" => Inc(reg(rest)),
-                "jmp" => Jmp(rest.parse().unwrap()),
-                "jie" => {
-                    let (r, offset) = rest.split_once(", ").unwrap();
-                    Jie(reg(r), offset.parse().unwrap())
-                }
-                "jio" => {
-                    let (r, offset) = rest.split_once(", ").unwrap();
-                    Jio(reg(r), offset.parse().unwrap())
-                }
-                _ => panic!("invalid instruction: {line}"),
-            }
-        })
-        .collect()
 }
 
 #[cfg(test)]
