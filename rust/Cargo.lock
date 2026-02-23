@@ -412,6 +412,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "year_2016"
+version = "0.1.0"
+dependencies = [
+ "hashbrown",
+ "test-case",
+]
+
+[[package]]
 name = "year_2018"
 version = "0.1.0"
 dependencies = [

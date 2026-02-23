@@ -1,0 +1,10 @@
+[package]
+name = "year_2016"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+hashbrown = "0.16.1"
+
+[dev-dependencies]
+test-case = "3.3.1"
