@@ -416,6 +416,7 @@ name = "year_2016"
 version = "0.1.0"
 dependencies = [
  "hashbrown",
+ "itertools",
  "test-case",
 ]
 
