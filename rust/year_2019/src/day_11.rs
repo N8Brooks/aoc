@@ -13,7 +13,7 @@ pub fn part_1(input: &str) -> usize {
     let color = Rc::new(Cell::new(false));
     let inputs = {
         let color = Rc::clone(&color);
-        repeat_with(move || color.get() as isize)
+        repeat_with(move || color.get().into())
     };
 
     inputs
@@ -34,13 +34,13 @@ pub fn part_1(input: &str) -> usize {
 pub fn part_2(input: &str) -> String {
     let (mut di, mut dj) = (-1, 0);
     let (mut i, mut j) = (0, 0);
-    let mut painted = [[b' '; 43]; 6];
-    painted[i][j] = b'#';
+    let mut painted = [[false; 43]; 6];
+    painted[i][j] = true;
 
-    let color = Rc::new(Cell::new(b'#'));
+    let color = Rc::new(Cell::new(true));
     let inputs = {
         let color = Rc::clone(&color);
-        repeat_with(move || (color.get() == b'#') as isize)
+        repeat_with(move || color.get().into())
     };
 
     inputs
@@ -48,19 +48,19 @@ pub fn part_2(input: &str) -> String {
         .map(|output| output != 0)
         .tuples()
         .for_each(|(new_color, right)| {
-            painted[i][j] = if new_color { b'#' } else { b' ' };
+            painted[i][j] = new_color;
             (di, dj) = if right { (dj, -di) } else { (-dj, di) };
             (i, j) = (i.strict_add_signed(di), j.strict_add_signed(dj));
             color.set(painted[i][j]);
         });
 
     painted
+        .map(|row| row.map(|b| if b { '#' } else { ' ' }))
         .each_ref()
         .into_iter()
         .map(|row| row.as_slice())
-        .intersperse(b"\n")
+        .intersperse(&['\n'])
         .flatten()
-        .map(|&b| b as char)
         .collect()
 }
 
