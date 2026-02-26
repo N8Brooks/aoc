@@ -8,7 +8,6 @@ itertools = "0.14.0"
 ndarray = "0.17.0"
 num = "0.4.3"
 regex = { version = "1.12.2", features = ["unicode-perl"] }
-phf = { version = "0.13.1", features = ["macros"] }
 hashbrown = "0.16.1"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = { version = "1.0.149", default-features = false, features = [

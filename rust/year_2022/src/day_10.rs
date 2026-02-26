@@ -1,94 +1,135 @@
-use phf::phf_map;
-use std::str::Lines;
+use itertools::Itertools as _;
+use std::iter::repeat_n;
 
-struct RegisterXParser<'a> {
-    input_lines: Lines<'a>,
-    register_x: i64,
-}
-
-impl Iterator for RegisterXParser<'_> {
-    type Item = Vec<i64>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if let Some(line) = self.input_lines.next() {
-            let register_xs = match line.split_once(' ') {
-                // addx
-                Some((_, v)) => {
-                    let register_xs = vec![self.register_x; 2];
-                    self.register_x += v.parse::<i64>().unwrap();
-                    register_xs
-                }
-                // noop
-                None => vec![self.register_x],
-            };
-            Some(register_xs)
-        } else {
-            None
-        }
-    }
-}
-
-impl<'a> RegisterXParser<'a> {
-    fn new(input: &'a str) -> RegisterXParser<'a> {
-        RegisterXParser {
-            input_lines: input.lines(),
-            register_x: 1,
-        }
-    }
-}
-
-pub fn part_1(input: &str) -> i64 {
-    RegisterXParser::new(input)
-        .flatten()
+pub fn part_1(input: &str) -> isize {
+    iter_cycles(input)
         .enumerate()
-        .filter_map(|(i, register_x)| {
-            let cycle = i as i64 + 1;
-            if (cycle - 20) % 40 == 0 {
-                Some(cycle * register_x)
-            } else {
-                None
-            }
-        })
+        .skip(19)
+        .step_by(40)
+        .map(|(i, x)| (i + 1).cast_signed() * x)
         .sum()
 }
 
-/// Maps letter strings to their char representation.
-static LETTERS: phf::Map<&'static str, char> = phf_map! {
-    // Some random characters for example test case
-    "##..#\n###..\n####.\n#####\n#####\n#####" => '◣',
-    "#..##\n.###.\n...##\n.....\n#....\n##..." => '◂',
-    "..##.\n..###\n##...\n#####\n..###\n....#" => '◄',
-    ".##..\n...##\n.####\n.....\n###..\n#####" => '◈',
-    "##..#\n#...#\n....#\n#####\n....#\n#...." => '▿',
-    "#..##\n##...\n###..\n.....\n#####\n...##" => '▽',
-    "..##.\n###..\n..###\n#####\n.....\n#####" => '◅',
-    ".##..\n.###.\n#....\n.....\n.####\n....." => '◇',
-    // Actual letters for input test case
-    "###..\n#..#.\n#..#.\n###..\n#.#..\n#..#." => 'R',
-    "#..#.\n#.#..\n##...\n#.#..\n#.#..\n#..#." => 'K',
-    "###..\n#..#.\n#..#.\n###..\n#....\n#...." => 'P',
-    "..##.\n...#.\n...#.\n...#.\n#..#.\n.##.." => 'J',
-    "###..\n#..#.\n###..\n#..#.\n#..#.\n###.." => 'B',
-    "#....\n#....\n#....\n#....\n#....\n####." => 'L',
-    ".##..\n#..#.\n#..#.\n####.\n#..#.\n#..#." => 'A',
-};
-
 pub fn part_2(input: &str) -> String {
-    // 8 capital letters where each capital letter has 6 rows of length 5
-    let mut letters = vec![vec![String::new(); 6]; 8];
-    for (i, register_x) in RegisterXParser::new(input).flatten().enumerate() {
-        let position = i % 40;
-        let pixel = if register_x.abs_diff(position as i64) > 1 {
-            '.'
-        } else {
-            '#'
-        };
-        letters[position / 5][i / 40].push(pixel);
-    }
-    letters
+    let rows = crt_rows(input);
+    transpose(rows)
+        .as_chunks()
+        .0
         .iter()
-        .map(|letter| LETTERS[letter.join("\n").as_str()])
+        .map(|&cols| match transpose(cols).each_ref() {
+            #[rustfmt::skip]
+            [
+                b".##..",
+                b"#..#.",
+                b"#..#.",
+                b"####.",
+                b"#..#.",
+                b"#..#.",
+            ] => 'A',
+            #[rustfmt::skip]
+            [
+                b"###..",
+                b"#..#.",
+                b"###..",
+                b"#..#.",
+                b"#..#.",
+                b"###..",
+            ] => 'B',
+            #[rustfmt::skip]
+            [
+                b"..##.",
+                b"...#.",
+                b"...#.",
+                b"...#.",
+                b"#..#.",
+                b".##..",
+            ] => 'J',
+            #[rustfmt::skip]
+            [
+                b"#..#.",
+                b"#.#..",
+                b"##...",
+                b"#.#..",
+                b"#.#..",
+                b"#..#.",
+            ] => 'K',
+            #[rustfmt::skip]
+            [
+                b"#....",
+                b"#....",
+                b"#....",
+                b"#....",
+                b"#....",
+                b"####.",
+            ] => 'L',
+            #[rustfmt::skip]
+            [
+                b"###..",
+                b"#..#.",
+                b"#..#.",
+                b"###..",
+                b"#....",
+                b"#....",
+            ] => 'P',
+            #[rustfmt::skip]
+            [
+                b"###..",
+                b"#..#.",
+                b"#..#.",
+                b"###..",
+                b"#.#..",
+                b"#..#.",
+            ] => 'R',
+            rows => panic!(
+                "unknown letter:\n{}",
+                rows.map(|row| str::from_utf8(row).unwrap()).join("\n")
+            ),
+        })
         .collect()
+}
+
+fn iter_cycles(input: &str) -> impl Iterator<Item = isize> {
+    let mut x = 1;
+    parse_instructions(input).flat_map(move |instruction| {
+        if let Some(dx) = instruction {
+            let res = repeat_n(x, 2);
+            x += dx;
+            res
+        } else {
+            repeat_n(x, 1)
+        }
+    })
+}
+
+fn parse_instructions(input: &str) -> impl Iterator<Item = Option<isize>> {
+    input.lines().map(|line| {
+        if let Some(dx) = line.strip_prefix("addx ") {
+            Some(dx.parse().unwrap())
+        } else if line == "noop" {
+            None
+        } else {
+            panic!("invalid instruction: {line}")
+        }
+    })
+}
+
+fn crt_rows(input: &str) -> [[u8; 40]; 6] {
+    iter_cycles(input)
+        .enumerate()
+        .map(|(i, x)| {
+            let pos = (i % 40).cast_signed();
+            if x.abs_diff(pos) > 1 { b'.' } else { b'#' }
+        })
+        .array_chunks()
+        .collect_array()
+        .unwrap()
+}
+
+/// Transposes a 2D array of size MxN into one of size NxM.
+fn transpose<const M: usize, const N: usize, T>(m: [[T; N]; M]) -> [[T; M]; N] {
+    use std::array::from_fn;
+    let mut iters = m.map(|r| r.into_iter());
+    from_fn(|_| from_fn(|i| iters[i].next().unwrap()))
 }
 
 #[cfg(test)]
@@ -246,11 +287,22 @@ noop";
 
     #[test_case(EXAMPLE => 13140)]
     #[test_case(INPUT => 15120)]
-    fn part_1(input: &str) -> i64 {
+    fn part_1(input: &str) -> isize {
         super::part_1(input)
     }
 
-    #[test_case(EXAMPLE => "◣◂◄◈▿▽◅◇")]
+    #[test_case(EXAMPLE => [
+        *b"##..##..##..##..##..##..##..##..##..##..",
+        *b"###...###...###...###...###...###...###.",
+        *b"####....####....####....####....####....",
+        *b"#####.....#####.....#####.....#####.....",
+        *b"######......######......######......####",
+        *b"#######.......#######.......#######.....",
+    ])]
+    fn example_2(input: &str) -> [[u8; 40]; 6] {
+        super::crt_rows(input)
+    }
+
     #[test_case(INPUT => "RKPJBPLA")]
     fn part_2(input: &str) -> String {
         super::part_2(input)
