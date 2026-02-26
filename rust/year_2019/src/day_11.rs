@@ -34,8 +34,8 @@ pub fn part_1(input: &str) -> usize {
 pub fn part_2(input: &str) -> String {
     let (mut di, mut dj) = (-1, 0);
     let (mut i, mut j) = (0, 0);
-    let mut painted = [[false; 43]; 6];
-    painted[i][j] = true;
+    let mut painted = [[b' '; 43]; 6];
+    painted[i][j] = b'#';
 
     let color = Rc::new(Cell::new(true));
     let inputs = {
@@ -48,20 +48,85 @@ pub fn part_2(input: &str) -> String {
         .map(|output| output != 0)
         .tuples()
         .for_each(|(new_color, right)| {
-            painted[i][j] = new_color;
+            painted[i][j] = if new_color { b'#' } else { b' ' };
             (di, dj) = if right { (dj, -di) } else { (-dj, di) };
-            (i, j) = (i.strict_add_signed(di), j.strict_add_signed(dj));
-            color.set(painted[i][j]);
+            i = i.strict_add_signed(di);
+            j = j.strict_add_signed(dj);
+            color.set(painted[i][j] == b'#');
         });
 
-    painted
-        .map(|row| row.map(|b| if b { '#' } else { ' ' }))
-        .each_ref()
-        .into_iter()
-        .map(|row| row.as_slice())
-        .intersperse(&['\n'])
-        .flatten()
+    transpose(painted)
+        .as_chunks()
+        .0
+        .iter()
+        .map(|&cols| match transpose(cols).each_ref() {
+            #[rustfmt::skip]
+            [
+                b" ### ",
+                b" #  #",
+                b" ### ",
+                b" #  #",
+                b" #  #",
+                b" ### ",
+            ] => 'B',
+            #[rustfmt::skip]
+            [
+                b"  ## ",
+                b" #  #",
+                b" #   ",
+                b" #   ",
+                b" #  #",
+                b"  ## ",
+            ] => 'C',
+            #[rustfmt::skip]
+            [
+                b" ####",
+                b" #   ",
+                b" ### ",
+                b" #   ",
+                b" #   ",
+                b" #   ",
+            ] => 'F',
+            #[rustfmt::skip]
+            [
+                b" ### ",
+                b" #  #",
+                b" #  #",
+                b" ### ",
+                b" #   ",
+                b" #   ",
+            ] => 'P',
+            #[rustfmt::skip]
+            [
+                b" #  #",
+                b" #  #",
+                b" #  #",
+                b" #  #",
+                b" #  #",
+                b"  ## ",
+            ] => 'U',
+            #[rustfmt::skip]
+            [
+                b" ####",
+                b"    #",
+                b"   # ",
+                b"  #  ",
+                b" #   ",
+                b" ####",
+            ] => 'Z',
+            rows => panic!(
+                "unknown letter:\n{}",
+                rows.map(|row| str::from_utf8(row).unwrap()).join("\n")
+            ),
+        })
         .collect()
+}
+
+/// Transposes a 2D array of size MxN into one of size NxM.
+fn transpose<const M: usize, const N: usize, T>(m: [[T; N]; M]) -> [[T; M]; N] {
+    use std::array::from_fn;
+    let mut iters = m.map(|r| r.into_iter());
+    from_fn(|_| from_fn(|i| iters[i].next().unwrap()))
 }
 
 #[cfg(test)]
@@ -75,15 +140,7 @@ mod test {
         super::part_1(input)
     }
 
-    const EXPECTED_2: &str = " \
- ###  #### ###  #  # #### #  # ###   ##    
- #  # #    #  # #  #    # #  # #  # #  #   
- ###  ###  #  # #  #   #  #  # #  # #      
- #  # #    ###  #  #  #   #  # ###  #      
- #  # #    #    #  # #    #  # #    #  #   
- ###  #    #     ##  ####  ##  #     ##    ";
-
-    #[test_case(INPUT => EXPECTED_2)]
+    #[test_case(INPUT => "BFPUZUPC")]
     fn part_2(input: &str) -> String {
         super::part_2(input)
     }
