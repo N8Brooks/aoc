@@ -1,6 +1,5 @@
 use Instruction::*;
-use hashbrown::HashMap;
-use std::{cell::LazyCell, str::FromStr};
+use std::str::FromStr;
 
 pub fn part_1(input: &str) -> usize {
     plot(input)
@@ -11,101 +10,79 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> String {
-    let letters: LazyCell<HashMap<[[u8; 5]; 6], char>> = LazyCell::new(|| {
-        [
-            (
-                #[rustfmt::skip]
-                [
-                    *b"###  ",
-                    *b"#  # ",
-                    *b"#  # ",
-                    *b"###  ",
-                    *b"# #  ",
-                    *b"#  # ",
-                ],
-                'R',
-            ),
-            (
-                #[rustfmt::skip]
-                [
-                    *b"#  # ",
-                    *b"#  # ",
-                    *b"#  # ",
-                    *b"#  # ",
-                    *b"#  # ",
-                    *b" ##  ",
-                ],
-                'U',
-            ),
-            (
-                #[rustfmt::skip]
-                [
-                    *b" ##  ",
-                    *b"#  # ",
-                    *b"#    ",
-                    *b"#    ",
-                    *b"#  # ",
-                    *b" ##  ",
-                ],
-                'C',
-            ),
-            (
-                #[rustfmt::skip]
-                [
-                    *b"#### ",
-                    *b"#    ",
-                    *b"###  ",
-                    *b"#    ",
-                    *b"#    ",
-                    *b"#### ",
-                ],
-                'E',
-            ),
-            (
-                #[rustfmt::skip]
-                [
-                    *b" ##  ",
-                    *b"#  # ",
-                    *b"#  # ",
-                    *b"#  # ",
-                    *b"#  # ",
-                    *b" ##  ",
-                ],
-                'O',
-            ),
-            (
-                #[rustfmt::skip]
-                [
-                    *b" ### ",
-                    *b"  #  ",
-                    *b"  #  ",
-                    *b"  #  ",
-                    *b"  #  ",
-                    *b" ### ",
-                ],
-                'I',
-            ),
-            (
-                #[rustfmt::skip]
-                [
-                    *b"#    ",
-                    *b"#    ",
-                    *b"#    ",
-                    *b"#    ",
-                    *b"#    ",
-                    *b"#### ",
-                ],
-                'L',
-            ),
-        ]
-        .into_iter()
-        .collect()
-    });
     transpose(plot(input))
         .as_chunks()
         .0
         .iter()
-        .map(|&cols| letters[&transpose(cols)])
+        .map(|&cols| match transpose(cols).each_ref() {
+            #[rustfmt::skip]
+            [
+                b" ##  ",
+                b"#  # ",
+                b"#    ",
+                b"#    ",
+                b"#  # ",
+                b" ##  ",
+            ] => 'C',
+            #[rustfmt::skip]
+            [
+                b"#### ",
+                b"#    ",
+                b"###  ",
+                b"#    ",
+                b"#    ",
+                b"#### ",
+            ] => 'E',
+            #[rustfmt::skip]
+            [
+                b" ### ",
+                b"  #  ",
+                b"  #  ",
+                b"  #  ",
+                b"  #  ",
+                b" ### ",
+            ] => 'I',
+            #[rustfmt::skip]
+            [
+                b"#    ",
+                b"#    ",
+                b"#    ",
+                b"#    ",
+                b"#    ",
+                b"#### ",
+            ] => 'L',
+            #[rustfmt::skip]
+            [
+                b" ##  ",
+                b"#  # ",
+                b"#  # ",
+                b"#  # ",
+                b"#  # ",
+                b" ##  ",
+            ] => 'O',
+            #[rustfmt::skip]
+            [
+                b"###  ",
+                b"#  # ",
+                b"#  # ",
+                b"###  ",
+                b"# #  ",
+                b"#  # ",
+            ] => 'R',
+            #[rustfmt::skip]
+            [
+                b"#  # ",
+                b"#  # ",
+                b"#  # ",
+                b"#  # ",
+                b"#  # ",
+                b" ##  ",
+            ] => 'U',
+            rows => panic!(
+                "unknown letter:\n{}",
+                rows.map(|row| str::from_utf8(row).unwrap()).join("\n")
+            ),
+        })
         .collect()
 }
 
