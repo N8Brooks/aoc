@@ -1,39 +1,54 @@
-use itertools::Itertools as _;
+use util::str;
 
 pub fn part_1(input: &str, m: usize, n: usize) -> usize {
-    let layer = input
+    let [_, ones, twos, ..] = input
         .as_bytes()
         .chunks_exact(m * n)
-        .min_by_key(|layer| layer.iter().filter(|&&b| b == b'0').count())
+        .map(|layer| {
+            layer.iter().fold([0; 10], |mut counts, &b| {
+                let i = (b - b'0') as usize;
+                counts[i] += 1;
+                counts
+            })
+        })
+        .min_by_key(|layer| layer[0])
         .unwrap();
-    let count_1 = layer.iter().filter(|&&b| b == b'1').count();
-    let count_2 = layer.iter().filter(|&&b| b == b'2').count();
-    count_1 * count_2
+    ones * twos
 }
 
-pub fn part_2(input: &str, m: usize, n: usize) -> String {
-    input
-        .as_bytes()
-        .chunks_exact(m * n)
-        .fold(vec![b'2'; m * n], |mut layer_1, layer_2| {
-            for (pxl_1, pxl_2) in layer_1.iter_mut().zip(layer_2) {
-                if *pxl_1 == b'2' {
-                    *pxl_1 = *pxl_2;
+pub fn part_2<const N: usize>(input: &str) -> String
+where
+    [(); 6 * N]:,
+{
+    let image = visible_image::<6, N>(input);
+    str::from_image(&image)
+}
+
+pub fn visible_image<const M: usize, const N: usize>(input: &str) -> [[u8; N]; M]
+where
+    [(); M * N]:,
+{
+    let pixels =
+        input
+            .as_bytes()
+            .chunks_exact(M * N)
+            .fold([b'2'; M * N], |mut layer_1, layer_2| {
+                for (pxl_1, pxl_2) in layer_1.iter_mut().zip(layer_2) {
+                    if *pxl_1 == b'2' {
+                        *pxl_1 = *pxl_2;
+                    }
                 }
-            }
-            layer_1
+                layer_1
+            });
+    TryInto::<[[u8; N]; M]>::try_into(pixels.as_chunks().0)
+        .unwrap()
+        .map(|row| {
+            row.map(|pxl| match pxl {
+                b'0' => b' ',
+                b'1' => b'#',
+                _ => panic!("Invalid pixel value {pxl}"),
+            })
         })
-        .chunks_exact(n)
-        .map(|row| -> String {
-            row.iter()
-                .map(|pxl| match pxl {
-                    b'0' => ' ',
-                    b'1' => '#',
-                    _ => panic!("Invalid pixel value {pxl}"),
-                })
-                .collect()
-        })
-        .join("\n")
 }
 
 #[cfg(test)]
@@ -50,19 +65,13 @@ mod test {
         super::part_1(input, m, n)
     }
 
-    const EXAMPLE_2: &str = "0222112222120000";
+    #[test_case(INPUT => "PCULA")]
+    fn part_2(input: &str) -> String {
+        super::part_2::<25>(input)
+    }
 
-    const EXPECTED_2: &str = "\
-###   ##  #  # #     ##  
-#  # #  # #  # #    #  # 
-#  # #    #  # #    #  # 
-###  #    #  # #    #### 
-#    #  # #  # #    #  # 
-#     ##   ##  #### #  # ";
-
-    #[test_case(EXAMPLE_2, 2, 2 => " #\n# ".to_string())]
-    #[test_case(INPUT, 6, 25 => EXPECTED_2.to_string())]
-    fn part_2(input: &str, m: usize, n: usize) -> String {
-        super::part_2(input, m, n)
+    #[test_case("0222112222120000" => [*b" #", *b"# "])]
+    fn example_2(input: &str) -> [[u8; 2]; 2] {
+        super::visible_image::<2, 2>(input)
     }
 }

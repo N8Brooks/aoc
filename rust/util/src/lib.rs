@@ -1,8 +1,5 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
+#![feature(ascii_char)]
+#![feature(ascii_char_variants)]
+pub mod array;
+pub mod ascii;
+pub mod str;

@@ -8,6 +8,7 @@ itertools = "0.14.0"
 num = "0.4.3"
 hashbrown = "0.16.1"
 regex = { version = "1.12.2", features = ["unicode-perl"] }
+util = { path = "../util" }
 
 [dev-dependencies]
 test-case = "3.3.1"
