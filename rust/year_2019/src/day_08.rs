@@ -28,18 +28,17 @@ pub fn visible_image<const M: usize, const N: usize>(input: &str) -> [[u8; N]; M
 where
     [(); M * N]:,
 {
-    let pixels =
-        input
-            .as_bytes()
-            .chunks_exact(M * N)
-            .fold([b'2'; M * N], |mut layer_1, layer_2| {
-                for (pxl_1, pxl_2) in layer_1.iter_mut().zip(layer_2) {
-                    if *pxl_1 == b'2' {
-                        *pxl_1 = *pxl_2;
-                    }
+    let pixels = input.as_bytes().as_chunks::<{ M * N }>().0.iter().fold(
+        [b'2'; M * N],
+        |mut layer_1, layer_2| {
+            for (pxl_1, pxl_2) in layer_1.iter_mut().zip(layer_2) {
+                if *pxl_1 == b'2' {
+                    *pxl_1 = *pxl_2;
                 }
-                layer_1
-            });
+            }
+            layer_1
+        },
+    );
     TryInto::<[[u8; N]; M]>::try_into(pixels.as_chunks().0)
         .unwrap()
         .map(|row| {
