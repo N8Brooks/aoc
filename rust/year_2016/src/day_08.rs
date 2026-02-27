@@ -1,5 +1,6 @@
 use Instruction::*;
 use std::str::FromStr;
+use util::str;
 
 pub fn part_1(input: &str) -> usize {
     plot(input)
@@ -10,80 +11,7 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> String {
-    transpose(plot(input))
-        .as_chunks()
-        .0
-        .iter()
-        .map(|&cols| match transpose(cols).each_ref() {
-            #[rustfmt::skip]
-            [
-                b" ##  ",
-                b"#  # ",
-                b"#    ",
-                b"#    ",
-                b"#  # ",
-                b" ##  ",
-            ] => 'C',
-            #[rustfmt::skip]
-            [
-                b"#### ",
-                b"#    ",
-                b"###  ",
-                b"#    ",
-                b"#    ",
-                b"#### ",
-            ] => 'E',
-            #[rustfmt::skip]
-            [
-                b" ### ",
-                b"  #  ",
-                b"  #  ",
-                b"  #  ",
-                b"  #  ",
-                b" ### ",
-            ] => 'I',
-            #[rustfmt::skip]
-            [
-                b"#    ",
-                b"#    ",
-                b"#    ",
-                b"#    ",
-                b"#    ",
-                b"#### ",
-            ] => 'L',
-            #[rustfmt::skip]
-            [
-                b" ##  ",
-                b"#  # ",
-                b"#  # ",
-                b"#  # ",
-                b"#  # ",
-                b" ##  ",
-            ] => 'O',
-            #[rustfmt::skip]
-            [
-                b"###  ",
-                b"#  # ",
-                b"#  # ",
-                b"###  ",
-                b"# #  ",
-                b"#  # ",
-            ] => 'R',
-            #[rustfmt::skip]
-            [
-                b"#  # ",
-                b"#  # ",
-                b"#  # ",
-                b"#  # ",
-                b"#  # ",
-                b" ##  ",
-            ] => 'U',
-            rows => panic!(
-                "unknown letter:\n{}",
-                rows.map(|row| str::from_utf8(row).unwrap()).join("\n")
-            ),
-        })
-        .collect()
+    str::from_image(&plot(input))
 }
 
 fn plot(input: &str) -> [[u8; 50]; 6] {
@@ -142,13 +70,6 @@ impl FromStr for Instruction {
             Err(())
         }
     }
-}
-
-/// Transposes a 2D array of size MxN into one of size NxM.
-fn transpose<const M: usize, const N: usize, T>(m: [[T; N]; M]) -> [[T; M]; N] {
-    use std::array::from_fn;
-    let mut iters = m.map(|r| r.into_iter());
-    from_fn(|_| from_fn(|i| iters[i].next().unwrap()))
 }
 
 #[cfg(test)]
