@@ -1,28 +1,28 @@
-use Place::*;
+use std::str::FromStr;
+
 use hashbrown::HashMap;
 use itertools::Itertools as _;
-use std::{num::NonZeroU32, str::FromStr};
+
+use Place::*;
 
 pub fn part_1(input: &str) -> usize {
-    const TARGET: (NonZeroU32, NonZeroU32) =
-        (NonZeroU32::new(17).unwrap(), NonZeroU32::new(61).unwrap());
     let (mut stack, rules) = parse_input(input);
-    let mut bots = HashMap::new();
-    let mut bins = HashMap::new();
+    let mut bots = HashMap::with_capacity(rules.len());
+    let mut bins = HashMap::with_capacity(21);
     while let Some((i, a)) = stack.pop() {
         if let Some(b) = bots.remove(&i) {
-            let (a, b) = if a < b { (a, b) } else { (b, a) };
-            if (a, b) == TARGET {
+            let (a, b) = (a.min(b), a.max(b));
+            if (a, b) == (17, 61) {
                 return i;
             }
             let (lo, hi) = rules[&i];
             match lo {
                 Bot(i) => stack.push((i, a)),
-                Bin(i) => assert!(bins.insert(i, a).is_none()),
+                Bin(i) => _ = bins.insert(i, a),
             }
             match hi {
                 Bot(i) => stack.push((i, b)),
-                Bin(i) => assert!(bins.insert(i, b).is_none()),
+                Bin(i) => _ = bins.insert(i, b),
             }
         } else {
             bots.insert(i, a);
@@ -31,36 +31,32 @@ pub fn part_1(input: &str) -> usize {
     panic!("no bot found that compares 17 and 61")
 }
 
-pub fn part_2(input: &str) -> NonZeroU32 {
+pub fn part_2(input: &str) -> u32 {
     let (mut stack, rules) = parse_input(input);
-    let mut bots = HashMap::new();
-    let mut bins = HashMap::new();
+    let mut bots = HashMap::with_capacity(rules.len());
+    let mut bins = HashMap::with_capacity(21);
     while let Some((i, a)) = stack.pop() {
         if let Some(b) = bots.remove(&i) {
-            let (a, b) = if a < b { (a, b) } else { (b, a) };
+            let (a, b) = (a.min(b), a.max(b));
             let (lo, hi) = rules[&i];
             match lo {
                 Bot(i) => stack.push((i, a)),
-                Bin(i) => assert!(bins.insert(i, a).is_none()),
+                Bin(i) => _ = bins.insert(i, a),
             }
             match hi {
                 Bot(i) => stack.push((i, b)),
-                Bin(i) => assert!(bins.insert(i, b).is_none()),
+                Bin(i) => _ = bins.insert(i, b),
             }
         } else {
             bots.insert(i, a);
         }
     }
-    bins[&0]
-        .checked_mul(bins[&1])
-        .unwrap()
-        .checked_mul(bins[&2])
-        .unwrap()
+    bins[&0] * bins[&1] * bins[&2]
 }
 
 type Places = (Place, Place);
 
-fn parse_input(input: &str) -> (Vec<(usize, NonZeroU32)>, HashMap<usize, Places>) {
+fn parse_input(input: &str) -> (Vec<(usize, u32)>, HashMap<usize, Places>) {
     use itertools::Either::*;
     input.lines().partition_map(|line| {
         if let Some(line) = line.strip_prefix("value ") {
@@ -118,6 +114,6 @@ value 2 goes to bot 2";
     #[test_case(EXAMPLE => 30)]
     #[test_case(INPUT => 4042)]
     fn part_2(input: &str) -> u32 {
-        super::part_2(input).get()
+        super::part_2(input)
     }
 }
