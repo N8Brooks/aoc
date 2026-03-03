@@ -1,48 +1,79 @@
-use std::str::FromStr;
+use std::{
+    ops::{Index, IndexMut},
+    str::FromStr,
+};
 
 use Instruction::*;
-use Val::*;
 
-pub fn part_1(input: &str) -> usize {
+pub fn part_1(input: &str) -> u32 {
     evaluate_a(input, 0)
 }
 
-pub fn part_2(input: &str) -> usize {
+pub fn part_2(input: &str) -> u32 {
     evaluate_a(input, 1)
 }
 
-fn evaluate_a(input: &str, c: usize) -> usize {
-    let instructions: Vec<_> = input.lines().map(|l| l.parse().unwrap()).collect();
-    let mut registers = [0; 4];
-    registers[2] = c;
+fn evaluate_a(input: &str, c: u32) -> u32 {
+    let instructions: Vec<_> = input.lines().map(|line| line.parse().unwrap()).collect();
+    let mut registers = Registers::new(0, 0, c, 0);
     let mut ip = 0;
-    while let Some(instruction) = instructions.get(ip) {
-        match *instruction {
-            Cpy(Int(x), y) => registers[y] = x,
-            Cpy(Reg(x), y) => registers[y] = registers[x],
+    while let Some(&instruction) = instructions.get(ip) {
+        match instruction {
+            Cpy(x, y) => registers[y] = registers.get(x),
             Inc(x) => registers[x] += 1,
             Dec(x) => registers[x] -= 1,
-            Jnz(Int(x), y) if x != 0 => {
-                ip = ip.strict_add_signed(y);
-                continue;
+            Jnz(x, y) => {
+                if registers.get(x) != 0 {
+                    ip = ip.strict_add_signed(y);
+                    continue;
+                }
             }
-            Jnz(Reg(x), y) if registers[x] != 0 => {
-                ip = ip.strict_add_signed(y);
-                continue;
-            }
-            _ => {}
         }
         ip += 1;
     }
-    registers[0]
+    registers[Ident::A]
+}
+
+#[derive(Copy, Clone)]
+struct Registers([u32; 4]);
+
+impl Registers {
+    #[inline]
+    fn new(a: u32, b: u32, c: u32, d: u32) -> Self {
+        Self([a, b, c, d])
+    }
+
+    #[inline]
+    fn get(&self, val: Value) -> u32 {
+        match val {
+            Value::Literal(x) => x,
+            Value::Register(x) => self[x],
+        }
+    }
+}
+
+impl Index<Ident> for Registers {
+    type Output = u32;
+
+    #[inline]
+    fn index(&self, index: Ident) -> &Self::Output {
+        &self.0[usize::from(index)]
+    }
+}
+
+impl IndexMut<Ident> for Registers {
+    #[inline]
+    fn index_mut(&mut self, index: Ident) -> &mut Self::Output {
+        &mut self.0[usize::from(index)]
+    }
 }
 
 #[derive(Copy, Clone)]
 enum Instruction {
-    Cpy(Val, usize),
-    Inc(usize),
-    Dec(usize),
-    Jnz(Val, isize),
+    Cpy(Value, Ident),
+    Inc(Ident),
+    Dec(Ident),
+    Jnz(Value, isize),
 }
 
 impl FromStr for Instruction {
@@ -53,13 +84,13 @@ impl FromStr for Instruction {
         match instruction {
             "cpy" => {
                 let (arg1, arg2) = args.split_once(' ').unwrap();
-                Ok(Cpy(arg1.parse().unwrap(), Val::reg(arg2)))
+                Ok(Cpy(arg1.parse()?, arg2.parse()?))
             }
-            "inc" => Ok(Inc(Val::reg(args))),
-            "dec" => Ok(Dec(Val::reg(args))),
+            "inc" => Ok(Inc(args.parse()?)),
+            "dec" => Ok(Dec(args.parse()?)),
             "jnz" => {
                 let (arg1, arg2) = args.split_once(' ').unwrap();
-                Ok(Jnz(arg1.parse().unwrap(), arg2.parse().unwrap()))
+                Ok(Jnz(arg1.parse()?, arg2.parse().unwrap()))
             }
             _ => Err(()),
         }
@@ -68,32 +99,49 @@ impl FromStr for Instruction {
 
 /// Either an integer or the value of a register
 #[derive(Copy, Clone)]
-enum Val {
-    Int(usize),
-    Reg(usize),
+enum Value {
+    Literal(u32),
+    Register(Ident),
 }
 
-impl FromStr for Val {
+impl FromStr for Value {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if let Ok(i) = s.parse() {
-            Ok(Int(i))
-        } else {
-            Ok(Reg(Val::reg(s)))
+        s.parse()
+            .map(Self::Literal)
+            .or_else(|_| s.parse().map(Self::Register))
+    }
+}
+
+#[repr(usize)]
+#[derive(Copy, Clone)]
+enum Ident {
+    A = 0,
+    B = 1,
+    C = 2,
+    D = 3,
+}
+
+impl FromStr for Ident {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        use Ident::*;
+        match s {
+            "a" => Ok(A),
+            "b" => Ok(B),
+            "c" => Ok(C),
+            "d" => Ok(D),
+            _ => Err(()),
         }
     }
 }
 
-impl Val {
-    fn reg(s: &str) -> usize {
-        match s {
-            "a" => 0,
-            "b" => 1,
-            "c" => 2,
-            "d" => 3,
-            _ => panic!("invalid register {s}"),
-        }
+impl From<Ident> for usize {
+    #[inline]
+    fn from(ident: Ident) -> Self {
+        ident as usize
     }
 }
 
@@ -112,12 +160,12 @@ dec a";
 
     #[test_case(EXAMPLE => 42)]
     #[test_case(INPUT => 318009)]
-    fn part_1(input: &str) -> usize {
+    fn part_1(input: &str) -> u32 {
         super::part_1(input)
     }
 
     #[test_case(INPUT => 9227663)]
-    fn part_2(input: &str) -> usize {
+    fn part_2(input: &str) -> u32 {
         super::part_2(input)
     }
 }
