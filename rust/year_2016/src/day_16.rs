@@ -1,6 +1,5 @@
 use std::error::Error;
 
-use itertools::Itertools;
 use num::Integer;
 
 pub fn part_1(input: &str) -> Result<String, ParseInitialStateError> {
@@ -12,52 +11,31 @@ pub fn part_2(input: &str) -> Result<String, ParseInitialStateError> {
 }
 
 pub fn checksum(input: &str, n: usize) -> Result<String, ParseInitialStateError> {
-    // let mut a = parse_initial_state(input)?;
-    // // Modified dragon curve
-    // while a.len() < n {
-    //     let b: Vec<bool> = a.iter().rev().map(|x| !x).collect();
-    //     a.push(false);
-    //     a.extend(b);
-    // }
-    // // Take first `n` bits
-    // a.truncate(n);
-    // // Checksum
-    // while {
-    //     a = a.as_chunks().0.iter().map(|[x, y]| x == y).collect();
-    //     a.len().is_even()
-    // } {}
-    // Ok(a.into_iter().map(|b| if b { '1' } else { '0' }).collect())
-
     let initial_state = parse_initial_state(input)?;
-    let m = initial_state.len();
-    let data = (0..n).map(|i| {
-        if (i + 1).is_multiple_of(m + 1) {
-            let x = i / (m + 1) + 1;
-            let k = x.trailing_zeros();
-            (x >> (k + 1)).is_odd()
-        } else if (i / (m + 1)).is_even() {
-            initial_state[i % (m + 1)]
-        } else {
-            !initial_state[initial_state.len() - 1 - (i % (m + 1))]
+    let data = {
+        let m = initial_state.len();
+        let mut a = initial_state;
+        let target = (n + 1).div_ceil(m + 1).next_power_of_two() * (m + 1) - 1;
+        a.reserve_exact(target - a.len());
+        let mut b = Vec::with_capacity(a.capacity() / 2);
+        while a.len() < n {
+            a.iter().rev().map(|x| !x).collect_into(&mut b);
+            a.push(false);
+            a.append(&mut b);
         }
-    });
+        a.truncate(n); // take first `n` bits
+        a
+    };
     let checksum = data
-        .chunks(1 << n.trailing_zeros())
-        .into_iter()
-        .map(|x| {
-            if x.into_iter().filter(|&b| b).count().is_even() {
-                '1'
-            } else {
-                '0'
-            }
-        })
+        .chunks_exact(n & n.wrapping_neg()) // largest power of 2 dividing n
+        .map(|chunk| chunk.iter().filter(|&&bit| bit).count().is_even())
+        .map(|even_ones| if even_ones { '1' } else { '0' })
         .collect();
     Ok(checksum)
 }
 
 fn parse_initial_state(input: &str) -> Result<Vec<bool>, ParseInitialStateError> {
     input
-        .trim()
         .chars()
         .map(|c| match c {
             '0' => Ok(false),
