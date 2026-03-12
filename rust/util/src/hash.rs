@@ -1,9 +1,7 @@
-use std::array;
-
 #[derive(Debug, Clone)]
 pub struct Md5Hasher {
     state: [u32; 4],
-    buffer: [u8; 64],
+    buffer: [u32; 16],
     len: u64,
 }
 
@@ -11,7 +9,7 @@ impl Default for Md5Hasher {
     fn default() -> Self {
         Self {
             state: Self::INIT_STATE,
-            buffer: [0; 64],
+            buffer: [0; 16],
             len: 0,
         }
     }
@@ -25,24 +23,30 @@ impl Md5Hasher {
         let buf_len = self.buf_len();
         self.len = self.len.wrapping_add(bytes.len() as u64);
         let Some((left, right)) = bytes.split_at_checked(64 - buf_len) else {
-            self.buffer[buf_len..buf_len + bytes.len()].copy_from_slice(bytes);
+            self.buf()[buf_len..buf_len + bytes.len()].copy_from_slice(bytes);
             return;
         };
-        self.buffer[buf_len..].copy_from_slice(left);
-        Self::process(&mut self.state, &self.buffer);
+        self.buf()[buf_len..].copy_from_slice(left);
+        self.process();
         let (chunks, rem) = right.as_chunks::<64>();
         for chunk in chunks {
-            Self::process(&mut self.state, chunk);
+            self.buf().copy_from_slice(chunk);
+            self.process();
         }
-        self.buffer[..rem.len()].copy_from_slice(rem);
+        self.buf()[..rem.len()].copy_from_slice(rem);
+    }
+
+    #[inline(always)]
+    fn buf(&mut self) -> &mut [u8; 64] {
+        unsafe { &mut *self.buffer.as_mut_ptr().cast::<[u8; 64]>() }
     }
 
     #[inline]
     pub fn write_u8(&mut self, i: u8) {
         let buf_len = self.buf_len();
-        self.buffer[buf_len] = i;
+        self.buf()[buf_len] = i;
         if buf_len == 63 {
-            Self::process(&mut self.state, &self.buffer);
+            self.process();
         }
         self.len = self.len.wrapping_add(1);
     }
@@ -52,25 +56,25 @@ impl Md5Hasher {
         (self.len & 63) as usize
     }
 
-    pub fn finish(&self) -> [u32; 4] {
+    pub fn finish_words(&self) -> [u32; 4] {
         let mut hasher = self.clone();
         let bit_len = hasher.len.wrapping_mul(8).to_le_bytes();
         hasher.write_u8(0x80);
         let buf_len = hasher.buf_len();
         if buf_len > 56 {
-            hasher.buffer[buf_len..].fill(0);
-            Self::process(&mut hasher.state, &hasher.buffer);
-            hasher.buffer[..56].fill(0);
+            hasher.buf()[buf_len..].fill(0);
+            hasher.process();
+            hasher.buf()[..56].fill(0);
         } else {
-            hasher.buffer[buf_len..56].fill(0);
+            hasher.buf()[buf_len..56].fill(0);
         }
-        hasher.buffer[56..64].copy_from_slice(&bit_len);
-        Self::process(&mut hasher.state, &hasher.buffer);
+        hasher.buf()[56..64].copy_from_slice(&bit_len);
+        hasher.process();
         hasher.state
     }
 
     pub fn finish_bytes(&self) -> [u8; 16] {
-        let digest = self.finish();
+        let digest = self.finish_words();
         let mut words = [0; 16];
         for (word, bytes) in words.as_chunks_mut::<4>().0.iter_mut().zip(digest) {
             word.copy_from_slice(&bytes.to_le_bytes());
@@ -89,11 +93,11 @@ impl Md5Hasher {
         out
     }
 
-    pub fn finish_u128(&self) -> u128 {
+    pub fn finish(&self) -> u128 {
         u128::from_be_bytes(self.finish_bytes())
     }
 
-    fn process(state: &mut [u32; 4], buffer: &[u8; 64]) {
+    fn process(&mut self) {
         const S: [u32; 64] = [
             7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 5, 9, 14, 20, 5, 9, 14, 20,
             5, 9, 14, 20, 5, 9, 14, 20, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
@@ -112,19 +116,14 @@ impl Md5Hasher {
             0xeb86d391,
         ];
 
-        let words: [u32; 16] = array::from_fn(|i| {
-            let j = 4 * i;
-            u32::from_le_bytes([buffer[j], buffer[j + 1], buffer[j + 2], buffer[j + 3]])
-        });
-
-        let [mut a, mut b, mut c, mut d] = *state;
+        let [mut a, mut b, mut c, mut d] = self.state;
 
         for i in 0..16 {
             let f = (b & c) | (!b & d);
             let t = a
                 .wrapping_add(f)
                 .wrapping_add(K[i])
-                .wrapping_add(words[i])
+                .wrapping_add(self.buffer[i])
                 .rotate_left(S[i]);
             (a, b, c, d) = (d, b.wrapping_add(t), b, c);
         }
@@ -135,7 +134,7 @@ impl Md5Hasher {
             let t = a
                 .wrapping_add(f)
                 .wrapping_add(K[i])
-                .wrapping_add(words[g])
+                .wrapping_add(self.buffer[g])
                 .rotate_left(S[i]);
             (a, b, c, d) = (d, b.wrapping_add(t), b, c);
         }
@@ -146,7 +145,7 @@ impl Md5Hasher {
             let t = a
                 .wrapping_add(f)
                 .wrapping_add(K[i])
-                .wrapping_add(words[g])
+                .wrapping_add(self.buffer[g])
                 .rotate_left(S[i]);
             (a, b, c, d) = (d, b.wrapping_add(t), b, c);
         }
@@ -157,15 +156,15 @@ impl Md5Hasher {
             let t = a
                 .wrapping_add(f)
                 .wrapping_add(K[i])
-                .wrapping_add(words[g])
+                .wrapping_add(self.buffer[g])
                 .rotate_left(S[i]);
             (a, b, c, d) = (d, b.wrapping_add(t), b, c);
         }
 
-        state[0] = state[0].wrapping_add(a);
-        state[1] = state[1].wrapping_add(b);
-        state[2] = state[2].wrapping_add(c);
-        state[3] = state[3].wrapping_add(d);
+        self.state[0] = self.state[0].wrapping_add(a);
+        self.state[1] = self.state[1].wrapping_add(b);
+        self.state[2] = self.state[2].wrapping_add(c);
+        self.state[3] = self.state[3].wrapping_add(d);
     }
 }
 
@@ -184,6 +183,6 @@ mod test {
     fn test_finish_u128() {
         let mut hasher = Md5Hasher::default();
         hasher.write(b"The quick brown fox jumps over the lazy dog");
-        assert_eq!(hasher.finish_u128(), 0x9e107d9d372bb6826bd81d3542a419d6,);
+        assert_eq!(hasher.finish(), 0x9e107d9d372bb6826bd81d3542a419d6,);
     }
 }
