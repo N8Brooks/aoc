@@ -2,4 +2,5 @@
 #![feature(ascii_char_variants)]
 pub mod array;
 pub mod ascii;
+pub mod hash;
 pub mod str;
