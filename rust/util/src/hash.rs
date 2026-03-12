@@ -1,9 +1,9 @@
-use std::mem::{self, MaybeUninit};
+use std::{array, mem::MaybeUninit};
 
 #[derive(Debug, Clone)]
 pub struct Md5Hasher {
     state: [u32; 4],
-    buffer: [u32; 16],
+    buffer: [MaybeUninit<u32>; 16],
     len: u64,
 }
 
@@ -11,9 +11,7 @@ impl Default for Md5Hasher {
     fn default() -> Self {
         Self {
             state: Self::INIT_STATE,
-            #[allow(clippy::uninit_assumed_init, invalid_value)]
-            // SAFETY: The buffer is initialized before it's read from.
-            buffer: unsafe { MaybeUninit::uninit().assume_init() },
+            buffer: [MaybeUninit::uninit(); 16],
             len: 0,
         }
     }
@@ -27,34 +25,37 @@ impl Md5Hasher {
         let buf_len = self.buf_len();
         self.len = self.len.wrapping_add(bytes.len() as u64);
         let Some((left, right)) = bytes.split_at_checked(64 - buf_len) else {
-            self.buf()[buf_len..buf_len + bytes.len()].copy_from_slice(bytes);
+            self.buf()[buf_len..buf_len + bytes.len()].write_copy_of_slice(bytes);
             return;
         };
-        self.buf()[buf_len..].copy_from_slice(left);
-        self.process();
+        self.buf()[buf_len..].write_copy_of_slice(left);
+        // SAFETY: every byte of `hasher.buffer` is initialized at this point
+        unsafe { self.process() };
         let (chunks, rem) = right.as_chunks::<64>();
         for chunk in chunks {
-            // SAFETY: process converts the u32s into little-endian
-            let tmp = unsafe { *chunk.as_ptr().cast() };
-            self.state = process(&self.state, tmp);
+            #[allow(unused_mut)]
+            let mut tmp = unsafe { std::ptr::read_unaligned(chunk.as_ptr().cast::<[u32; 16]>()) };
+            #[cfg(target_endian = "big")]
+            tmp.iter_mut().for_each(|w| *w = u32::from_le(*w));
+            self.state = process(&self.state, &tmp);
         }
-        self.buf()[..rem.len()].copy_from_slice(rem);
+        self.buf()[..rem.len()].write_copy_of_slice(rem);
     }
 
     #[inline]
     pub fn write_u8(&mut self, i: u8) {
         let buf_len = self.buf_len();
-        self.buf()[buf_len] = i;
+        self.buf()[buf_len].write(i);
         if buf_len == 63 {
-            self.process();
+            // SAFETY: every byte of `hasher.buffer` is initialized at this point
+            unsafe { self.process() };
         }
         self.len = self.len.wrapping_add(1);
     }
 
     #[inline(always)]
-    fn buf(&mut self) -> &mut [u8; 64] {
-        // SAFETY: idk
-        unsafe { &mut *self.buffer.as_mut_ptr().cast() }
+    fn buf(&mut self) -> &mut [MaybeUninit<u8>; 64] {
+        self.buffer.as_bytes_mut().try_into().unwrap()
     }
 
     #[inline(always)]
@@ -63,16 +64,8 @@ impl Md5Hasher {
     }
 
     pub fn finish(&self) -> [u8; 16] {
-        #[cfg(target_endian = "big")]
-        // SAFETY: idk
-        unsafe {
-            mem::transmute(self.finish_words().map(u32::to_le))
-        }
-        // SAFETY: idk
-        #[cfg(target_endian = "little")]
-        unsafe {
-            mem::transmute(self.finish_words())
-        }
+        let mut it = self.finish_words().into_iter().flat_map(u32::to_le_bytes);
+        array::from_fn(move |_| it.next().unwrap())
     }
 
     pub fn finish_words(&self) -> [u32; 4] {
@@ -81,44 +74,37 @@ impl Md5Hasher {
         hasher.write_u8(0x80);
         let buf_len = hasher.buf_len();
         if buf_len > 56 {
-            hasher.buf()[buf_len..].fill(0);
-            hasher.process();
-            hasher.buf()[..56].fill(0);
+            hasher.buf()[buf_len..].write_filled(0);
+            // SAFETY: every byte of `hasher.buffer` is initialized at this point
+            unsafe { hasher.process() };
+            hasher.buf()[..56].write_filled(0);
         } else {
-            hasher.buf()[buf_len..56].fill(0);
+            hasher.buf()[buf_len..56].write_filled(0);
         }
-        hasher.buf()[56..64].copy_from_slice(&bit_len);
-        hasher.process();
+        hasher.buf()[56..64].write_copy_of_slice(&bit_len);
+        // SAFETY: every byte of `hasher.buffer` is initialized at this point
+        unsafe { hasher.process() };
         hasher.state
     }
 
     pub fn finish_hex(&self) -> [u8; 32] {
         const HEX: &[u8; 16] = b"0123456789abcdef";
-        let digest = self.finish();
-        let mut out = [MaybeUninit::uninit(); 32];
-        for (i, byte) in digest.into_iter().enumerate() {
-            out[2 * i].write(HEX[(byte >> 4) as usize]);
-            out[2 * i + 1].write(HEX[(byte & 0x0f) as usize]);
-        }
-        // SAFETY: the array has been fully initialized
-        unsafe { MaybeUninit::array_assume_init(out) }
+        let mut it = self
+            .finish()
+            .into_iter()
+            .flat_map(|b| [HEX[(b >> 4) as usize], HEX[(b & 0x0f) as usize]]);
+        array::from_fn(|_| it.next().unwrap())
     }
 
     pub fn finish_u128(&self) -> u128 {
-        #[cfg(target_endian = "big")]
-        // SAFETY: idk
-        unsafe {
-            mem::transmute(self.finish_words().map(u32::to_le))
-        }
-        // SAFETY: idk
-        #[cfg(target_endian = "little")]
-        unsafe {
-            mem::transmute(self.finish_words())
-        }
+        u128::from_le_bytes(self.finish())
     }
 
-    fn process(&mut self) {
-        self.state = process(&self.state, &self.buffer);
+    // SAFETY: the caller must ensure that `self.buffer` is fully initialized
+    unsafe fn process(&mut self) {
+        // SAFETY: the caller must ensure that `self.buffer` is fully initialized
+        let buffer = unsafe { self.buffer.assume_init_ref() };
+        self.state = process(&self.state, buffer.try_into().unwrap());
     }
 }
 
@@ -142,7 +128,7 @@ fn process(state @ &[mut a, mut b, mut c, mut d]: &[u32; 4], buffer: &[u32; 16])
     ];
 
     #[cfg(target_endian = "big")]
-    buffer.iter_mut().for_each(|word| *word = word.to_le());
+    let buffer = buffer.map(u32::from_le);
 
     for i in 0..16 {
         let f = (b & c) | (!b & d);
