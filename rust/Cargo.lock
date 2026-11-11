@@ -431,7 +431,7 @@ dependencies = [
 name = "year_2021"
 version = "0.1.0"
 dependencies = [
- "itertools 0.14.0",
+ "itertools 0.15.0",
  "num",
  "test-case",
 ]
