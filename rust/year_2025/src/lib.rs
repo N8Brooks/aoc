@@ -1,5 +1,4 @@
 #![feature(generic_const_exprs)]
-#![feature(strip_circumfix)]
 #![allow(incomplete_features)]
 #![allow(unstable_name_collisions)] // collect_array
 pub mod day_01;

@@ -5,9 +5,9 @@ use itertools::Itertools as _;
 pub fn part_1(input: &str, k: usize) -> usize {
     let points = parse_points(input);
     (0..points.len())
-        .tuple_combinations()
-        .k_smallest_relaxed_by_key(k, |&(i1, i2)| idistance(points[i1], points[i2]))
-        .fold(UnionFind::new(points.len()), |mut uf, (i1, i2)| {
+        .array_combinations()
+        .k_smallest_relaxed_by_key(k, |&[i1, i2]| idistance(points[i1], points[i2]))
+        .fold(UnionFind::new(points.len()), |mut uf, [i1, i2]| {
             uf.unite(i1, i2);
             uf
         })
@@ -20,8 +20,8 @@ pub fn part_2(input: &str) -> usize {
     let points = parse_points(input);
     let (mut i1, mut i2) = (0, 0);
     let mut heap: BinaryHeap<_> = (0..points.len())
-        .tuple_combinations()
-        .map(|(i1, i2)| (Reverse(idistance(points[i1], points[i2])), i1, i2))
+        .array_combinations()
+        .map(|[i1, i2]| (Reverse(idistance(points[i1], points[i2])), i1, i2))
         .collect();
     let mut uf = UnionFind::new(points.len());
     while uf.count > 1 {

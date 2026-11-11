@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-itertools = "0.14.0"
+itertools = "0.15.0"
 num = "0.4.3"
-hashbrown = "0.16.1"
+hashbrown = "0.17.1"
 
 [dev-dependencies]
 test-case = "3.3.1"

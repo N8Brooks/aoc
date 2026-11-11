@@ -2,8 +2,8 @@ use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     parse_input(input)
-        .tuple_combinations()
-        .map(|((x1, y1), (x2, y2))| {
+        .array_combinations()
+        .map(|[(x1, y1), (x2, y2)]| {
             let dx = x1.abs_diff(x2) + 1;
             let dy = y1.abs_diff(y2) + 1;
             dx * dy
@@ -16,8 +16,8 @@ pub fn part_2(input: &str) -> usize {
     let points: Vec<_> = parse_input(input).collect();
     points
         .iter()
-        .tuple_combinations()
-        .filter(|&(&(x1, y1), &(x2, y2))| {
+        .array_combinations()
+        .filter(|&[&(x1, y1), &(x2, y2)]| {
             // Inner rectangle
             let rx1 = x1.min(x2) + 1;
             let rx2 = x1.max(x2) - 1;
@@ -35,7 +35,7 @@ pub fn part_2(input: &str) -> usize {
                     ux1 > ux2 || uy1 > uy2
                 })
         })
-        .map(|(&(x1, y1), &(x2, y2))| {
+        .map(|[&(x1, y1), &(x2, y2)]| {
             let dx = x1.abs_diff(x2) + 1;
             let dy = y1.abs_diff(y2) + 1;
             dx * dy
