@@ -27,7 +27,7 @@ pub fn checksum(input: &str, n: usize) -> Result<String, ParseInitialStateError>
         a
     };
     let checksum = data
-        .chunks_exact(n & n.wrapping_neg()) // largest power of 2 dividing n
+        .chunks_exact(n.isolate_lowest_one()) // largest power of 2 dividing n
         .map(|chunk| chunk.iter().filter(|&&bit| bit).count().is_even())
         .map(|even_ones| if even_ones { '1' } else { '0' })
         .collect();

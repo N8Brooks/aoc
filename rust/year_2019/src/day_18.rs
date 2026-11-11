@@ -114,7 +114,7 @@ pub fn part_2(input: &str) -> usize {
         .count();
     let all_keys = (1 << num_keys) - 1;
 
-    let p0 = [b'1', b'2', b'3', b'4'];
+    let p0 = *b"1234";
     let mut heap = BinaryHeap::from([(Reverse(0), 0, p0)]);
     let mut seen: HashSet<(u32, [u8; 4])> = HashSet::from([(0, p0)]);
 

@@ -49,17 +49,6 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
 
 [[package]]
 name = "hashbrown"
-version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100"
-dependencies = [
- "allocator-api2",
- "equivalent",
- "foldhash",
-]
-
-[[package]]
-name = "hashbrown"
 version = "0.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
@@ -69,15 +58,6 @@ dependencies = [
  "foldhash",
  "serde",
  "serde_core",
-]
-
-[[package]]
-name = "itertools"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285"
-dependencies = [
- "either",
 ]
 
 [[package]]
@@ -367,8 +347,8 @@ version = "0.1.0"
 name = "year_2015"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.17.1",
- "itertools 0.15.0",
+ "hashbrown",
+ "itertools",
  "num",
  "serde",
  "serde_json",
@@ -380,8 +360,8 @@ dependencies = [
 name = "year_2016"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.17.1",
- "itertools 0.15.0",
+ "hashbrown",
+ "itertools",
  "num",
  "test-case",
  "util",
@@ -391,8 +371,8 @@ dependencies = [
 name = "year_2017"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.17.1",
- "itertools 0.15.0",
+ "hashbrown",
+ "itertools",
  "num",
  "test-case",
 ]
@@ -401,8 +381,8 @@ dependencies = [
 name = "year_2018"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.17.1",
- "itertools 0.15.0",
+ "hashbrown",
+ "itertools",
  "num",
  "test-case",
 ]
@@ -411,8 +391,8 @@ dependencies = [
 name = "year_2019"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.16.1",
- "itertools 0.14.0",
+ "hashbrown",
+ "itertools",
  "num",
  "regex",
  "test-case",
@@ -423,7 +403,7 @@ dependencies = [
 name = "year_2020"
 version = "0.1.0"
 dependencies = [
- "itertools 0.15.0",
+ "itertools",
  "test-case",
 ]
 
@@ -431,7 +411,7 @@ dependencies = [
 name = "year_2021"
 version = "0.1.0"
 dependencies = [
- "itertools 0.15.0",
+ "itertools",
  "num",
  "test-case",
 ]
@@ -440,8 +420,8 @@ dependencies = [
 name = "year_2022"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.17.1",
- "itertools 0.15.0",
+ "hashbrown",
+ "itertools",
  "ndarray",
  "num",
  "regex",
@@ -454,7 +434,7 @@ dependencies = [
 name = "year_2023"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.17.1",
+ "hashbrown",
  "num",
  "test-case",
 ]
@@ -463,8 +443,8 @@ dependencies = [
 name = "year_2024"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.17.1",
- "itertools 0.15.0",
+ "hashbrown",
+ "itertools",
  "num",
  "regex",
  "test-case",
@@ -474,8 +454,8 @@ dependencies = [
 name = "year_2025"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.17.1",
- "itertools 0.15.0",
+ "hashbrown",
+ "itertools",
  "num",
  "test-case",
 ]

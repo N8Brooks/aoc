@@ -32,7 +32,7 @@ fn solve(input: &str, part_2: bool) -> usize {
             let mut item_count = 0;
             for (part, mut names) in state[floor_1].into_iter().enumerate() {
                 while names > 0 {
-                    let bit = names & names.wrapping_neg();
+                    let bit = names.isolate_lowest_one();
                     names &= names - 1;
                     items[item_count] = (part, bit);
                     item_count += 1;
