@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 pub use part_1_context::part_1;
 pub use part_2_context::part_2;
 
@@ -9,10 +11,10 @@ enum Operator {
     Mul,
 }
 
-impl TryFrom<&str> for Operator {
-    type Error = String;
+impl FromStr for Operator {
+    type Err = String;
 
-    fn try_from(char: &str) -> Result<Self, Self::Error> {
+    fn from_str(char: &str) -> Result<Self, Self::Err> {
         match char {
             "+" => Ok(Operator::Add),
             "-" => Ok(Operator::Sub),
@@ -65,7 +67,7 @@ mod part_1_context {
                 let mut tokens = input.split(' ');
                 Expression::Expressions(
                     tokens.next().expect("first token"),
-                    Operator::try_from(tokens.next().expect("second token")).unwrap(),
+                    tokens.next().expect("second token").parse().unwrap(),
                     tokens.next().expect("third token"),
                 )
             }
@@ -121,7 +123,7 @@ mod part_2_context {
                 if name == "root" {
                     Either::Left((a, b))
                 } else {
-                    let operator = Operator::try_from(operator).unwrap();
+                    let operator = operator.parse().unwrap();
                     Either::Right((name, Expression::Expressions(a, operator, b)))
                 }
             }

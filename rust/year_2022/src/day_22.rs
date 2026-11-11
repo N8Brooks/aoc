@@ -407,21 +407,18 @@ fn compute_orientations(
 
     for bi in 0..block_rows {
         for bj in 0..block_cols {
-            let mut has_tile = false;
             let row0 = bi * face_size;
             let col0 = bj * face_size;
-            for i in row0..(row0 + face_size).min(rows) {
-                let row = &board[i];
-                for j in col0..(col0 + face_size).min(row.len()) {
-                    if row[j].is_some() {
-                        has_tile = true;
-                        break;
-                    }
-                }
-                if has_tile {
-                    break;
-                }
-            }
+            let has_tile = board
+                .iter()
+                .take((row0 + face_size).min(rows))
+                .skip(row0)
+                .flat_map(|row| {
+                    row.iter()
+                        .take((col0 + face_size).min(row.len()))
+                        .skip(col0)
+                })
+                .any(|cell| cell.is_some());
             if has_tile {
                 blocks.insert((bi, bj));
             }
