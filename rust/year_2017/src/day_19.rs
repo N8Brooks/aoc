@@ -1,5 +1,7 @@
 use std::{ascii::Char, iter::successors};
 
+use Point::*;
+
 pub fn part_1(input: &str) -> String {
     route(input).filter_map(Point::letter).collect()
 }
@@ -39,8 +41,6 @@ enum Point {
     Crossing,
     Letter(Char),
 }
-
-use Point::*;
 
 impl Point {
     fn parse(b: u8) -> Result<Option<Self>, ()> {

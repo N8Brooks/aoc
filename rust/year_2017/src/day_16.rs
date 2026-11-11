@@ -1,5 +1,7 @@
 use std::{array, ascii::Char, iter::successors, str::FromStr};
 
+use DanceMove::*;
+
 pub fn part_1(input: &str) -> String {
     dance_once::<16>(input)
 }
@@ -33,8 +35,6 @@ enum DanceMove {
     Exchange(usize, usize),
     Partner(Char, Char),
 }
-
-use DanceMove::*;
 
 impl FromStr for DanceMove {
     type Err = ();
