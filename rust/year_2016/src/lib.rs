@@ -1,10 +1,7 @@
 #![feature(option_reference_flattening)]
 #![feature(iter_array_chunks)]
-#![feature(stmt_expr_attributes)]
-#![feature(strip_circumfix)]
 #![feature(iter_collect_into)]
 #![feature(iter_next_chunk)]
-#![feature(iterator_try_collect)]
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;
