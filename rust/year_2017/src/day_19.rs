@@ -28,7 +28,7 @@ fn route(input: &str) -> impl Iterator<Item = Point> {
 fn parse_map(input: &str) -> Vec<Vec<Option<Point>>> {
     input
         .lines()
-        .map(|line| line.bytes().map(|b| Point::parse(b)).try_collect())
+        .map(|line| line.bytes().map(Point::parse).try_collect())
         .try_collect()
         .unwrap()
 }
