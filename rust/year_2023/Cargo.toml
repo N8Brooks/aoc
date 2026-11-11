@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 num = "0.4.3"
-hashbrown = "0.16.1"
+hashbrown = "0.17.1"
 
 [dev-dependencies]
 test-case = "3.3.1"
