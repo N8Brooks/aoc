@@ -5,6 +5,8 @@ use std::{
     str::FromStr,
 };
 
+use {Instruction::*, Value::*};
+
 pub fn part_1(input: &str) -> isize {
     let instructions: Vec<Instruction> = input.lines().map(|line| line.parse().unwrap()).collect();
     Program::new(&instructions).run(empty()).last().unwrap()
@@ -40,8 +42,6 @@ enum Instruction {
     Rcv(usize),
     Jgz(Value, Value),
 }
-
-use Instruction::*;
 
 impl FromStr for Instruction {
     type Err = ();
@@ -113,8 +113,6 @@ enum Value {
     Register(usize),
     Literal(isize),
 }
-
-use Value::*;
 
 impl FromStr for Value {
     type Err = ();
