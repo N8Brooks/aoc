@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-itertools = "0.14.0"
-hashbrown = { version = "0.16.1", features = ["serde"] }
-serde = { version = "1.0.228", features = ["derive"] }
-serde_json = { version = "1.0.149" }
+itertools = "0.15.0"
+hashbrown = { version = "0.17.1", features = ["serde"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154" }
 num = "0.4.3"
 util = { path = "../util" }
 

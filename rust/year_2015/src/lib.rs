@@ -1,6 +1,5 @@
 #![feature(iter_next_chunk)]
 #![feature(iter_collect_into)]
-#![feature(strip_circumfix)]
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;
