@@ -13,9 +13,9 @@ pub fn part_1(input: &str) -> usize {
         .filter(|(u, _)| u.starts_with('t'))
         .flat_map(|(&u, vs)| {
             vs.iter()
-                .tuple_combinations()
-                .filter(|&(v, w)| network[v].contains(w))
-                .map(move |(v, w)| {
+                .array_combinations()
+                .filter(|&[v, w]| network[v].contains(w))
+                .map(move |[v, w]| {
                     let mut set = [u, v, w];
                     set.sort_unstable();
                     set

@@ -42,8 +42,8 @@ fn count_antinodes(
         .flat_map(|antennas| {
             antennas
                 .into_iter()
-                .tuple_combinations()
-                .flat_map(|((i1, j1), (i2, j2))| {
+                .array_combinations()
+                .flat_map(|[(i1, j1), (i2, j2)]| {
                     let rows_1 = iter_axis(i1, i2);
                     let cols_1 = iter_axis(j1, j2);
                     let rows_2 = iter_axis(i2, i1);
