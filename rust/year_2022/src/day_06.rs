@@ -1,10 +1,11 @@
+use hashbrown::DefaultHashBuilder;
 use itertools::Itertools;
 
 pub fn part_1(input: &str) -> usize {
     input
         .bytes()
         .tuple_windows()
-        .position(|(a, b, c, d)| [a, b, c, d].iter().all_unique())
+        .position(|(a, b, c, d)| [a, b, c, d].iter().all_unique_with_hasher(DefaultHashBuilder::default()))
         .unwrap()
         + 4
 }
@@ -15,7 +16,7 @@ pub fn part_2(input: &str) -> usize {
     (0..input.len())
         .zip(14..input.len())
         .map(|(i, j)| &input[i..j])
-        .position(|slice| slice.iter().all_unique())
+        .position(|slice| slice.iter().all_unique_with_hasher(DefaultHashBuilder::default()))
         .unwrap()
         + 14
 }

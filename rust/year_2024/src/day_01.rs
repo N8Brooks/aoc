@@ -1,3 +1,4 @@
+use hashbrown::DefaultHashBuilder;
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
@@ -11,7 +12,7 @@ pub fn part_1(input: &str) -> usize {
 
 pub fn part_2(input: &str) -> usize {
     let (lefts, rights) = parse_input(input);
-    let counts = rights.into_iter().counts();
+    let counts = rights.into_iter().counts_with_hasher(DefaultHashBuilder::default());
     lefts
         .filter_map(|num| counts.get(&num).map(|count| num * count))
         .sum()

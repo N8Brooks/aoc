@@ -1,3 +1,4 @@
+use hashbrown::DefaultHashBuilder;
 use itertools::Itertools;
 
 pub fn part_1(input: &str) -> i64 {
@@ -12,7 +13,7 @@ pub fn part_2(input: &str) -> i64 {
             *sum += num;
             Some(*sum)
         })
-        .duplicates()
+        .duplicates_with_hasher(DefaultHashBuilder::default())
         .next()
         .unwrap_or_else(|| unreachable!())
 }

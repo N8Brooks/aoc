@@ -1,4 +1,4 @@
-use hashbrown::{HashMap, HashSet};
+use hashbrown::{DefaultHashBuilder, HashMap, HashSet};
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
@@ -40,7 +40,7 @@ pub fn part_2(input: &str) -> String {
             vs.iter()
                 .flat_map(|v| network[v].iter())
                 .chain(vs.iter())
-                .counts()
+                .counts_with_hasher(DefaultHashBuilder::default())
                 .into_iter()
                 .filter(|&(_, count)| count >= n - 1)
                 .map(|(v, _)| *v)

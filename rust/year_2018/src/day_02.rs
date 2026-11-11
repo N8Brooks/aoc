@@ -1,10 +1,11 @@
+use hashbrown::DefaultHashBuilder;
 use itertools::Itertools;
 
 pub fn part_1(input: &str) -> usize {
     let counts = input
         .lines()
-        .flat_map(|line| line.chars().counts().into_values().unique())
-        .counts();
+        .flat_map(|line| line.chars().counts_with_hasher(DefaultHashBuilder::default()).into_values().unique())
+        .counts_with_hasher(DefaultHashBuilder::default());
     [2, 3]
         .iter()
         .map(|count| counts.get(count).unwrap_or(&0))
@@ -22,7 +23,7 @@ pub fn part_2(input: &str) -> String {
                     .collect_vec()
             })
         })
-        .duplicates()
+        .duplicates_with_hasher(DefaultHashBuilder::default())
         .next()
         .expect("some duplicate")
         .into_iter()

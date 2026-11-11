@@ -4,7 +4,7 @@ use std::{
     mem,
 };
 
-use hashbrown::{HashMap, HashSet};
+use hashbrown::{DefaultHashBuilder, HashMap, HashSet};
 use itertools::Itertools as _;
 
 type Point = (usize, usize);
@@ -140,7 +140,7 @@ fn parse_portals(map: &[&[u8]]) -> (Point, Point, HashMap<Point, Point>) {
             .find(|[a, b]| a.is_ascii_uppercase() && b.is_ascii_uppercase())
             .map(|label| (label, (i, j)))
         })
-        .into_group_map();
+        .into_group_map_with_hasher(DefaultHashBuilder::default());
     let [aa, zz] = [b"AA", b"ZZ"].map(|label| {
         portals
             .remove(label)

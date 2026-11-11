@@ -1,5 +1,6 @@
 use std::{array, iter::successors};
 
+use hashbrown::DefaultHashBuilder;
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
@@ -24,7 +25,7 @@ pub fn part_1(input: &str) -> usize {
             })
         }))
     })
-    .duplicates()
+    .duplicates_with_hasher(DefaultHashBuilder::default())
     .next()
     .unwrap();
     last.into_iter()

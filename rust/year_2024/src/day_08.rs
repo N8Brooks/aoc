@@ -1,6 +1,6 @@
 use std::iter::once;
 
-use hashbrown::HashSet;
+use hashbrown::{DefaultHashBuilder, HashSet};
 
 use itertools::Itertools;
 
@@ -37,7 +37,7 @@ fn count_antinodes(
         .enumerate()
         .flat_map(|(i, line)| line.bytes().enumerate().map(move |(j, c)| (c, (i, j))))
         .filter(|(c, _)| *c != b'.')
-        .into_group_map()
+        .into_group_map_with_hasher(DefaultHashBuilder::default())
         .into_values()
         .flat_map(|antennas| {
             antennas

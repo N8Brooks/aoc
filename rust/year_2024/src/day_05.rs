@@ -1,10 +1,10 @@
-use hashbrown::{HashMap, HashSet};
+use hashbrown::{DefaultHashBuilder, HashMap, HashSet};
 
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     let (rules, pages) = parse_input(input);
-    let nexts = rules.into_iter().into_group_map();
+    let nexts = rules.into_iter().into_group_map_with_hasher(DefaultHashBuilder::default());
     pages
         .into_iter()
         .filter(|update| {
@@ -34,8 +34,8 @@ pub fn part_2(input: &str) -> usize {
                 .filter(|(x, y)| set.contains(x) & set.contains(y))
                 .copied()
                 .collect_vec();
-            let mut indegree = rules.iter().map(|(_, y)| *y).counts();
-            let graph = rules.into_iter().into_group_map();
+            let mut indegree = rules.iter().map(|(_, y)| *y).counts_with_hasher(DefaultHashBuilder::default());
+            let graph = rules.into_iter().into_group_map_with_hasher(DefaultHashBuilder::default());
 
             let mut frontier = graph
                 .keys()

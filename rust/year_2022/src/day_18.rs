@@ -1,5 +1,6 @@
 use std::{collections::HashSet, ops::Range};
 
+use hashbrown::DefaultHashBuilder;
 use itertools::Itertools;
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
@@ -27,7 +28,7 @@ pub fn part_1(input: &str) -> usize {
                 Face::Xy([x, y, z + 1]),
             ]
         })
-        .counts()
+        .counts_with_hasher(DefaultHashBuilder::default())
         .values()
         .filter(|count| *count == &1)
         .count()
