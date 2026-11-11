@@ -31,7 +31,7 @@ pub fn part_1(input: &str) -> usize {
 pub fn part_2(input: &str) -> usize {
     let (mut files, mut spaces): (Vec<_>, Vec<_>) = input
         .bytes()
-        .chain([b'0']) // Sentinel space for tuples + unzip
+        .chain(*b"0") // Sentinel space for tuples + unzip
         .scan(0, |index_2, count| {
             let size = (count - b'0') as usize;
             let index_1 = *index_2;

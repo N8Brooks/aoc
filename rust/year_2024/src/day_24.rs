@@ -59,15 +59,14 @@ enum Wire<'a> {
 
 impl<'a> Wire<'a> {
     fn parse(s: &'a str) -> Self {
-        s[1..].parse().map_or_else(
-            |_| Wire::Other(s),
-            |i| match s.chars().next().unwrap() {
+        s[1..]
+            .parse()
+            .map_or(Wire::Other(s), |i| match s.chars().next().unwrap() {
                 'x' => Wire::X(i),
                 'y' => Wire::Y(i),
                 'z' => Wire::Z(i),
                 _ => unreachable!(),
-            },
-        )
+            })
     }
 }
 
