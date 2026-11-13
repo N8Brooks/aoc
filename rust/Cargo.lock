@@ -403,6 +403,7 @@ dependencies = [
 name = "year_2020"
 version = "0.1.0"
 dependencies = [
+ "hashbrown",
  "itertools",
  "test-case",
 ]
