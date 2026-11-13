@@ -1,4 +1,4 @@
-use std::cell::LazyCell;
+use std::sync::LazyLock;
 
 use hashbrown::HashSet;
 use itertools::Itertools;
@@ -28,10 +28,10 @@ struct StateSpace(Array2<usize>);
 
 impl From<&str> for StateSpace {
     fn from(line: &str) -> Self {
-        let re = LazyCell::new(|| {
-            Regex::new(r"^Blueprint \d+: Each ore robot costs (?P<ore_robot_ore_cost>\d+) ore. Each clay robot costs (?P<clay_robot_ore_cost>\d+) ore. Each obsidian robot costs (?P<obsidian_robot_ore_cost>\d+) ore and (?P<obsidian_robot_clay_cost>\d+) clay. Each geode robot costs (?P<geode_robot_ore_cost>\d+) ore and (?P<geode_robot_obsidian_cost>\d+) obsidian.$").unwrap()
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
+            Regex::new(r"^Blueprint [0-9]+: Each ore robot costs (?P<ore_robot_ore_cost>[0-9]+) ore. Each clay robot costs (?P<clay_robot_ore_cost>[0-9]+) ore. Each obsidian robot costs (?P<obsidian_robot_ore_cost>[0-9]+) ore and (?P<obsidian_robot_clay_cost>[0-9]+) clay. Each geode robot costs (?P<geode_robot_ore_cost>[0-9]+) ore and (?P<geode_robot_obsidian_cost>[0-9]+) obsidian.$").unwrap()
         });
-        let cap = re.captures(line).unwrap();
+        let cap = RE.captures(line).unwrap();
         StateSpace(array![
             [cap["ore_robot_ore_cost"].parse().unwrap(), 0, 0, 0,],
             [cap["clay_robot_ore_cost"].parse().unwrap(), 0, 0, 0],

@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::{cell::LazyCell, collections::VecDeque};
+use std::{collections::VecDeque, sync::LazyLock};
 
 #[derive(Debug)]
 struct Monkey {
@@ -34,18 +34,18 @@ impl Monkey {
 
 impl From<&str> for Monkey {
     fn from(input: &str) -> Self {
-        let re = LazyCell::new(|| {
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
             Regex::new(
-                r"Monkey \d+:
-  Starting items: (?P<items>[\d, ]+)
-  Operation: new = (?P<left>old|\d+) (?P<op>\+|\*) (?P<right>old|\d+)
-  Test: divisible by (?P<divisor>\d+)
-    If true: throw to monkey (?P<is_true_monkey>\d+)
-    If false: throw to monkey (?P<is_false_monkey>\d+)",
+                r"Monkey [0-9]+:
+  Starting items: (?P<items>[0-9, ]+)
+  Operation: new = (?P<left>old|[0-9]+) (?P<op>\+|\*) (?P<right>old|[0-9]+)
+  Test: divisible by (?P<divisor>[0-9]+)
+    If true: throw to monkey (?P<is_true_monkey>[0-9]+)
+    If false: throw to monkey (?P<is_false_monkey>[0-9]+)",
             )
             .unwrap()
         });
-        let cap = re.captures(input).unwrap();
+        let cap = RE.captures(input).unwrap();
         Monkey {
             activity: 0,
             items: cap["items"]

@@ -1,4 +1,4 @@
-use std::{cell::LazyCell, ops::RangeInclusive};
+use std::{ops::RangeInclusive, sync::LazyLock};
 
 use itertools::Itertools;
 use num::Integer;
@@ -12,16 +12,19 @@ struct ScannerBeaconPair {
 }
 
 impl ScannerBeaconPair {
-    fn from(line: &str) -> ScannerBeaconPair {
-        let re = LazyCell::new(|| {
-            Regex::new(r"\bSensor at x=(?P<scanner_x>\-?\w+), y=(?P<scanner_y>\-?\w+): closest beacon is at x=(?P<beacon_x>\-?\w+), y=(?P<beacon_y>\-?\w+)\b").unwrap()
+    fn from(line: &str) -> Self {
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
+            Regex::new(
+                r"Sensor at x=(-?[0-9]+), y=(-?[0-9]+): closest beacon is at x=(-?[0-9]+), y=(-?[0-9]+)"
+            ).unwrap()
         });
-        let cap = re.captures(line).unwrap();
-        let scanner_x = cap["scanner_x"].parse().unwrap();
-        let scanner_y = cap["scanner_y"].parse().unwrap();
-        let beacon_x = cap["beacon_x"].parse().unwrap();
-        let beacon_y = cap["beacon_y"].parse().unwrap();
-        ScannerBeaconPair {
+        let [scanner_x, scanner_y, beacon_x, beacon_y] = RE
+            .captures(line)
+            .unwrap()
+            .extract::<4>()
+            .1
+            .map(|s| s.parse().unwrap());
+        Self {
             scanner_x,
             scanner_y,
             beacon_x,

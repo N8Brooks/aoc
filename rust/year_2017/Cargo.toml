@@ -9,4 +9,4 @@ hashbrown = "0.17.1"
 num = "0.4.3"
 
 [dev-dependencies]
-test-case = "3.4.0"
+test-case = "3.4.1"

@@ -1,4 +1,4 @@
-use std::{cell::LazyCell, iter::successors};
+use std::{iter::successors, sync::LazyLock};
 
 use regex::Regex;
 
@@ -40,7 +40,7 @@ pub fn part_1(input: &str) -> usize {
 }
 
 fn parse_input(input: &str) -> (Vec<Vec<Option<bool>>>, Vec<Path>) {
-    let re = LazyCell::new(|| Regex::new(r"(?:L|R|\d+)").unwrap());
+    static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?:L|R|[0-9]+)").unwrap());
     let (board, path) = input.split_once("\n\n").unwrap();
     let board = board
         .lines()
@@ -55,7 +55,7 @@ fn parse_input(input: &str) -> (Vec<Vec<Option<bool>>>, Vec<Path>) {
                 .collect()
         })
         .collect();
-    let path = re
+    let path = RE
         .captures_iter(path)
         .map(|token| match &token[0] {
             "L" => Left,

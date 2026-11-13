@@ -5,9 +5,12 @@ edition = "2024"
 
 [dependencies]
 itertools = "0.15.0"
-regex = "1.12.2"
+regex = { version = "1.13.1", default-features = false, features = [
+  "std",
+  "perf",
+] }
 num = "0.4.3"
 hashbrown = "0.17.1"
 
 [dev-dependencies]
-test-case = "3.3.1"
+test-case = "3.4.1"

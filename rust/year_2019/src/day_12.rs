@@ -66,10 +66,10 @@ fn step(vel: &mut [isize; 4], pos: &mut [isize; 4]) {
 
 /// Parses the input into three arrays of four positions each, one per axis.
 fn parse_moons(input: &str) -> [[isize; 4]; 3] {
-    use std::sync::OnceLock;
-    static RE: OnceLock<regex::Regex> = OnceLock::new();
-    let re = RE.get_or_init(|| regex::Regex::new(r"<x=(-?\d+), y=(-?\d+), z=(-?\d+)>").unwrap());
-    re.captures_iter(input)
+    use std::sync::LazyLock;
+    static RE: LazyLock<regex::Regex> =
+        LazyLock::new(|| regex::Regex::new(r"<x=(-?[0-9]+), y=(-?[0-9]+), z=(-?[0-9]+)>").unwrap());
+    RE.captures_iter(input)
         .map(|cap| [1, 2, 3].map(|i| cap[i].parse().unwrap()))
         .collect_array()
         .unwrap()

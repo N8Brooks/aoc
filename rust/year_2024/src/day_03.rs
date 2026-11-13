@@ -4,7 +4,7 @@ use regex::Regex;
 
 pub fn part_1(input: &str) -> usize {
     static RE: LazyLock<Regex> =
-        LazyLock::new(|| Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap());
+        LazyLock::new(|| Regex::new(r"mul\(([0-9]{1,3}),([0-9]{1,3})\)").unwrap());
     RE.captures_iter(input)
         .map(|cap| {
             let num_1 = cap[1].parse::<usize>().unwrap();
@@ -15,8 +15,9 @@ pub fn part_1(input: &str) -> usize {
 }
 
 pub fn part_2(input: &str) -> usize {
-    static RE: LazyLock<Regex> =
-        LazyLock::new(|| Regex::new(r"(?:(do|don't)\(\))|mul\((\d{1,3}),(\d{1,3})\)").unwrap());
+    static RE: LazyLock<Regex> = LazyLock::new(|| {
+        Regex::new(r"(?:(do|don't)\(\))|mul\(([0-9]{1,3}),([0-9]{1,3})\)").unwrap()
+    });
     let mut enabled = true;
     RE.captures_iter(input)
         .map(|cap| {

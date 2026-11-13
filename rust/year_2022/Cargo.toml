@@ -5,14 +5,17 @@ edition = "2024"
 
 [dependencies]
 itertools = "0.15.0"
-ndarray = "0.17.0"
+ndarray = "0.17.2"
 num = "0.4.3"
-regex = { version = "1.12.2", features = ["unicode-perl"] }
+regex = { version = "1.13.1", default-features = false, features = [
+  "std",
+  "perf",
+] }
 hashbrown = "0.17.1"
-serde = { version = "1.0.228", features = ["derive"] }
-serde_json = { version = "1.0.149", default-features = false, features = [
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154", default-features = false, features = [
   "std",
 ] }
 
 [dev-dependencies]
-test-case = "3.3.1"
+test-case = "3.4.1"

@@ -1,4 +1,4 @@
-use std::{cell::LazyCell, collections::HashMap};
+use std::{collections::HashMap, sync::LazyLock};
 
 use regex::Regex;
 
@@ -77,10 +77,10 @@ struct VolcanoNode {
 
 impl VolcanoNode {
     fn parse_line<'a>(line: &'a str, valves: &mut HashMap<&'a str, usize>) -> (usize, VolcanoNode) {
-        let re = LazyCell::new(|| {
-            Regex::new(r"^Valve (?P<valve>[A-Z]+) has flow rate=(?P<flow_rate>\d+); tunnels? leads? to valves? (?P<leads>[A-Z]+(?:, [A-Z]+)*)$").unwrap()
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
+            Regex::new(r"^Valve (?P<valve>[A-Z]+) has flow rate=(?P<flow_rate>[0-9]+); tunnels? leads? to valves? (?P<leads>[A-Z]+(?:, [A-Z]+)*)$").unwrap()
         });
-        let cap = re.captures(line).unwrap();
+        let cap = RE.captures(line).unwrap();
         let valve = &line[cap.name("valve").unwrap().range()];
         let new_index = valves.len();
         let index = *valves.entry(valve).or_insert(new_index);
