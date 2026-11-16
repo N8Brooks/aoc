@@ -1,6 +1,7 @@
-use std::cmp::Ordering;
+use std::cmp::Ordering::*;
 
 use itertools::Itertools as _;
+use num::Integer as _;
 
 pub fn part_1(input: &str, m: i32, n: i32) -> i32 {
     let mid_m = m / 2;
@@ -10,10 +11,10 @@ pub fn part_1(input: &str, m: i32, n: i32) -> i32 {
             let i = (i + di * 100).rem_euclid(m);
             let j = (j + dj * 100).rem_euclid(n);
             match (i.cmp(&mid_m), j.cmp(&mid_n)) {
-                (Ordering::Less, Ordering::Less) => Some(0),
-                (Ordering::Less, Ordering::Greater) => Some(1),
-                (Ordering::Greater, Ordering::Less) => Some(2),
-                (Ordering::Greater, Ordering::Greater) => Some(3),
+                (Less, Less) => Some(0),
+                (Less, Greater) => Some(1),
+                (Greater, Less) => Some(2),
+                (Greater, Greater) => Some(3),
                 _ => None,
             }
         })
@@ -27,18 +28,24 @@ pub fn part_1(input: &str, m: i32, n: i32) -> i32 {
 
 pub fn part_2(input: &str, m: i32, n: i32) -> i32 {
     let (is, js, dis, djs): (Vec<_>, Vec<_>, Vec<_>, Vec<_>) = parse_input(input).multiunzip();
-    let residues = [(is, dis, m), (js, djs, n)].map(|(mut xs, dxs, n)| {
-        let mut ti = 0;
-        let threshold = n as f32 / 4.;
-        while maths::std(&xs) > threshold {
-            xs.iter_mut()
-                .zip(&dxs)
-                .for_each(|(i, di)| *i = (*i + di).rem_euclid(n));
-            ti += 1;
-        }
-        ti
+
+    let [a, b] = [(is, dis, m), (js, djs, n)].map(|(xs, dxs, size)| {
+        (0..size)
+            .min_by_key(|&t| {
+                let (sum, sum_sq) = xs
+                    .iter()
+                    .zip(&dxs)
+                    .map(|(&x, &dx)| (x + dx * t).rem_euclid(size))
+                    .fold((0, 0), |(sum, sq), x| (sum + x, sq + x * x));
+
+                xs.len() as i32 * sum_sq - sum * sum
+            })
+            .unwrap()
     });
-    maths::chinese_remainder_theorem(&residues, &[m, n]).unwrap()
+
+    // Chinese Remainder Theorem
+    let inverse = m.extended_gcd(&n).x.rem_euclid(n);
+    a + m * ((b - a).rem_euclid(n) * inverse).rem_euclid(n)
 }
 
 fn parse_input(input: &str) -> impl Iterator<Item = (i32, i32, i32, i32)> + '_ {
@@ -55,58 +62,6 @@ fn parse_input(input: &str) -> impl Iterator<Item = (i32, i32, i32, i32)> + '_ {
             vj.parse().unwrap(),
         )
     })
-}
-
-mod maths {
-    pub(super) fn std(values: &[i32]) -> f32 {
-        let n = values.len() as f32;
-        let mean = values.iter().sum::<i32>() as f32 / n;
-        let var = values
-            .iter()
-            .map(|&x| (x as f32 - mean).powi(2))
-            .sum::<f32>()
-            / n;
-        var.sqrt()
-    }
-
-    /// Source: https://github.com/TheAlgorithms/
-    pub(super) fn chinese_remainder_theorem(residues: &[i32], modulli: &[i32]) -> Option<i32> {
-        let prod = modulli.iter().product::<i32>();
-        let mut sum = 0;
-        for (&residue, &modulus) in residues.iter().zip(modulli) {
-            let p = prod / modulus;
-            sum += residue * mod_inv(p, modulus)? * p
-        }
-        Some(sum % prod)
-    }
-
-    fn mod_inv(x: i32, n: i32) -> Option<i32> {
-        let (g, x, _) = extended_euclidean_algorithm(x, n);
-        if g == 1 {
-            Some((x % n + n) % n)
-        } else {
-            None
-        }
-    }
-
-    fn extended_euclidean_algorithm(a: i32, b: i32) -> (i32, i32, i32) {
-        let (mut old_r, mut rem) = (a, b);
-        let (mut old_s, mut coeff_s) = (1, 0);
-        let (mut old_t, mut coeff_t) = (0, 1);
-        while rem != 0 {
-            let quotient = old_r / rem;
-            update_step(&mut rem, &mut old_r, quotient);
-            update_step(&mut coeff_s, &mut old_s, quotient);
-            update_step(&mut coeff_t, &mut old_t, quotient);
-        }
-        (old_r, old_s, old_t)
-    }
-
-    fn update_step(a: &mut i32, old_a: &mut i32, quotient: i32) {
-        let temp = *a;
-        *a = *old_a - quotient * temp;
-        *old_a = temp;
-    }
 }
 
 #[cfg(test)]
