@@ -1,10 +1,14 @@
-#![feature(const_array)]
-#![feature(const_closures)]
-#![feature(const_trait_impl)]
-#![allow(incomplete_features)] // generic_const_exprs
-#![feature(generic_const_exprs)]
-#![feature(iterator_try_collect)]
-#![feature(iter_collect_into)]
+#![feature(
+    const_array,
+    const_closures,
+    const_trait_impl,
+    gca_const_items,
+    gca_min_const_items,
+    generic_const_items,
+    iter_collect_into,
+    iterator_try_collect
+)]
+#![allow(incomplete_features)]
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;

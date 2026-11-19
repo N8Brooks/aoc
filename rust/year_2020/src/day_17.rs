@@ -1,7 +1,9 @@
-use std::array;
+use std::{array, gca};
 
 use hashbrown::{DefaultHashBuilder, HashSet};
 use itertools::Itertools as _;
+
+const NEIGHBOR_COUNT<const M: usize>: usize = 3usize.pow(M as u32) - 1;
 
 pub fn part_1(input: &str) -> usize {
     simulate::<3>(input)
@@ -11,10 +13,7 @@ pub fn part_2(input: &str) -> usize {
     simulate::<4>(input)
 }
 
-fn simulate<const M: usize>(input: &str) -> usize
-where
-    [(); 3usize.pow(M as u32) - 1]:,
-{
+fn simulate<const M: usize>(input: &str) -> usize {
     let directions = const { neighbors::<M>() };
 
     let mut positions: HashSet<[i8; M]> = input
@@ -49,11 +48,8 @@ where
     positions.len()
 }
 
-const fn neighbors<const M: usize>() -> [[i8; M]; 3usize.pow(M as u32) - 1]
-where
-    [(); 3usize.pow(M as u32) - 1]:,
-{
-    let n = 3usize.pow(M as u32) - 1;
+const fn neighbors<const M: usize>() -> [[i8; M]; gca!(NEIGHBOR_COUNT::<M>)] {
+    let n = NEIGHBOR_COUNT::<M>;
 
     array::from_fn(const |i| {
         let value = i + (i >= n / 2) as usize;
