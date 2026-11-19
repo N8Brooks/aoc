@@ -1,6 +1,6 @@
 #![feature(iter_next_chunk)]
-#![feature(generic_const_exprs)]
-#![allow(incomplete_features)] // generic_const_exprs
+#![feature(gca_const_items, gca_min_const_items, generic_const_items)]
+#![allow(incomplete_features)]
 #![allow(unstable_name_collisions)] // iter_intersperse
 pub mod day_01;
 pub mod day_02;

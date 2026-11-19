@@ -1,6 +1,8 @@
-use std::iter::successors;
+use std::{gca, iter::successors};
 
 use itertools::{Itertools as _, multizip};
+
+const PADDED_LEN<const N: usize>: usize = N + 2;
 
 pub fn part_1(input: &str) -> usize {
     resource_score::<50, 50>(input, 10)
@@ -30,11 +32,7 @@ impl From<u8> for Acre {
     }
 }
 
-pub fn resource_score<const M: usize, const N: usize>(input: &str, t: usize) -> usize
-where
-    [(); N + 2]:,
-    [(); M + 2]:,
-{
+pub fn resource_score<const M: usize, const N: usize>(input: &str, t: usize) -> usize {
     let area_0 = parse_area::<M, N>(input);
 
     if t == 0 {
@@ -57,11 +55,7 @@ fn parse_area<const M: usize, const N: usize>(input: &str) -> [[Acre; N]; M] {
         .unwrap()
 }
 
-fn brent_cycle<const M: usize, const N: usize>(x0: [[Acre; N]; M]) -> (usize, usize)
-where
-    [(); N + 2]:,
-    [(); M + 2]:,
-{
+fn brent_cycle<const M: usize, const N: usize>(x0: [[Acre; N]; M]) -> (usize, usize) {
     let mut power = 1;
     let mut lambda = 1;
 
@@ -95,11 +89,7 @@ where
     (mu, lambda)
 }
 
-fn step<const M: usize, const N: usize>(init: &[[Acre; N]; M]) -> [[Acre; N]; M]
-where
-    [(); N + 2]:,
-    [(); M + 2]:,
-{
+fn step<const M: usize, const N: usize>(init: &[[Acre; N]; M]) -> [[Acre; N]; M] {
     let area = pad(init);
     area.array_windows()
         .map(|[a, b, c]| {
@@ -126,8 +116,10 @@ where
         .unwrap()
 }
 
-fn pad<const M: usize, const N: usize>(init: &[[Acre; N]; M]) -> [[Acre; N + 2]; M + 2] {
-    let mut area = [[Open; N + 2]; M + 2];
+fn pad<const M: usize, const N: usize>(
+    init: &[[Acre; N]; M],
+) -> [[Acre; gca!(PADDED_LEN::<N>)]; gca!(PADDED_LEN::<M>)] {
+    let mut area = [[Open; gca!(PADDED_LEN::<N>)]; gca!(PADDED_LEN::<M>)];
     area.iter_mut().skip(1).zip(init).for_each(|(area, init)| {
         area[1..=N].copy_from_slice(init);
     });

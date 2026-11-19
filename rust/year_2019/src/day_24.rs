@@ -1,7 +1,9 @@
-use std::{array, iter::successors};
+use std::{array, gca, iter::successors};
 
 use hashbrown::DefaultHashBuilder;
 use itertools::Itertools as _;
+
+const LEVEL_COUNT<const N: usize>: usize = 2 * N + 1;
 
 pub fn part_1(input: &str) -> usize {
     let grid0 = parse_grid(input);
@@ -40,11 +42,8 @@ pub fn part_2(input: &str) -> usize {
     total_bugs::<200>(input)
 }
 
-fn total_bugs<const N: usize>(input: &str) -> usize
-where
-    [(); 2 * N + 1]:,
-{
-    let mut grids0 = [[[false; 5]; 5]; 2 * N + 1];
+fn total_bugs<const N: usize>(input: &str) -> usize {
+    let mut grids0 = [[[false; 5]; 5]; gca!(LEVEL_COUNT::<N>)];
     grids0[N] = parse_grid(input);
     let last = (1..=N).fold(grids0, |grids, step| {
         array::from_fn(|k| {

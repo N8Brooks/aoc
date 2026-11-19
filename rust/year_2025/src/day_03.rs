@@ -1,3 +1,7 @@
+use std::gca;
+
+const WINDOW_SIZE<const N: usize>: usize = N + 1;
+
 pub fn part_1(input: &str) -> usize {
     sum_max_joltage::<2>(input)
 }
@@ -6,15 +10,12 @@ pub fn part_2(input: &str) -> usize {
     sum_max_joltage::<12>(input)
 }
 
-fn sum_max_joltage<const N: usize>(input: &str) -> usize
-where
-    [(); N + 1]:,
-{
+fn sum_max_joltage<const N: usize>(input: &str) -> usize {
     input
         .lines()
         .map(|line| {
             let (init, rest) = line.as_bytes().split_at(N);
-            let mut window = [b'0'; N + 1];
+            let mut window = [b'0'; gca!(WINDOW_SIZE::<N>)];
             window[..N].copy_from_slice(init);
             for &b in rest {
                 window[N] = b;

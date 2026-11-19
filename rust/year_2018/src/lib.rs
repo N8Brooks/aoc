@@ -1,6 +1,6 @@
 #![feature(iter_next_chunk)]
 #![feature(iter_collect_into)]
-#![feature(generic_const_exprs)]
+#![feature(gca_const_items, gca_min_const_items, generic_const_items)]
 #![feature(option_reference_flattening)]
 #![allow(incomplete_features)]
 pub mod day_01;

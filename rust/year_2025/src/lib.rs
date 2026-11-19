@@ -1,4 +1,4 @@
-#![feature(generic_const_exprs)]
+#![feature(gca_const_items, gca_min_const_items, generic_const_items)]
 #![allow(incomplete_features)]
 #![allow(unstable_name_collisions)] // collect_array
 pub mod day_01;
