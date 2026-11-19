@@ -1,8 +1,8 @@
 #![feature(const_array)]
 #![feature(const_closures)]
 #![feature(const_trait_impl)]
-#![feature(generic_const_exprs)]
 #![allow(incomplete_features)] // generic_const_exprs
+#![feature(generic_const_exprs)]
 #![feature(iterator_try_collect)]
 #![feature(iter_collect_into)]
 pub mod day_01;
@@ -22,3 +22,4 @@ pub mod day_14;
 pub mod day_15;
 pub mod day_16;
 pub mod day_17;
+pub mod day_18;
