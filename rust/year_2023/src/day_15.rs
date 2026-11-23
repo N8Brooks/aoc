@@ -97,22 +97,22 @@ mod test {
 
     const EXAMPLE_1: &str = "rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2023/day_15.txt");
+    const INPUT: &str = include_str!("../test_data/day_15.txt");
 
-    #[test_case(EXAMPLE_1, 1320)]
-    #[test_case(INPUT, 517315)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 1320)]
+    #[test_case(INPUT => 517315)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE_1, 145)]
-    #[test_case(INPUT, 247763)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_1 => 145)]
+    #[test_case(INPUT => 247763)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 
-    #[test_case("HASH", 52)]
-    fn hash(input: &str, expected: usize) {
-        assert_eq!(super::hash(input), expected);
+    #[test_case("HASH" => 52)]
+    fn hash(input: &str) -> usize {
+        super::hash(input)
     }
 }

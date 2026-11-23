@@ -35,17 +35,17 @@ const NUMS: [&str; 9] = [
 mod test {
     use test_case::test_case;
 
-    const INPUT: &str = include_str!("../../../test_data/year_2023/day_01.txt");
+    const INPUT: &str = include_str!("../test_data/day_01.txt");
 
     const EXAMPLE_1: &str = "1abc2
 pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet";
 
-    #[test_case(EXAMPLE_1, 142)]
-    #[test_case(INPUT, 52974)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 142)]
+    #[test_case(INPUT => 52974)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
     const EXAMPLE_2: &str = "two1nine
@@ -56,9 +56,9 @@ xtwone3four
 zoneight234
 7pqrstsixteen";
 
-    #[test_case(EXAMPLE_2, 281)]
-    #[test_case(INPUT, 53340)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_2 => 281)]
+    #[test_case(INPUT => 53340)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

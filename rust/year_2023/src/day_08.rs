@@ -73,11 +73,11 @@ impl<'a> Network<'a> {
 mod test {
     use test_case::test_case;
 
-    #[test_case(EXAMPLE_1, 2)]
-    #[test_case(EXAMPLE_2, 6)]
-    #[test_case(INPUT, 20221)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE_1 => 2)]
+    #[test_case(EXAMPLE_2 => 6)]
+    #[test_case(INPUT => 20221)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
     const EXAMPLE_1: &str = "RL
@@ -96,13 +96,13 @@ AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)";
 
-    #[test_case(EXAMPLE_3, 6)]
-    #[test_case(INPUT, 14616363770447)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE_3 => 6)]
+    #[test_case(INPUT => 14616363770447)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 
-    const INPUT: &str = include_str!("../../../test_data/year_2023/day_08.txt");
+    const INPUT: &str = include_str!("../test_data/day_08.txt");
 
     const EXAMPLE_3: &str = "LR
 
