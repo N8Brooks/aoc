@@ -56,17 +56,17 @@ mod test {
 0,0 -> 8,8
 5,5 -> 8,2";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2021/day_05.txt");
+    const INPUT: &str = include_str!("../test_data/day_05.txt");
 
-    #[test_case(EXAMPLE, 5)]
-    #[test_case(INPUT, 5167)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 5)]
+    #[test_case(INPUT => 5167)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 12)]
-    #[test_case(INPUT, 17604)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 12)]
+    #[test_case(INPUT => 17604)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

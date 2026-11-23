@@ -64,17 +64,17 @@ mod test {
 00010
 01010";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2021/day_03.txt");
+    const INPUT: &str = include_str!("../test_data/day_03.txt");
 
-    #[test_case(EXAMPLE, 198)]
-    #[test_case(INPUT, 3242606)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 198)]
+    #[test_case(INPUT => 3242606)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 230)]
-    #[test_case(INPUT, 4856080)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 230)]
+    #[test_case(INPUT => 4856080)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

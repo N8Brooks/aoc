@@ -1,37 +1,65 @@
+use std::str::FromStr;
+
 use num::complex::Complex;
 
+use crate::day_02::Dir::*;
+
 pub fn part_1(input: &str) -> isize {
-    let Complex { re: hpos, im: vpos } = input
-        .lines()
-        .map(|line| {
-            let (dir, mag) = line.split_once(' ').unwrap();
-            let mag = mag.parse().unwrap();
-            match dir {
-                "forward" => Complex::new(mag, 0),
-                "down" => Complex::new(0, mag),
-                "up" => Complex::new(0, -mag),
-                _ => panic!("invalid direction"),
-            }
+    let Complex { re: i, im: j } = parse_input(input)
+        .map(|(dir, mag)| match dir {
+            Forward => Complex::new(0, mag),
+            Down => Complex::new(mag, 0),
+            Up => Complex::new(-mag, 0),
         })
-        .fold(Complex::<isize>::new(0, 0), |a, b| a + b);
-    hpos * vpos
+        .sum();
+
+    i * j
 }
 
 pub fn part_2(input: &str) -> isize {
     let mut aim = 0;
-    let mut pos = Complex::<isize>::new(0, 0);
-    for line in input.lines() {
+
+    let Complex { re: i, im: j } = parse_input(input)
+        .filter_map(|(dir, mag)| match dir {
+            Forward => Some(Complex::new(aim * mag, mag)),
+            Down => {
+                aim += mag;
+                None
+            }
+            Up => {
+                aim -= mag;
+                None
+            }
+        })
+        .sum();
+
+    i * j
+}
+
+fn parse_input(input: &str) -> impl Iterator<Item = (Dir, isize)> {
+    input.lines().map(|line| {
         let (dir, mag) = line.split_once(' ').unwrap();
-        let mag = mag.parse().unwrap();
-        match dir {
-            "forward" => pos += Complex::new(mag, aim * mag),
-            "down" => aim += mag,
-            "up" => aim -= mag,
-            _ => panic!("invalid direction"),
-        }
+        (dir.parse().unwrap(), mag.parse().unwrap())
+    })
+}
+
+enum Dir {
+    Forward,
+    Down,
+    Up,
+}
+
+impl FromStr for Dir {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "forward" => Dir::Forward,
+            "down" => Dir::Down,
+            "up" => Dir::Up,
+            _ => return Err(()),
+        })
     }
-    let Complex { re: hpos, im: vpos } = pos;
-    hpos * vpos
 }
 
 #[cfg(test)]
@@ -45,17 +73,17 @@ up 3
 down 8
 forward 2";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2021/day_02.txt");
+    const INPUT: &str = include_str!("../test_data/day_02.txt");
 
-    #[test_case(EXAMPLE, 150)]
-    #[test_case(INPUT, 1855814)]
-    fn part_1(input: &str, expected: isize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 150)]
+    #[test_case(INPUT => 1855814)]
+    fn part_1(input: &str) -> isize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 900)]
-    #[test_case(INPUT, 1845455714)]
-    fn part_2(input: &str, expected: isize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 900)]
+    #[test_case(INPUT => 1845455714)]
+    fn part_2(input: &str) -> isize {
+        super::part_2(input)
     }
 }

@@ -50,17 +50,17 @@ mod test {
 
     const EXAMPLE: &str = "16,1,2,0,4,2,7,1,2,14";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2021/day_07.txt");
+    const INPUT: &str = include_str!("../test_data/day_07.txt");
 
-    #[test_case(EXAMPLE, 37)]
-    #[test_case(INPUT, 345035)]
-    fn part_1(input: &str, expected: isize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 37)]
+    #[test_case(INPUT => 345035)]
+    fn part_1(input: &str) -> isize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 168)]
-    #[test_case(INPUT, 97038163)]
-    fn part_2(input: &str, expected: isize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 168)]
+    #[test_case(INPUT => 97038163)]
+    fn part_2(input: &str) -> isize {
+        super::part_2(input)
     }
 }

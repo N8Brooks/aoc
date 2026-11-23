@@ -1,11 +1,11 @@
-use itertools::Itertools;
+use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     input
         .lines()
         .map(|line| line.parse::<u64>().unwrap())
-        .tuple_windows()
-        .filter(|(a, b)| b > a)
+        .array_windows()
+        .filter(|[a, b]| b > a)
         .count()
 }
 
@@ -13,10 +13,10 @@ pub fn part_2(input: &str) -> usize {
     input
         .lines()
         .map(|line| line.parse::<u64>().unwrap())
-        .tuple_windows()
-        .map(|(a, b, c)| a + b + c)
-        .tuple_windows()
-        .filter(|(a, b)| b > a)
+        .array_windows()
+        .map(|[a, b, c]| a + b + c)
+        .array_windows()
+        .filter(|[a, b]| b > a)
         .count()
 }
 
@@ -35,17 +35,17 @@ mod tests {
 260
 263";
 
-    static INPUT: &str = include_str!("../../../test_data/year_2021/day_01.txt");
+    static INPUT: &str = include_str!("../test_data/day_01.txt");
 
-    #[test_case(EXAMPLE, 7)]
-    #[test_case(INPUT, 1557)]
-    fn part_2(input: &str, actual: usize) {
-        assert_eq!(super::part_1(input), actual);
+    #[test_case(EXAMPLE => 7)]
+    #[test_case(INPUT => 1557)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 5)]
-    #[test_case(INPUT, 1608)]
-    fn part_1(input: &str, actual: usize) {
-        assert_eq!(super::part_2(input), actual);
+    #[test_case(EXAMPLE => 5)]
+    #[test_case(INPUT => 1608)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }

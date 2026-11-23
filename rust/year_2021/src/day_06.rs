@@ -27,17 +27,17 @@ mod test {
 
     const EXAMPLE: &str = "3,4,3,1,2";
 
-    const INPUT: &str = include_str!("../../../test_data/year_2021/day_06.txt");
+    const INPUT: &str = include_str!("../test_data/day_06.txt");
 
-    #[test_case(EXAMPLE, 5934)]
-    #[test_case(INPUT, 389726)]
-    fn part_1(input: &str, expected: usize) {
-        assert_eq!(super::part_1(input), expected);
+    #[test_case(EXAMPLE => 5934)]
+    #[test_case(INPUT => 389726)]
+    fn part_1(input: &str) -> usize {
+        super::part_1(input)
     }
 
-    #[test_case(EXAMPLE, 26984457539)]
-    #[test_case(INPUT, 1743335992042)]
-    fn part_2(input: &str, expected: usize) {
-        assert_eq!(super::part_2(input), expected);
+    #[test_case(EXAMPLE => 26984457539)]
+    #[test_case(INPUT => 1743335992042)]
+    fn part_2(input: &str) -> usize {
+        super::part_2(input)
     }
 }
