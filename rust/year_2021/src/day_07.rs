@@ -1,26 +1,21 @@
-use hashbrown::DefaultHashBuilder;
-use itertools::Itertools as _;
-
 pub fn part_1(input: &str) -> usize {
-    let counts = parse_input(input);
-    counts
-        .keys()
-        .map(|a| counts.iter().map(|(&b, count)| a.abs_diff(b) * count).sum())
-        .min()
-        .unwrap()
+    let mut positions = parse_input(input);
+    let middle = positions.len() / 2;
+    let median = *positions.select_nth_unstable(middle).1;
+    positions.into_iter().map(|p| p.abs_diff(median)).sum()
 }
 
 pub fn part_2(input: &str) -> usize {
-    let counts = parse_input(input);
-    let (&min, &max) = counts.keys().minmax().into_option().unwrap();
-    (min..max + 1)
-        .map(|a| {
-            counts
+    let positions = parse_input(input);
+    let mean = positions.iter().sum::<usize>() / positions.len();
+    [mean, mean + 1]
+        .into_iter()
+        .map(|target| {
+            positions
                 .iter()
-                .map(|(&b, count)| {
-                    let n = a.abs_diff(b);
-                    let fuel_cost = n * (n + 1) / 2;
-                    fuel_cost * count
+                .map(|&p| {
+                    let d = p.abs_diff(target);
+                    d * (d + 1) / 2
                 })
                 .sum()
         })
@@ -28,11 +23,12 @@ pub fn part_2(input: &str) -> usize {
         .unwrap()
 }
 
-fn parse_input(input: &str) -> std::collections::HashMap<usize, usize, DefaultHashBuilder> {
+fn parse_input(input: &str) -> Vec<usize> {
     input
+        .trim()
         .split(',')
-        .map(|x| x.parse().unwrap())
-        .counts_with_hasher(DefaultHashBuilder::default())
+        .map(|s| s.parse().unwrap())
+        .collect()
 }
 
 #[cfg(test)]
