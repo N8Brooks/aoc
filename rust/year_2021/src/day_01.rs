@@ -14,9 +14,7 @@ pub fn part_2(input: &str) -> usize {
         .lines()
         .map(|line| line.parse::<u64>().unwrap())
         .array_windows()
-        .map(|[a, b, c]| a + b + c)
-        .array_windows()
-        .filter(|[a, b]| b > a)
+        .filter(|[a, _, _, d]| d > a)
         .count()
 }
 
