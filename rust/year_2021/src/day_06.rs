@@ -1,43 +1,41 @@
-use std::collections::VecDeque;
+pub fn part_1(input: &str) -> u64 {
+    simulate(input, 80)
+}
 
-fn simulate(input: &str, days: usize) -> usize {
-    let mut counts = VecDeque::from(vec![0; 9]);
+pub fn part_2(input: &str) -> u64 {
+    simulate(input, 256)
+}
+
+fn simulate(input: &str, days: usize) -> u64 {
+    let mut counts = [0; 9];
     for counter in input.split(',') {
         let counter: usize = counter.parse().unwrap();
         counts[counter] += 1;
     }
     for _ in 0..days {
-        counts[7] += counts[0];
         counts.rotate_left(1);
+        counts[6] += counts[8];
     }
-    counts.iter().sum()
-}
-
-pub fn part_1(input: &str) -> usize {
-    simulate(input, 80)
-}
-
-pub fn part_2(input: &str) -> usize {
-    simulate(input, 256)
+    counts.into_iter().sum()
 }
 
 #[cfg(test)]
 mod test {
     use test_case::test_case;
 
-    const EXAMPLE: &str = "3,4,3,1,2";
-
     const INPUT: &str = include_str!("../test_data/day_06.txt");
+
+    const EXAMPLE: &str = "3,4,3,1,2";
 
     #[test_case(EXAMPLE => 5934)]
     #[test_case(INPUT => 389726)]
-    fn part_1(input: &str) -> usize {
+    fn part_1(input: &str) -> u64 {
         super::part_1(input)
     }
 
     #[test_case(EXAMPLE => 26984457539)]
     #[test_case(INPUT => 1743335992042)]
-    fn part_2(input: &str) -> usize {
+    fn part_2(input: &str) -> u64 {
         super::part_2(input)
     }
 }
