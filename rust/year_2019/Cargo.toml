@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 hashbrown = { version = "0.17.2", features = ["nightly"] }
 itertools = "0.15.0"
-num = "0.4.3"
+num = { version = "0.4.3", default-features = false, features = ["alloc"] }
 regex = { version = "1.13.1", default-features = false, features = [
   "std",
   "perf",

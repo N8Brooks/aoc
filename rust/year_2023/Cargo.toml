@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 hashbrown = { version = "0.17.2", features = ["nightly"] }
-num = "0.4.3"
+num = { version = "0.4.3", default-features = false }
 
 [dev-dependencies]
 test-case = "3.4.1"

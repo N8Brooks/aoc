@@ -6,16 +6,14 @@ edition = "2024"
 [dependencies]
 hashbrown = { version = "0.17.2", features = ["nightly"] }
 itertools = "0.15.0"
-ndarray = "0.17.2"
-num = "0.4.3"
+ndarray = { version = "0.17.2", default-features = false }
+num = { version = "0.4.3", default-features = false }
 regex = { version = "1.13.1", default-features = false, features = [
   "std",
   "perf",
 ] }
-serde = { version = "1.0.229", features = ["derive"] }
-serde_json = { version = "1.0.154", default-features = false, features = [
-  "std",
-] }
+serde = { version = "1.0.229", default-features = false, features = ["alloc", "derive"] }
+serde_json = { version = "1.0.154", default-features = false, features = ["alloc"] }
 
 [dev-dependencies]
 test-case = "3.4.1"
