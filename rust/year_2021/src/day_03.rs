@@ -1,50 +1,39 @@
-use std::str;
-
 pub fn part_1(input: &str) -> usize {
-    let bit_length = input.find('\n').unwrap();
-    let mut bit_counts = vec![0; bit_length];
-    for line in input.lines() {
-        for (i, bit) in line.bytes().enumerate() {
-            let bit = bit - b'0';
-            bit_counts[i] += bit as usize;
-        }
-    }
+    let nums: Vec<_> = input.lines().map(|line| line.as_bytes()).collect();
+    let (n, m) = (nums.len(), nums[0].len());
 
-    let n_bin_nums = (input.len() + 1) / (bit_length + 1);
-    let mode_thresh = n_bin_nums / 2;
-    let gamma = bit_counts.iter().fold(0, |gamma, &bit_count| {
-        let mode_bit = bit_count > mode_thresh;
-        gamma << 1 | mode_bit as usize
+    let gamma = (0..m).fold(0, |gamma, i| {
+        (gamma << 1) | usize::from(2 * nums.iter().filter(|bytes| bytes[i] == b'1').count() > n)
     });
-    let epsilon = ((1 << bit_length) - 1) ^ gamma;
+
+    let mask = (1 << m) - 1;
+    let epsilon = mask ^ gamma;
 
     gamma * epsilon
 }
 
 pub fn part_2(input: &str) -> usize {
-    let mut i = 0;
-    let mut bin_nums: Vec<_> = input.lines().map(|line| line.as_bytes()).collect();
-    while bin_nums.len() > 1 {
-        let bit_count = bin_nums.iter().filter(|bin_num| bin_num[i] == b'1').count();
-        let mode = b'0' + (2 * bit_count >= bin_nums.len()) as u8;
-        bin_nums.retain_mut(|bin_num| bin_num[i] == mode);
-        i += 1;
-    }
-    let oxygen = str::from_utf8(bin_nums[0]).unwrap();
-    let oxygen = usize::from_str_radix(oxygen, 2).unwrap();
+    rating(input, true) * rating(input, false)
+}
 
-    let mut i = 0;
-    let mut bin_nums: Vec<_> = input.lines().map(|line| line.as_bytes()).collect();
-    while bin_nums.len() > 1 {
-        let bit_count = bin_nums.iter().filter(|bin_num| bin_num[i] == b'1').count();
-        let mode = b'0' + (2 * bit_count < bin_nums.len()) as u8;
-        bin_nums.retain_mut(|bin_num| bin_num[i] == mode);
-        i += 1;
-    }
-    let co2 = str::from_utf8(bin_nums[0]).unwrap();
-    let co2 = usize::from_str_radix(co2, 2).unwrap();
+fn rating(input: &str, most_common: bool) -> usize {
+    let mut nums: Vec<_> = input.lines().collect();
+    let m = nums[0].len();
 
-    oxygen * co2
+    for i in 0..m {
+        if nums.len() == 1 {
+            break;
+        }
+
+        let ones = nums.iter().filter(|num| num.as_bytes()[i] == b'1').count();
+
+        let keep_one = (2 * ones >= nums.len()) == most_common;
+        let bit = b'0' + u8::from(keep_one);
+
+        nums.retain(|num| num.as_bytes()[i] == bit);
+    }
+
+    usize::from_str_radix(nums[0], 2).unwrap()
 }
 
 #[cfg(test)]
