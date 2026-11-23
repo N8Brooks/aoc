@@ -5,7 +5,7 @@ use num::complex::Complex;
 use crate::day_02::Dir::*;
 
 pub fn part_1(input: &str) -> isize {
-    let Complex { re: i, im: j } = parse_input(input)
+    let Complex { re: d, im: h } = parse_input(input)
         .map(|(dir, mag)| match dir {
             Forward => Complex::new(0, mag),
             Down => Complex::new(mag, 0),
@@ -13,27 +13,17 @@ pub fn part_1(input: &str) -> isize {
         })
         .sum();
 
-    i * j
+    d * h
 }
 
 pub fn part_2(input: &str) -> isize {
-    let mut aim = 0;
+    let (h, d, _) = parse_input(input).fold((0, 0, 0), |(x, y, aim), (dir, mag)| match dir {
+        Forward => (x + mag, y + aim * mag, aim),
+        Down => (x, y, aim + mag),
+        Up => (x, y, aim - mag),
+    });
 
-    let Complex { re: i, im: j } = parse_input(input)
-        .filter_map(|(dir, mag)| match dir {
-            Forward => Some(Complex::new(aim * mag, mag)),
-            Down => {
-                aim += mag;
-                None
-            }
-            Up => {
-                aim -= mag;
-                None
-            }
-        })
-        .sum();
-
-    i * j
+    h * d
 }
 
 fn parse_input(input: &str) -> impl Iterator<Item = (Dir, isize)> {
