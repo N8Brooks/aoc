@@ -1,5 +1,4 @@
-use std::collections::{HashMap, HashSet};
-
+use hashbrown::{HashMap, HashSet};
 use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> isize {

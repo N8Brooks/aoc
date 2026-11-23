@@ -1,13 +1,13 @@
+use hashbrown::HashSet;
 use itertools::Itertools;
-use std::collections::HashSet;
 
 pub fn part_1(input: &str) -> u32 {
     input
         .lines()
         .map(|line| {
             let (a, b) = line.split_at(line.len() / 2);
-            let a: HashSet<u8> = HashSet::from_iter(a.bytes());
-            let b: HashSet<u8> = HashSet::from_iter(b.bytes());
+            let a: HashSet<_> = a.bytes().collect();
+            let b: HashSet<_> = b.bytes().collect();
             let item = a.intersection(&b).next().unwrap();
             get_item_priority(item)
         })
@@ -19,9 +19,9 @@ pub fn part_2(input: &str) -> u32 {
         .lines()
         .tuples()
         .map(|(a, b, c)| {
-            let mut a: HashSet<u8> = HashSet::from_iter(a.bytes());
-            let b: HashSet<u8> = HashSet::from_iter(b.bytes());
-            let c: HashSet<u8> = HashSet::from_iter(c.bytes());
+            let mut a: HashSet<u8> = a.bytes().collect();
+            let b: HashSet<u8> = b.bytes().collect();
+            let c: HashSet<u8> = c.bytes().collect();
             a.retain(|item| b.contains(item) && c.contains(item));
             let item = a.iter().next().unwrap();
             get_item_priority(item)

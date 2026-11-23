@@ -1,6 +1,7 @@
 use std::cell::RefCell;
-use std::collections::HashMap;
 use std::rc::Rc;
+
+use hashbrown::HashMap;
 
 #[derive(Default, Debug)]
 struct Node<'a> {

@@ -1,6 +1,6 @@
-use std::{collections::HashSet, ops::Range};
+use std::ops::Range;
 
-use hashbrown::DefaultHashBuilder;
+use hashbrown::{DefaultHashBuilder, HashSet};
 use itertools::Itertools;
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]

@@ -1,5 +1,5 @@
-use num::{signum, Complex};
-use std::collections::HashMap;
+use hashbrown::HashMap;
+use num::{Complex, signum};
 
 fn parse_line(line: &str) -> (Complex<isize>, Complex<isize>) {
     let (start, stop) = line.split_once(" -> ").unwrap();

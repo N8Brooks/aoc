@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+hashbrown = { version = "0.17.2", features = ["nightly"] }
 itertools = "0.15.0"
-hashbrown = "0.17.1"
 num = "0.4.3"
 
 [dev-dependencies]

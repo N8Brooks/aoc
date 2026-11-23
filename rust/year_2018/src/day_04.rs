@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use itertools::Itertools;
+use hashbrown::DefaultHashBuilder;
+use itertools::Itertools as _;
 
 pub fn part_1(input: &str) -> usize {
     let (id, counts) = parse_input(input)
@@ -40,7 +41,7 @@ enum Event {
 
 use Event::*;
 
-fn parse_input(input: &str) -> HashMap<usize, [usize; 60]> {
+fn parse_input(input: &str) -> HashMap<usize, [usize; 60], DefaultHashBuilder> {
     input
         .lines()
         .map(|line| {
@@ -66,7 +67,7 @@ fn parse_input(input: &str) -> HashMap<usize, [usize; 60]> {
         })
         .chunk_by(|(id, ..)| *id)
         .into_iter()
-        .into_grouping_map_by(|(id, _)| *id)
+        .into_grouping_map_by_with_hasher(|(id, _)| *id, DefaultHashBuilder::default())
         .fold([0; 60], |counts, _, (_, data)| {
             data.filter(|(.., event)| !matches!(event, BeginShift(_)))
                 .map(|(_, timestamp, event)| {

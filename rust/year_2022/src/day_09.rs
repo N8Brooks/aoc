@@ -1,5 +1,5 @@
+use hashbrown::HashSet;
 use num::Complex;
-use std::collections::HashSet;
 
 pub fn part_1(input: &str) -> usize {
     simulate_rope(input, &mut [Complex::new(0, 0)])

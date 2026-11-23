@@ -1,5 +1,6 @@
-use std::{collections::HashMap, sync::LazyLock};
+use std::sync::LazyLock;
 
+use hashbrown::HashMap;
 use regex::Regex;
 
 struct VolcanoState<'a> {
@@ -110,8 +111,7 @@ pub fn part_1(input: &str) -> usize {
 
 #[cfg(test)]
 mod test {
-    use std::collections::HashMap;
-
+    use hashbrown::HashMap;
     use test_case::test_case;
 
     const EXAMPLE: &str = "Valve AA has flow rate=0; tunnels lead to valves DD, II, BB

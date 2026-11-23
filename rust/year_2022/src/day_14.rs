@@ -1,26 +1,4 @@
-use std::collections::HashSet;
-
-fn parse_cave(input: &str) -> HashSet<(isize, isize)> {
-    let mut cave = HashSet::new();
-    for line in input.lines() {
-        let mut coordinates = line.split(" -> ").map(|coordinate| {
-            let (x, y) = coordinate.split_once(',').unwrap();
-            (x.parse::<isize>().unwrap(), y.parse::<isize>().unwrap())
-        });
-        let (mut x, mut y) = coordinates.next().unwrap();
-        for (x_end, y_end) in coordinates {
-            let x_d = (x_end - x).signum();
-            let y_d = (y_end - y).signum();
-            while (x, y) != (x_end, y_end) {
-                cave.insert((x, y));
-                x += x_d;
-                y += y_d;
-            }
-            cave.insert((x, y));
-        }
-    }
-    cave
-}
+use hashbrown::HashSet;
 
 pub fn part_1(input: &str) -> usize {
     let mut cave = parse_cave(input);
@@ -65,6 +43,28 @@ pub fn part_2(input: &str) -> usize {
         }
     }
     cave.len() - rock_count
+}
+
+fn parse_cave(input: &str) -> HashSet<(isize, isize)> {
+    let mut cave = HashSet::new();
+    for line in input.lines() {
+        let mut coordinates = line.split(" -> ").map(|coordinate| {
+            let (x, y) = coordinate.split_once(',').unwrap();
+            (x.parse::<isize>().unwrap(), y.parse::<isize>().unwrap())
+        });
+        let (mut x, mut y) = coordinates.next().unwrap();
+        for (x_end, y_end) in coordinates {
+            let x_d = (x_end - x).signum();
+            let y_d = (y_end - y).signum();
+            while (x, y) != (x_end, y_end) {
+                cave.insert((x, y));
+                x += x_d;
+                y += y_d;
+            }
+            cave.insert((x, y));
+        }
+    }
+    cave
 }
 
 #[cfg(test)]

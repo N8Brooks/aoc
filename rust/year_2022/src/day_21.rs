@@ -37,7 +37,7 @@ impl Operator {
 }
 
 mod part_1_context {
-    use std::collections::HashMap;
+    use hashbrown::HashMap;
 
     use super::Operator;
 
@@ -89,8 +89,7 @@ mod part_1_context {
 }
 
 mod part_2_context {
-    use std::collections::HashMap;
-
+    use hashbrown::HashMap;
     use itertools::{Either, Itertools};
 
     use super::Operator;

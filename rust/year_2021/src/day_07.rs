@@ -1,40 +1,24 @@
-use itertools::{Itertools, MinMaxResult};
-use std::collections::HashMap;
+use hashbrown::DefaultHashBuilder;
+use itertools::Itertools as _;
 
-pub fn part_1(input: &str) -> isize {
-    let mut counts: HashMap<isize, isize> = HashMap::new();
-    for x in input.split(',') {
-        let x = x.parse().unwrap();
-        *counts.entry(x).or_default() += 1;
-    }
+pub fn part_1(input: &str) -> usize {
+    let counts = parse_input(input);
     counts
         .keys()
-        .map(|x_0| {
-            counts
-                .iter()
-                .map(|(x_1, count)| (x_1 - x_0).abs() * count)
-                .sum()
-        })
+        .map(|a| counts.iter().map(|(&b, count)| a.abs_diff(b) * count).sum())
         .min()
         .unwrap()
 }
 
-pub fn part_2(input: &str) -> isize {
-    let mut counts: HashMap<isize, isize> = HashMap::new();
-    for x in input.split(',') {
-        let x = x.parse().unwrap();
-        *counts.entry(x).or_default() += 1;
-    }
-    let (min, max) = match counts.keys().minmax() {
-        MinMaxResult::MinMax(&min, &max) => (min, max),
-        _ => (0, 0),
-    };
+pub fn part_2(input: &str) -> usize {
+    let counts = parse_input(input);
+    let (&min, &max) = counts.keys().minmax().into_option().unwrap();
     (min..max + 1)
-        .map(|x_0| {
+        .map(|a| {
             counts
                 .iter()
-                .map(|(x_1, count)| {
-                    let n = (x_1 - x_0).abs();
+                .map(|(&b, count)| {
+                    let n = a.abs_diff(b);
                     let fuel_cost = n * (n + 1) / 2;
                     fuel_cost * count
                 })
@@ -44,23 +28,28 @@ pub fn part_2(input: &str) -> isize {
         .unwrap()
 }
 
+fn parse_input(input: &str) -> std::collections::HashMap<usize, usize, DefaultHashBuilder> {
+    input
+        .split(',')
+        .map(|x| x.parse().unwrap())
+        .counts_with_hasher(DefaultHashBuilder::default())
+}
+
 #[cfg(test)]
 mod test {
     use test_case::test_case;
 
-    const EXAMPLE: &str = "16,1,2,0,4,2,7,1,2,14";
-
     const INPUT: &str = include_str!("../test_data/day_07.txt");
 
-    #[test_case(EXAMPLE => 37)]
+    #[test_case("16,1,2,0,4,2,7,1,2,14" => 37)]
     #[test_case(INPUT => 345035)]
-    fn part_1(input: &str) -> isize {
+    fn part_1(input: &str) -> usize {
         super::part_1(input)
     }
 
-    #[test_case(EXAMPLE => 168)]
+    #[test_case("16,1,2,0,4,2,7,1,2,14" => 168)]
     #[test_case(INPUT => 97038163)]
-    fn part_2(input: &str) -> isize {
+    fn part_2(input: &str) -> usize {
         super::part_2(input)
     }
 }
