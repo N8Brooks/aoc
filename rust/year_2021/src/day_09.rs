@@ -1,9 +1,10 @@
-use itertools::Itertools;
+use std::mem;
+
+use itertools::{Itertools as _, iproduct};
 
 pub fn part_1(input: &str) -> usize {
     let input = input.lines().map(|line| line.as_bytes()).collect_vec();
-    let m = input.len();
-    let n = input[0].len();
+    let (m, n) = (input.len(), input[0].len());
     input
         .iter()
         .enumerate()
@@ -28,10 +29,8 @@ pub fn part_2(input: &str) -> usize {
         .lines()
         .map(|line| line.bytes().collect_vec())
         .collect_vec();
-    let m = input.len();
-    let n = input[0].len();
-    (0..m)
-        .cartesian_product(0..n)
+    let (m, n) = (input.len(), input[0].len());
+    iproduct!(0..m, 0..n)
         .filter_map(|(i, j)| {
             if input[i][j] == b'9' {
                 return None;
@@ -40,7 +39,7 @@ pub fn part_2(input: &str) -> usize {
             input[i][j] = b'9';
             let mut count = 1;
             while let Some((i, j)) = stack.pop() {
-                let neighbors = [
+                [
                     i.checked_sub(1).map(|i| (i, j)),
                     (i + 1 < m).then_some((i + 1, j)),
                     j.checked_sub(1).map(|j| (i, j)),
@@ -48,19 +47,13 @@ pub fn part_2(input: &str) -> usize {
                 ]
                 .into_iter()
                 .flatten()
-                .filter(|&(i, j)| input[i][j] != b'9')
-                .collect_vec();
-                count += neighbors.len();
-                for &(i, j) in &neighbors {
-                    input[i][j] = b'9';
-                }
-                stack.extend(neighbors);
+                .filter(|&(i, j)| mem::replace(&mut input[i][j], b'9') != b'9')
+                .inspect(|_| count += 1)
+                .collect_into(&mut stack);
             }
             Some(count)
         })
-        .sorted()
-        .rev()
-        .take(3)
+        .k_largest(3)
         .product()
 }
 
