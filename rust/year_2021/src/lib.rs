@@ -1,4 +1,5 @@
 #![feature(iter_collect_into)]
+#![feature(impl_trait_in_assoc_type)]
 pub mod day_01;
 pub mod day_02;
 pub mod day_03;
