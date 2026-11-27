@@ -420,6 +420,7 @@ dependencies = [
 name = "year_2021"
 version = "0.1.0"
 dependencies = [
+ "arrayvec",
  "hashbrown",
  "itertools",
  "num",

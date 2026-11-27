@@ -1,4 +1,5 @@
 #![feature(
+    array_try_map,
     const_trait_impl,
     iter_collect_into,
     impl_trait_in_assoc_type,
@@ -14,3 +15,4 @@ pub mod day_07;
 pub mod day_08;
 pub mod day_09;
 pub mod day_10;
+pub mod day_11;
