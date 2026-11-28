@@ -41,7 +41,7 @@ pub fn visible_image<const M: usize, const N: usize>(input: &str) -> [[u8; N]; M
         .unwrap()
         .map(|row| {
             row.map(|pxl| match pxl {
-                b'0' => b' ',
+                b'0' => b'.',
                 b'1' => b'#',
                 _ => panic!("Invalid pixel value {pxl}"),
             })
@@ -67,7 +67,7 @@ mod test {
         super::part_2::<25>(input)
     }
 
-    #[test_case("0222112222120000" => [*b" #", *b"# "])]
+    #[test_case("0222112222120000" => [*b".#", *b"#."])]
     fn example_2(input: &str) -> [[u8; 2]; 2] {
         super::visible_image::<2, 2>(input)
     }

@@ -425,6 +425,7 @@ dependencies = [
  "itertools",
  "num",
  "test-case",
+ "util",
 ]
 
 [[package]]

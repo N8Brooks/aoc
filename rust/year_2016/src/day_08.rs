@@ -15,7 +15,7 @@ pub fn part_2(input: &str) -> String {
 }
 
 fn plot(input: &str) -> [[u8; 50]; 6] {
-    let mut plot = [[b' '; 50]; 6];
+    let mut plot = [[b'.'; 50]; 6];
     for line in input.lines() {
         match line.parse().unwrap() {
             Rect { width, height } => {
